@@ -1,0 +1,9 @@
+# git pull --recurse-submodules
+# git submodule update --init --recursive --remote
+[submodule "functions/assets/Net_DNS2"]
+        path = functions/assets/Net_DNS2
+        url = https://github.com/mikepultz/netdns2.git
+
+[submodule "functions/assets/PHPMailer"]
+        path = functions/assets/PHPMailer
+        url = https://github.com/PHPMailer/PHPMailer.git
