@@ -18,7 +18,26 @@ print '<a href="/route/cron/edit.php" class="open_popup btn btn-sm btn-outline-s
 print '</div><br><br>';
 
 # text
-print "<p>"._('List of scheduled cronjobs').".</p>";
+print "<p>";
+print _('List of scheduled cronjobs').". "._("Each tenant has separate scripts that will be executed only if scheduled here").". "._("");
+print "<ul>";
+foreach ($Cron->get_valid_scripts() as $j) {
+
+	$script_nice = $Cron->name_script($j);
+
+	print "<li>"._($script_nice[name])." :: <span class='text-muted'>"._($script_nice['desc']).".</span></li>";
+}
+print "</ul>";
+
+print _("All scripts are called from main cron.php cronjob (and executed if scheduled here) that should be executed every 5 minutes").". "._("Crontab example").":<br>";
+print "<pre class='text-muted' style='padding: 5px 10px; border-radius:6px; border:1px solid rgba(0,0,0,0.1);float:left'>";
+print "# php-ssl cronjob
+*/5 * * * * /usr/bin/php /usr/local/www/cron.php";
+print "</pre>";
+
+print "<div class='clearfix'></div>";
+
+print "</p>";
 
 
 # fetch jobs

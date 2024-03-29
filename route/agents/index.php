@@ -41,7 +41,7 @@ print '<a href="/route/agents/edit.php?action=add&tenant='.$user->t_id.'" data-b
 print '</div><br><br>';
 
 # text
-print "<p>"._('List of all agents').".</p>";
+print "<p>"._("Scan agents can be deployed as separate instances and will fetch certificate for main server").". "._("Main instance connects to Agent API and requests agent to scan hostname for certificate, which than returns result back to main server").". "._("With agents you can have local instance on main server that will resolve hostnames and SSL scan locally directly from server, and remote instance that will resolve hostnames against different DNS server and scan certificates on remote server").". "._("Useful if you want to have a local and remote (public) zones").".<br><br>"._("Scan agents can be installed from github repository ")."<a href='https://github.com/phpipam/php-ssl-agent' target='_blank'>https://github.com/phpipam/php-ssl-agent</a>.</p>";
 
 # errors
 require(dirname(__FILE__)."/../dashboard/card-agent-errors.php");
@@ -69,11 +69,10 @@ print "<tbody>";
 
 if (sizeof($agent_groups)==0) {
 	print "<tr>";
-	print "	<td colspan=8><i class='fa fa-database text-info' style='color:#ccc;padding:0px 5px;'></i> <span class='text-info'>". _("No agents available").".</span></td>";
+	print "	<td colspan=8><i class='fa fa-server text-info' style='color:#ccc;padding:0px 5px;'></i> <span class='text-info'>". _("No agents available").".</span></td>";
 	print "</tr>";
 }
 else {
-
 	// init agent
 	$Agent = new Agent ();
 	// get conf
@@ -92,7 +91,7 @@ else {
 
 		if(sizeof($group)==0) {
 			print "<tr>";
-			print "	<td colspan=8><i class='fa fa-database text-info' style='color:#ccc;padding:0px 5px;'></i> <span class='text-info'>"._("No agents available").".</span></td>";
+			print "	<td colspan=8><i class='fa fa-server text-info' style='color:#ccc;padding:0px 5px;'></i> <span class='text-info'>"._("No agents available").".</span></td>";
 			print "</tr>";
 		}
 		else {
@@ -106,7 +105,7 @@ else {
 				$status = is_null($a->last_success) ? "<span class='badge bg-warning text-dark'>"._("Unknown")."</span>" : $status;
 
 				print "<tr>";
-				print "	<td><i class='fa fa-database $icon_color' style='color:#ccc;padding:0px 5px;'></i> <strong>".$a->name."</strong></td>";
+				print "	<td><i class='fa fa-server' style='color:#ccc;padding:0px 5px;'></i> <strong>".$a->name."</strong></td>";
 				print "	<td>$status</td>";
 				print "	<td class='text-muted d-none d-lg-table-cell'>".$a->url."</td>";
 				print "	<td class='text-muted d-none d-lg-table-cell' style='font-size:11px;width:140px'>".$a->last_check."</td>";

@@ -66,6 +66,41 @@ class Cron extends Common {
 		return $this->valid_cronjob_scripts;
 	}
 
+	public function name_script ($name = "") {
+
+
+		if ($name=="update_certificates") {
+			return [
+				"name" => "Update SSL certificates",
+				"desc" => "This script will check for new certificates from all tenant hosts from all available zones and will send mail if certificate change occurs"
+				];
+		}
+		elseif ($name=="axfr_transfer") {
+			return [
+				"name" => "Zone transfers",
+				"desc" => "This script will sync all hosts for AXFR zones from DNS server (AXFR transfer) and add / remove new hosts to local database if needed"
+				];
+		}
+		elseif ($name=="remove_orphaned") {
+			return [
+				"name" => "Remove orhaned certificates",
+				"desc" => "This script removes all orphaned certificates that are no longer attached to any host"
+				];
+		}
+		elseif ($name=="expired_certificates") {
+			return [
+				"name" => "Notify about expired certificates",
+				"desc" => "This script will check any certificates that are about to expire or have expired and email notification to owners and administrators"
+				];
+		}
+		else {
+			return [
+				"name" => $name,
+				"desc" => ""
+				];
+		}
+	}
+
 	public function execute_cronjobs ($execution_time,  $cli_arguments = []) {
 		if(sizeof($this->cronjobs)>0) {
 			foreach ($this->cronjobs as $j) {

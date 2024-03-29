@@ -50,6 +50,9 @@ else {
 	else {
 		$certificate_details['subject']['CN_all'] = $certificate_details['subject']['CN'];
 	}
+
+	// get all ignored issuers
+	$Certificates->get_all_ignored_issuers ();
 ?>
 
 <div class='header'>
@@ -302,6 +305,10 @@ else {
 			$basicConstraints_class 	  = "text-muted";
 		}
 
+		// ignored issuer ?
+		$ignored_cert = $Certificates->is_issuer_ignored (str_replace("keyid:", "", $cert['certificate']['extensions']['authorityKeyIdentifier']), $certificate->t_id)===true ? " <span class='badge bg-warning'><i class='fa fa-volume-xmark'></i></span>" : "";
+		$ignored_issuer = $Certificates->is_issuer_ignored ($cert['certificate']['extensions']['subjectKeyIdentifier'], $certificate->t_id)===true ? " <span class='badge bg-warning'>"._("Ignored issuer")."</span>" : "";
+
 		// get hash
 		$cert['raw'] = "-----BEGIN CERTIFICATE-----\n".$cert['raw'];
 		$cert_x509 = openssl_x509_read($cert['raw']);
@@ -309,7 +316,7 @@ else {
 		print "<tr>";
 		print "	<th style='padding-top: 15px;'>"._($title)."</th>";
 		print "	<td style='padding-left: 10px;padding-top: 15px;'>";
-		print "<strong><a href=''>".$cert['certificate']['subject']['CN']."</a></strong><br>";
+		print "<strong><a href=''>".$cert['certificate']['subject']['CN']."</a></strong> $ignored_issuer $ignored_cert<br>";
 		print _("Issued by").": ".$cert['certificate']['issuer']['CN']."<br>";
 		print "<span class='text-muted $validto_class'>"._("Expires on").": ".date("Y-m-d H:i:s", $cert['certificate']['validTo_time_t'])."</span><br>";
 		print "<span style='font-size:10px;padding-left:10px;font-style:italic' class='text-muted'>"._("SHA-256 Fingerprint").": ".chunk_split(openssl_x509_fingerprint($cert_x509, 'SHA256'), 2, ' ')."</span><br>";

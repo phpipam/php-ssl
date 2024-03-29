@@ -11,9 +11,8 @@
 # load classes
 $Result   = new Result ();
 $Common   = new Common ();
-$URL      = new URL ();
+// $URL      = new URL ();
 $Database = new Database_PDO ();
-$SSL      = new SSL ($Database);
 $Config   = new Config ($Database);
 
 
@@ -72,6 +71,7 @@ try {
 		}
 
 		// reinit database
+		unset($Database);
 		$Database = new Database_PDO ();
 
 		// get changed based on execution time !
@@ -79,6 +79,8 @@ try {
 
 		// mail diff
 		if(sizeof($changed_hosts)>0) {
+			// processed flag - we need it in case issuer is ignored !
+			$processed = 0;
 
 			// fake user
 			$cron_user = new stdClass ();
@@ -86,6 +88,7 @@ try {
 
     		// init certs
     		$Certificates = new Certificates ($Database, $cron_user);
+    		$Certificates->get_all_ignored_issuers ($tenant_id);			// get all ignored issuers for this tenant
 
 			// init mailer
 			$Mail = new mailer ();
@@ -180,45 +183,50 @@ try {
             		$color  = "#1ABC9C";
             	}
 
-            	// try to prevent linkable text
-				$c->hostname                                 = $Mail->prevent_linkable_text($c->hostname);
-				$cert_parsed['subject']['CN']                = $Mail->prevent_linkable_text($cert_parsed['subject']['CN']);
-				$cert_parsed['extensions']['subjectAltName'] = $Mail->prevent_linkable_text($cert_parsed['extensions']['subjectAltName']);
-				$cert_parsed['issuer']['O']                  = $Mail->prevent_linkable_text($cert_parsed['issuer']['O']);
+            	// check if cert is ignored, if so skip to next item !
+            	if ($Certificates->is_issuer_ignored (str_replace("keyid:", "", $cert_parsed['extensions']['authorityKeyIdentifier']), $tenant_id)===false) {
 
-                $td_style_title = "vertical-align:top;padding:1px 5px;white-space:nowrap;padding-left:0px;padding-bottom: 7px;padding-top:20px;";
-                $td_style = "border-left:1px solid #ddd;vertical-align:top;padding:1px 5px;white-space:nowrap;padding-left:10px;";
+	            	// try to prevent linkable text
+					$c->hostname                                 = $Mail->prevent_linkable_text($c->hostname);
+					$cert_parsed['subject']['CN']                = $Mail->prevent_linkable_text($cert_parsed['subject']['CN']);
+					$cert_parsed['extensions']['subjectAltName'] = $Mail->prevent_linkable_text($cert_parsed['extensions']['subjectAltName']);
+					$cert_parsed['issuer']['O']                  = $Mail->prevent_linkable_text($cert_parsed['issuer']['O']);
 
-            	// content
-                $content2[] = "<tr><td style='$td_style_title'>".$Mail->font_bold.$c->hostname."</font></td></tr>";
-                $content2[] = "<tr><td style='$td_style'>".$Mail->font_norm._("IP").": ".$c->ip."</font></td></tr>";
-                $content2[] = "<tr><td style='$td_style'>".$Mail->font_norm._("Subject").":</font> ".$Mail->font_bold.$cert_parsed['subject']['CN']."</font></td></tr>";
-                $content2[] = "<tr><td style='$td_style'>".$Mail->font_norm._("Status").": <span style='color:$color;padding:0px;margin:0px;'>".$status." (".$cert_parsed['custom_validDays']." "._("days").")</span></font></td></tr>";
-                $content2[] = "<tr><td style='$td_style'>".$Mail->font_norm._("Issuer").": ".$cert_parsed['issuer']['O']."</font></td></tr>";
-                $content2[] = "<tr><td style='$td_style'>".$Mail->font_norm._("Serial").": <a href='https://".$mail_sender_settings->url."/".$tenant->href."/certificates/".$cert_parsed['serialNumber']."/' style='text-decoration:none;color:#333'>".$cert_parsed['serialNumberHex']."</a></font></td></tr>";
-                $content2[] = "<tr><td style='$td_style'>".$Mail->font_norm._("Expires").": ".$cert_parsed['custom_validTo']."</font></td></tr>";
-                $content2[] = "<tr><td style='$td_style'>".$Mail->font_norm._("Scan agent").": ".$c->agname."</font></td></tr>";
-                if(strlen($cert_parsed['extensions']['subjectAltName'])>0)
-                $content2[] = "<tr><td style='$td_style'>".$Mail->font_norm._("Altnames").":<br><span style='padding:2px;padding-left:15px;'>".str_replace(",","</span><br><span style='padding:0px;padding:2px;padding-left:15px;'>",$cert_parsed['extensions']['subjectAltName'])."</span></font></td></tr>";
+	                $td_style_title = "vertical-align:top;padding:1px 5px;white-space:nowrap;padding-left:0px;padding-bottom: 7px;padding-top:20px;";
+	                $td_style = "border-left:1px solid #ddd;vertical-align:top;padding:1px 5px;white-space:nowrap;padding-left:10px;";
 
-                // content - extra recipients
-                foreach (explode(";", $c->h_recipients) as $r) {
-                    if($Common->validate_mail($r)) {
-                        // add start of mail
-                        if(!array_key_exists($r, $h_recipients_mails)) { $h_recipients_mails[$r] = $content_h_recipients_mails; }
-                        // save content for user
-		                $h_recipients_mails[$r][] = "<tr><td style='$td_style_title'>".$Mail->font_bold.$c->hostname."</font></td></tr>";
-		                $h_recipients_mails[$r][] = "<tr><td style='$td_style'>".$Mail->font_norm._("IP").": ".$c->ip."</font></td></tr>";
-		                $h_recipients_mails[$r][] = "<tr><td style='$td_style'>".$Mail->font_norm._("Subject").":</font> ".$Mail->font_bold.$cert_parsed['subject']['CN']."</font></td></tr>";
-		                $h_recipients_mails[$r][] = "<tr><td style='$td_style'>".$Mail->font_norm._("Status").": <span style='color:$color;padding:0px;margin:0px;'>".$status." (".$cert_parsed['custom_validDays']." "._("days").")</span></font></td></tr>";
-		                $h_recipients_mails[$r][] = "<tr><td style='$td_style'>".$Mail->font_norm._("Issuer").": ".$cert_parsed['issuer']['O']."</font></td></tr>";
-		                $h_recipients_mails[$r][] = "<tr><td style='$td_style'>".$Mail->font_norm._("Serial").": <a href='https://".$mail_sender_settings->url."/".$tenant->href."/certificates/".$cert_parsed['serialNumber']."/' style='text-decoration:none;color:#333'>".$cert_parsed['serialNumberHex']."</a></font></td></tr>";
-		                $h_recipients_mails[$r][] = "<tr><td style='$td_style'>".$Mail->font_norm._("Expires").": ".$cert_parsed['custom_validTo']."</font></td></tr>";
-		                if(strlen($cert_parsed['extensions']['subjectAltName'])>0)
-		                $h_recipients_mails[$r][] = "<tr><td style='$td_style'>".$Mail->font_norm._("Altnames").":<br><span style='padding:2px;padding-left:15px;'>".str_replace(",","</span><br><span style='padding:0px;padding:2px;padding-left:15px;'>",$cert_parsed['extensions']['subjectAltName'])."</span></font></td></tr>";
-                    }
-                }
+	            	// content
+	                $content2[] = "<tr><td style='$td_style_title'>".$Mail->font_bold.$c->hostname."</font></td></tr>";
+	                $content2[] = "<tr><td style='$td_style'>".$Mail->font_norm._("IP").": ".$c->ip."</font></td></tr>";
+	                $content2[] = "<tr><td style='$td_style'>".$Mail->font_norm._("Subject").":</font> ".$Mail->font_bold.$cert_parsed['subject']['CN']."</font></td></tr>";
+	                $content2[] = "<tr><td style='$td_style'>".$Mail->font_norm._("Status").": <span style='color:$color;padding:0px;margin:0px;'>".$status." (".$cert_parsed['custom_validDays']." "._("days").")</span></font></td></tr>";
+	                $content2[] = "<tr><td style='$td_style'>".$Mail->font_norm._("Issuer").": ".$cert_parsed['issuer']['O']."</font></td></tr>";
+	                $content2[] = "<tr><td style='$td_style'>".$Mail->font_norm._("Serial").": <a href='https://".$mail_sender_settings->url."/".$tenant->href."/certificates/".$cert_parsed['serialNumber']."/' style='text-decoration:none;color:#333'>".$cert_parsed['serialNumberHex']."</a></font></td></tr>";
+	                $content2[] = "<tr><td style='$td_style'>".$Mail->font_norm._("Expires").": ".$cert_parsed['custom_validTo']."</font></td></tr>";
+	                $content2[] = "<tr><td style='$td_style'>".$Mail->font_norm._("Scan agent").": ".$c->agname."</font></td></tr>";
+	                if(strlen($cert_parsed['extensions']['subjectAltName'])>0)
+	                $content2[] = "<tr><td style='$td_style'>".$Mail->font_norm._("Altnames").":<br><span style='padding:2px;padding-left:15px;'>".str_replace(",","</span><br><span style='padding:0px;padding:2px;padding-left:15px;'>",$cert_parsed['extensions']['subjectAltName'])."</span></font></td></tr>";
 
+	                // content - extra recipients
+	                foreach (explode(";", $c->h_recipients) as $r) {
+	                    if($Common->validate_mail($r)) {
+	                        // add start of mail
+	                        if(!array_key_exists($r, $h_recipients_mails)) { $h_recipients_mails[$r] = $content_h_recipients_mails; }
+	                        // save content for user
+			                $h_recipients_mails[$r][] = "<tr><td style='$td_style_title'>".$Mail->font_bold.$c->hostname."</font></td></tr>";
+			                $h_recipients_mails[$r][] = "<tr><td style='$td_style'>".$Mail->font_norm._("IP").": ".$c->ip."</font></td></tr>";
+			                $h_recipients_mails[$r][] = "<tr><td style='$td_style'>".$Mail->font_norm._("Subject").":</font> ".$Mail->font_bold.$cert_parsed['subject']['CN']."</font></td></tr>";
+			                $h_recipients_mails[$r][] = "<tr><td style='$td_style'>".$Mail->font_norm._("Status").": <span style='color:$color;padding:0px;margin:0px;'>".$status." (".$cert_parsed['custom_validDays']." "._("days").")</span></font></td></tr>";
+			                $h_recipients_mails[$r][] = "<tr><td style='$td_style'>".$Mail->font_norm._("Issuer").": ".$cert_parsed['issuer']['O']."</font></td></tr>";
+			                $h_recipients_mails[$r][] = "<tr><td style='$td_style'>".$Mail->font_norm._("Serial").": <a href='https://".$mail_sender_settings->url."/".$tenant->href."/certificates/".$cert_parsed['serialNumber']."/' style='text-decoration:none;color:#333'>".$cert_parsed['serialNumberHex']."</a></font></td></tr>";
+			                $h_recipients_mails[$r][] = "<tr><td style='$td_style'>".$Mail->font_norm._("Expires").": ".$cert_parsed['custom_validTo']."</font></td></tr>";
+			                if(strlen($cert_parsed['extensions']['subjectAltName'])>0)
+			                $h_recipients_mails[$r][] = "<tr><td style='$td_style'>".$Mail->font_norm._("Altnames").":<br><span style='padding:2px;padding-left:15px;'>".str_replace(",","</span><br><span style='padding:0px;padding:2px;padding-left:15px;'>",$cert_parsed['extensions']['subjectAltName'])."</span></font></td></tr>";
+	                    }
+	                }
+                	// ignored no more
+                	$processed++;
+            	}
 	        }
 			$content2[] = "</table>";
 
@@ -229,23 +237,27 @@ try {
 	            }
 	        }
 
-			// recipients
-			$to = explode(",", $tenant->recipients);
-			// $to = ["miha.petkovsek@telemach.si"];
 
-            // set proper content
-            $selected_content = $tenant->mail_style=="list" ? $content2 : $content;
+	        // added for ignored certs check
+	        if ($processed>0) {
+				// recipients
+				$to = explode(",", $tenant->recipients);
+				// $to = ["miha.petkovsek@telemach.si"];
 
-			// send
-			$Mail->send ("Telemach php-ssl :: changed certificates [".$tenant->name."]", $to, [], [], implode("\n", $selected_content), false);
+	            // set proper content
+	            $selected_content = $tenant->mail_style=="list" ? $content2 : $content;
 
-	        // send to extra recepients
-	        if(sizeof($h_recipients_mails)) {
-	            foreach ($h_recipients_mails as $extra_mail=>$extra_content) {
-	                // send
-	                $Mail->send ("Telemach php-ssl :: changed certificates [".$tenant->name."]", [$extra_mail], $to, [], implode("\n", $extra_content), false);
-	            }
-	        }
+				// send
+				$Mail->send ("Telemach php-ssl :: changed certificates [".$tenant->name."]", $to, [], [], implode("\n", $selected_content), false);
+
+		        // send to extra recepients
+		        if(sizeof($h_recipients_mails)) {
+		            foreach ($h_recipients_mails as $extra_mail=>$extra_content) {
+		                // send
+		                $Mail->send ("Telemach php-ssl :: changed certificates [".$tenant->name."]", [$extra_mail], $to, [], implode("\n", $extra_content), false);
+		            }
+		        }
+	    	}
 		}
 	}
 } catch (Exception $e) {

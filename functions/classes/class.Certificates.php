@@ -20,6 +20,12 @@ class Certificates extends Common {
 	 */
 	private $user = false;
 
+	/**
+	 * Array of ignored issuers
+	 * @var array
+	 */
+	private $ignored_issuers = [];
+
 
 
 	/**
@@ -511,6 +517,58 @@ class Certificates extends Common {
 	 * @return [type]
 	 */
 	private function reformat_certificate ($certificate = "", $curr_format = "crt", $req_format = "crt") {
+		return false;
+	}
+
+
+
+
+	/**
+	 * Returns full list of all ignored issuers
+	 * @method get_all_ignored_issuers
+	 * @return array
+	 */
+	public function get_all_ignored_issuers ($t_id = NULL) {
+		// set tenant
+		$t_id = is_null($t_id) ? $this->user->t_id : $t_id;
+
+		// fetch
+		try {
+			// admins, ignore href
+			if($this->user->admin=="1") {
+				$ignored = $this->Database->getObjectsQuery("select * from ignored_issuers as i");
+			} else {
+				$ignored = $this->Database->getObjectsQuery("select * from ignored_issuers as i where t_id = ?", [$t_id]);
+			}
+		} catch (Exception $e) {
+			$this->errors[] = $e->getMessage();
+			$this->result_die ();
+		}
+		// save for later checks to avoild multiple db checks
+		if(sizeof($ignored)>0) {
+			foreach ($ignored as $i) {
+				$this->ignored_issuers[$i->t_id][$i->ski] = $i;
+			}
+		}
+
+		// return
+		return $ignored;
+	}
+
+	/**
+	 * Checks if specific issuer is ignored
+	 * @method is_issuer_ignored
+	 * @param  string $ski
+	 * @param  int $t_id
+	 * @return bool
+	 */
+	public function is_issuer_ignored ($ski = "", $t_id = 0) {
+		if (array_key_exists($t_id, $this->ignored_issuers)) {
+			if (array_key_exists(trim($ski), $this->ignored_issuers[$t_id])) {
+				return true;
+			}
+		}
+		// not found - default
 		return false;
 	}
 }

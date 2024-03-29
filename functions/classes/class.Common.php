@@ -99,30 +99,30 @@ class Common extends Validate {
  */
 function php_feature_missing($required_extensions = null, $required_functions = null) {
 
-        if (is_array($required_extensions)) {
-                foreach ($required_extensions as $ext) {
-                        if (extension_loaded($ext))
-                                continue;
+    if (is_array($required_extensions)) {
+        foreach ($required_extensions as $ext) {
+	        if (extension_loaded($ext))
+	                continue;
 
-                        return _('Required PHP extension not installed: ').$ext;
-                }
+	        return _('Required PHP extension not installed: ').$ext;
         }
+    }
 
-        if (is_array($required_functions)) {
-                foreach ($required_functions as $function) {
-                        if (function_exists($function))
-                                continue;
+    if (is_array($required_functions)) {
+        foreach ($required_functions as $function) {
+            if (function_exists($function))
+                continue;
 
-                        $ini_path = trim( php_ini_loaded_file() );
-                        $disabled_functions = ini_get('disable_functions');
-                        if (is_string($disabled_functions) && in_array($function, explode(';',$disabled_functions)))
-                                return _('Required function disabled')." : $ini_path, disable_functions=$function";
+            $ini_path = trim( php_ini_loaded_file() );
+            $disabled_functions = ini_get('disable_functions');
+            if (is_string($disabled_functions) && in_array($function, explode(';',$disabled_functions)))
+                return _('Required function disabled')." : $ini_path, disable_functions=$function";
 
-                        return _('Required function not found: ').$function.'()';
-                }
+            return _('Required function not found: ').$function.'()';
         }
+    }
 
-        return false;
+    return false;
 }
 
 
@@ -138,7 +138,7 @@ function php_feature_missing($required_extensions = null, $required_functions = 
 function scan_host ($host, $execution_time, $tenant_id) {
 	# load classes
 	$Database = new Database_PDO ();
-	$SSL      = new SSL ($Database);
+	$SSL       = new SSL ($Database);
 
 	// try to fetch cert
 	$host_certificate = $SSL->fetch_website_certificate ($host, $execution_time, $tenant_id);
