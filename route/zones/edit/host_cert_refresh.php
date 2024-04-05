@@ -45,7 +45,7 @@ try {
 		$ip = !isset($host_certificate['ip']) ? $SSL->resolve_ip($host->hostname) : $host_certificate['ip'];
 		// if Id of certificate changed
 		if($host->c_id!=$cert_id) {
-			$SSL->assign_host_certificate ($host->hostname, $ip, $host->host_id, $cert_id, $host_certificate['port'], $execution_time);
+			$SSL->assign_host_certificate ($host->hostname, $ip, $host->host_id, $cert_id, $host_certificate['port'], $execution_time, $host_certificate['tls_proto']);
 		}
 
 		// parse cert and set text
@@ -60,6 +60,7 @@ try {
 		$cert_text[] = _("Subject").": ".$cert_parsed['subject']['CN'];
 		$cert_text[] = _("Serial").": ".$cert_parsed['serialNumberHex'];
 		$cert_text[] = _("Valid to").": ".$cert_parsed['custom_validTo']." (".$cert_parsed['custom_validDays']." days)";
+		$cert_text[] = _("TLS version").": ".$host_certificate['tls_proto'];
 		$cert_text[] = _("Scan agent").": ".$host->agname;
 		$cert_text[] = "<a href='".$tenant->href."/certificates/".$host->zone_name."/".$cert_parsed['serialNumber']."/' target='_blank' class='btn btn-sm btn-outline-success'> "._("Show details")."</a>";
 

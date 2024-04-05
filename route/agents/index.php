@@ -41,7 +41,7 @@ print '<a href="/route/agents/edit.php?action=add&tenant='.$user->t_id.'" data-b
 print '</div><br><br>';
 
 # text
-print "<p>"._("Scan agents can be deployed as separate instances and will fetch certificate for main server").". "._("Main instance connects to Agent API and requests agent to scan hostname for certificate, which than returns result back to main server").". "._("With agents you can have local instance on main server that will resolve hostnames and SSL scan locally directly from server, and remote instance that will resolve hostnames against different DNS server and scan certificates on remote server").". "._("Useful if you want to have a local and remote (public) zones").".<br><br>"._("Scan agents can be installed from github repository ")."<a href='https://github.com/phpipam/php-ssl-agent' target='_blank'>https://github.com/phpipam/php-ssl-agent</a>.</p>";
+print "<p>"._('List of all agents').".</p>";
 
 # errors
 require(dirname(__FILE__)."/../dashboard/card-agent-errors.php");
@@ -57,10 +57,12 @@ print "<tr>";
 print "	<th data-field='name'>"._("Name")."</th>";
 print "	<th data-field='status' style='width:50px;' data-width='50' data-width-unit='px'>"._("Status")."</th>";
 print "	<th data-field='desc' class='d-none d-lg-table-cell'>"._("URL")."</th>";
+print "	<th data-field='zones' class='text-center' style='width:20px;''><i class='fa fa-database' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Zones")."'></i></th>";
+print "	<th data-field='hosts' class='text-center' style='width:20px;'><i class='fa fa-server' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Hosts")."'></i></th>";
 print "	<th data-field='check' class='d-none d-lg-table-cell' style='width:150px;'>"._("Last check")."</th>";
 print "	<th data-field='checks' class='d-none d-lg-table-cell' style='width:150px;'>"._("Last success")."</th>";
-print "	<th data-field='edit' class='text-center' style='width:20px;border-left:1px solid rgba(200,200,200,0.3);'><i class='fa fa-pencil' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Edit agent")."'></i></th>";
-print "	<th data-field='refresh' class='text-center' style='width:20px;border-left:1px solid rgba(200,200,200,0.3);'><i class='fa fa-refresh' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Retest agent")."'></i></th>";
+print "	<th data-field='edit' class='text-center' style='width:20px'><i class='fa fa-pencil' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Edit agent")."'></i></th>";
+print "	<th data-field='refresh' class='text-center' style='width:20px'><i class='fa fa-refresh' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Retest agent")."'></i></th>";
 print "	<th data-field='delete' class='text-center' style='width:20px;'><i class='fa fa-remove' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Delete agent")."'></i></th>";
 print "</tr>";
 print "</thead>";
@@ -69,10 +71,11 @@ print "<tbody>";
 
 if (sizeof($agent_groups)==0) {
 	print "<tr>";
-	print "	<td colspan=8><i class='fa fa-server text-info' style='color:#ccc;padding:0px 5px;'></i> <span class='text-info'>". _("No agents available").".</span></td>";
+	print "	<td colspan=10><i class='fa fa-database text-info' style='color:#ccc;padding:0px 5px;'></i> <span class='text-info'>". _("No agents available").".</span></td>";
 	print "</tr>";
 }
 else {
+
 	// init agent
 	$Agent = new Agent ();
 	// get conf
@@ -85,17 +88,21 @@ else {
 
 		if($user->admin=="1") {
 			print "<tr class='header'>";
-			print "	<td colspan=8><i class='fa fa-users text-muted'></i> "._("Tenant")." <a href='/".$user->href."/tenants/".$tenants[$tenant_id]->href."/'>".$tenants[$tenant_id]->name."</a></td>";
+			print "	<td colspan=10><i class='fa fa-users text-muted'></i> "._("Tenant")." <a href='/".$user->href."/tenants/".$tenants[$tenant_id]->href."/'>".$tenants[$tenant_id]->name."</a></td>";
 			print "</tr>";
 		}
 
 		if(sizeof($group)==0) {
 			print "<tr>";
-			print "	<td colspan=8><i class='fa fa-server text-info' style='color:#ccc;padding:0px 5px;'></i> <span class='text-info'>"._("No agents available").".</span></td>";
+			print "	<td colspan=10><i class='fa fa-database text-info' style='color:#ccc;padding:0px 5px;'></i> <span class='text-info'>"._("No agents available").".</span></td>";
 			print "</tr>";
 		}
 		else {
 			foreach ($group as $a) {
+
+				// cnt
+				$count_zones = $Database->getObjectQuery("select count(*) as cnt from zones where agent_id = ?", [$a->id]);
+				$count_hosts = $Database->getObjectQuery("select count(*) as cnt from zones as z, hosts as h where h.z_id = z.id and z.`agent_id` = ?", [$a->id]);
 
 				// error if status not ok
 				$status = array_key_exists($a->id, $agent_errors) ? "<span class='badge bg-danger text-dark'>"._("Error")."</span>" : "<span class='badge bg-success text-dark'>"._("OK")."</span>";
@@ -105,9 +112,11 @@ else {
 				$status = is_null($a->last_success) ? "<span class='badge bg-warning text-dark'>"._("Unknown")."</span>" : $status;
 
 				print "<tr>";
-				print "	<td><i class='fa fa-server' style='color:#ccc;padding:0px 5px;'></i> <strong>".$a->name."</strong></td>";
+				print "	<td><i class='fa fa-database $icon_color' style='color:#ccc;padding:0px 5px;'></i> <strong>".$a->name."</strong></td>";
 				print "	<td>$status</td>";
 				print "	<td class='text-muted d-none d-lg-table-cell'>".$a->url."</td>";
+				print "	<td class='text-center' style='width:20px;border-left:1px solid rgba(200,200,200,0.3);'><span class='badge bg-light text-dark'>".$count_zones->cnt."</span></td>";
+				print "	<td class='text-center' style='width:20px;border-right:1px solid rgba(200,200,200,0.3);'><span class='badge bg-light text-dark'>".$count_hosts->cnt."</span></td>";
 				print "	<td class='text-muted d-none d-lg-table-cell' style='font-size:11px;width:140px'>".$a->last_check."</td>";
 				print "	<td class='text-muted d-none d-lg-table-cell' style='font-size:11px;width:140px'>".$a->last_success."</td>";
 				print "	<td class='text-center' style='width:20px;border-left:1px solid rgba(200,200,200,0.3);'><span class='badge bg-success'><a href='/route/agents/edit.php?id=".$a->id."&action=edit&tenant=".$a->t_id."' data-bs-toggle='modal' data-bs-target='#modal1' style='color:rgb(34,155,115) !important;'><i class='fa fa-pencil'></i></a></span></td>";

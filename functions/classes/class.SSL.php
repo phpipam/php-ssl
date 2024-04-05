@@ -218,9 +218,9 @@ class SSL extends Common {
 				// stream_socket_client may create PHP WARNINGS before socket is created and $errstr is set
 				set_error_handler([&$this, 'php_error_handler']);
 				// conect and get result
-				stream_socket_client("ssl://".$host->hostname.":".$p, $errno, $errstr, $this->timeout, STREAM_CLIENT_CONNECT, $this->stream);
+				$client = stream_socket_client("ssl://".$host->hostname.":".$p, $errno, $errstr, $this->timeout, STREAM_CLIENT_CONNECT, $this->stream);
 				// process result
-				$certificate = $this->process_fetch_result ($errno, $errstr, $execution_time, $p);
+				$certificate = $this->process_fetch_result ($errno, $errstr, $execution_time, $p, $client);
 				// if not false quit, we found something
 				if ($certificate!==false) {
 					return $certificate;
@@ -309,9 +309,10 @@ class SSL extends Common {
 		// stream_socket_client may create PHP WARNINGS before socket is created and $errstr is set
 		set_error_handler([&$this, 'php_error_handler']);
 		// conect and get result
-		stream_socket_client("ssl://".$url_arr['host'].":".$url_arr['port'], $errno, $errstr, $this->timeout, STREAM_CLIENT_CONNECT, $this->stream);
+		$client = stream_socket_client("ssl://".$url_arr['host'].":".$url_arr['port'], $errno, $errstr, $this->timeout, STREAM_CLIENT_CONNECT, $this->stream);
 		// process result
-		$certificate = $this->process_fetch_result ($errno, $errstr, $execution_time, $url_arr['port']);
+		$certificate = $this->process_fetch_result ($errno, $errstr, $execution_time, $url_arr['port'], $client);
+
 		// if not false quit, we found something
 		if ($certificate!==false) {
 			return $certificate;
@@ -335,7 +336,7 @@ class SSL extends Common {
 	 * @param  int $port
 	 * @return array|false
 	 */
-	private function process_fetch_result ($errno, $errstr, $execution_time, $port) {
+	private function process_fetch_result ($errno, $errstr, $execution_time, $port, $client) {
 		// check stream
 		if($this->stream===false && strlen($errstr)==0) {
 			$this->errors[] = "Unable to establish socket connection";
@@ -350,6 +351,9 @@ class SSL extends Common {
 		else {
 			// get
 			$cont = stream_context_get_params($this->stream);
+
+			// metadata - TLS version
+			$metadata = stream_get_meta_data($client);
 
 			// get cert and export it
 			$peer_cert       = $cont["options"]["ssl"]["peer_certificate"];
@@ -377,7 +381,8 @@ class SSL extends Common {
 					"expires"	  => $valid_to,
 					"created"	  => $execution_time,
 					"port"		  => $port,
-					"ip" 		  => $this->resolve_ip($this->hostname)
+					"ip" 		  => $this->resolve_ip($this->hostname),
+					"tls_proto"   => $metadata['crypto']['cipher_version']
 				];
 			}
 		}
@@ -536,10 +541,9 @@ class SSL extends Common {
 	 * @param  datetime $execution_time
 	 * @return void
 	 */
-	public function assign_host_certificate ($hostname = "", $ip = "", $host_id = 0, $cert_id = 0, $port = 0, $execution_time) {
+	public function assign_host_certificate ($hostname = "", $ip = "", $host_id = 0, $cert_id = 0, $port = 0, $execution_time, $tls_version) {
 		try {
-			// $this->Database->updateObject("hosts", ["id"=>$host_id, "c_id"=>$cert_id, "port"=>$port, "ip"=>$this->resolve_ip ($hostname), "last_change"=>$execution_time]);
-			$this->Database->runQuery("update hosts set c_id_old = c_id, c_id = ?, port = ?, ip = ?, last_change = ? where id = ?", [$cert_id, $port, $ip, $execution_time, $host_id]);
+			$this->Database->runQuery("update hosts set c_id_old = c_id, c_id = ?, port = ?, ip = ?, last_change = ?, tls_version = ? where id = ?", [$cert_id, $port, $ip, $execution_time, $tls_version, $host_id]);
 		} catch (Exception $e) {
 			$this->errors[] = $e->getMessage();
 			$this->result_die ();

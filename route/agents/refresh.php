@@ -44,14 +44,42 @@ elseif (is_null($agent)) {
 else {
 	// content
 	$content = [];
-
 	// check agent status
 	$Agent = new Agent ();
 	// test
-	$Agent->test_agents ($Database, "google.com", 443, date("Y-m-d H:i:s"), $agent->id);
+	$resp = $Agent->test_agents ($Database, "google.com", 443, date("Y-m-d H:i:s"), $agent->id, true);
+
+	// print "<pre>";
+	// print_r($resp);
 
 	// print
 	$content[] = $Result->show("info", _("Agent updated"), false, false, true);
+
+
+	// process response
+	$content[] = "<hr>";
+	$content[] = "<table>";
+	$content[] = "<tr><th>"._("Queried URL")."</th><td>".$resp['info']['url']."</td>";
+	// error ?
+	if(strlen($resp['error'])>0) {
+		$content[] = "<tr><th>"._("Curl error")."</th><td>http/".$resp['error']."</td>";
+	}
+	else {
+		$content[] = "<tr><th>"._("HTTP code")."</th><td>http ".$resp['info']['http_code']." :: ".$Agent->name_http_code($resp['info']['http_code'])."</td>";
+		$content[] = "<tr><th>"._("HTTP version")."</th><td>http/".$resp['info']['http_version']."</td>";
+	}
+
+	// success ?
+	if(isset($resp['data']['success'])) {
+		if ($resp['data']['success']=="1") {
+			$content[] = "<tr><th>"._("Retrieved serial")."</th><td>".$resp['data']['result']['serial']."</td>";
+		}
+		else {
+			$content[] = "<tr><th>"._("Agent Error")."</th><td>".$resp['data']['result']['error']."</td>";
+		}
+	}
+
+	$content[] = "</table>";
 }
 
 

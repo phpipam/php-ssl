@@ -182,7 +182,9 @@ else {
 			if($show_details==0)
 			print "	<td>".$cert_parsed['custom_validTo']."</td>";
 			// found on port
-			print "	<td class='d-none d-xl-table-cell'><span class='badge bg-ligh1t text-dark'>".$t->port."</span></td>";
+			$tls = !is_null($t->tls_version)&&$cert_parsed['serialNumberHex']!="/" ? "<span class='text-muted' style='font-size:10px;'>".$t->tls_version."</span>" : "";
+			$t->port = $cert_parsed['serialNumberHex']!="/" ? $t->port : "/";
+			print "	<td class='d-none d-xl-table-cell'><span class='badge bg-ligh1t text-dark'>".$t->port."</span><br>$tls</td>";
 			// portgroups for scan
 			print "	<td class='d-none d-xl-table-cell'><span class='badge bg-light text-dark' data-bs-toggle='tooltip'data-bs-html='true' data-bs-placement='bottom' title='tcp/".implode("<br>tcp/", $all_port_groups[$t->t_id][$t->pg_id]['ports'])."'>".$all_port_groups[$t->t_id][$t->pg_id]['name']."</span></td>";
 

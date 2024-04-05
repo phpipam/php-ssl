@@ -1,3 +1,9 @@
+<?php
+# tenants
+if($user->admin=="1")
+$tenants = $Tenants->get_all ();
+?>
+
 <div class='header'>
 	<h3><?php print _("Fetch website certificate"); ?></h3>
 </div>
@@ -32,16 +38,22 @@
 			Select scanning agent:
 			<select name='agent_id' class="form-control form-control-sm">
 				<?php
-				// all agents
-				$all_agents = $Database->getObjectsQuery("select * from agents order by id asc");
+				# fetch agents
+				if($user->admin=="1")
+				$all_agents = $Database->getObjectsQuery("select * from agents");
+				else
+				$all_agents = $Database->getObjectsQuery("select * from agents where t_id = ?", [$user->t_id]);
 
 				// print
 				if(is_array($all_agents)) {
 					foreach ($all_agents as $agent) {
+						// suffix
+						$suffix = $user->admin=="1" ? " [".$tenants[$agent->t_id]->name."]" : "";
+
 						// select
 						$selected = @$_POST['agent_id']==$agent->id ? "selected" : "";
 						// print
-						print "<option value='".$agent->id."' $selected>$agent->name</option>";
+						print "<option value='".$agent->id."' $selected>$agent->name $suffix</option>";
 					}
 				}
 				?>
