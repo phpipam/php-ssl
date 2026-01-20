@@ -124,6 +124,9 @@ class User extends Common {
             $_SESSION['username'] = $user->email;
             // print ok
             $this->show("success", _("Login successful"));
+            // log
+            global $Log;
+            $Log->write ("user", $user->id, $user->t_id, $user->id, "login", false, "User has logged in");
         }
         // auth failed
         else {
@@ -159,22 +162,41 @@ class User extends Common {
 	/**
 	 * Checks is user has a valid session
 	 * @method validate_session
-	 * @param  bool $require_admin
+	 * @param  bool $require_admin :: Refers to tenant logged in user belongs to must be admin.
 	 * @return [type]
 	 */
-	public function validate_session ($require_admin = false) {
+	public function validate_session ($require_admin = false, $is_popup = false, $is_popup_result = false) {
 		// not logged in
 		if($this->user === false) {
-			header("Location: /login/");
-			die();
+			if (!$is_popup) {
+				header("Location: /login/");
+				die();
+			}
+			else {
+				if (!$is_popup_result) {
+					global $Modal;
+					$Modal->modal_print ("Session expired.", '<a class="btn btn-sm btn-info" href="/login/">'._("Please log in.")."</a>", "", false, "danger");
+				}
+				else {
+					$this->Result->show("info", _("Session expired. Redirecting to login..."), true);
+				}
+				die();
+			}
 		}
 		// not admin
 		elseif($require_admin && $this->user->admin !== "1") {
-			print "<div class='header'><h3>"._("Error")."</h3></div>";
-			print '<div class="container-fluid main">';
-			$this->save_error("Administrative privileges required");
-			$this->result_die ();
-			die();
+			if ($is_popup && !$is_popup_result) {
+				global $Modal;
+				$Modal->modal_print ("Error", "<div class='alert alert-danger'>"._("Administrative privileges required").".</div>", "", false, "danger");
+				die();
+			}
+			else {
+				print "<div class='header'><h3>"._("Error")."</h3></div>";
+				print '<div class="container-fluid main">';
+				$this->save_error("Administrative privileges required");
+				$this->result_die ();
+				die();
+			}
 		}
 	}
 

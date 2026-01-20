@@ -9,7 +9,7 @@
 # functions
 require('../../../functions/autoload.php');
 # validate user session
-$User->validate_session ();
+$User->validate_session (false, true, false);
 # validate permissions
 $User->validate_user_permissions (3, true);
 
@@ -37,6 +37,8 @@ try {
 	$content[] = $Result->show("success", _("All hosts in zone removed").".", false, false, true, true);
 	// header
 	$header_class = "success";
+	// Write log :: object, object_id, tenant_id, user_id, action, public, text
+	$Log->write ("zones", $_GET['zone_id'], $user->t_id, $user->id, "truncate", true, "Zone truncated");
 
 } catch (Exception $e) {
 	// error

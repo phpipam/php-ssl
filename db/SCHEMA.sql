@@ -274,6 +274,29 @@ CREATE TABLE `ignored_issuers` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+# Dump of table log
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `log`;
+
+CREATE TABLE `log` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `object` varchar(32) NOT NULL,
+  `object_id` int(11) unsigned DEFAULT NULL,
+  `object_t_id` int(11) unsigned DEFAULT NULL,
+  `object_u_id` int(11) unsigned DEFAULT NULL,
+  `action` varchar(32) NOT NULL,
+  `public` tinyint(1) NOT NULL DEFAULT 0,
+  `text` text DEFAULT NULL,
+  `json_object_old` text DEFAULT NULL,
+  `json_object_new` text DEFAULT NULL,
+  `date` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `object_id` (`object_id`),
+  KEY `object_t_id` (`object_t_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

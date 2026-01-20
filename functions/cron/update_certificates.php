@@ -14,7 +14,7 @@ $Common   = new Common ();
 // $URL      = new URL ();
 $Database = new Database_PDO ();
 $Config   = new Config ($Database);
-
+$Log 	  = new Log ($Database);
 
 # script can only be run from cli
 if(php_sapi_name()!="cli") {
@@ -227,6 +227,9 @@ try {
                 	// ignored no more
                 	$processed++;
             	}
+				// Write log :: object, object_id, tenant_id, user_id, action, public, text
+				//$Log->write ("hosts", $c->id, $user->t_id, null, "refresh", true, "New certificate assigned to host", NULL, json_encode($c));
+
 	        }
 			$content2[] = "</table>";
 

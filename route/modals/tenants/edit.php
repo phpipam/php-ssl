@@ -5,9 +5,9 @@
 #
 
 # functions
-require('../../functions/autoload.php');
+require('../../../functions/autoload.php');
 # validate user session
-$User->validate_session ();
+$User->validate_session (true, true);
 # validate permissions
 $User->validate_user_permissions (3, true);
 
@@ -149,4 +149,4 @@ else {
 
 
 # print modal
-$Modal->modal_print ($title, implode("\n", $content), $btn_text, "/route/tenants/edit-submit.php", false, $header_class);
+$Modal->modal_print ($title, implode("\n", $content), $btn_text, "/route/modals/tenants/edit-submit.php", false, $header_class);

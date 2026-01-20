@@ -144,6 +144,26 @@ class Zones extends Common {
 	}
 
 	/**
+	 * Makes sure added hostname is inside domain !
+	 * @method is_host_inside_domain
+	 * @param  string $hostname
+	 * @param  string $domainname
+	 * @return bool
+	 */
+	public function is_host_inside_domain ($hostname = "", $domainname = "") {
+		$dn_arr = array_reverse(explode(".", $domainname));
+		$hn_arr = array_reverse(explode(".", $hostname));
+		// check
+		foreach ($dn_arr as $index=>$var) {
+			if ($hn_arr[$index]!==$var) {
+				return false;
+			}
+		}
+		// all good
+		return true;
+	}
+
+	/**
 	 * Count how many certificates are present is some zone
 	 * @method count_zone_certs
 	 * @param  int $zone_id

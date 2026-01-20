@@ -3,7 +3,7 @@
 # functions
 require('../../../functions/autoload.php');
 # validate user session
-$User->validate_session ();
+$User->validate_session (false, true, false);
 # validate permissions
 $User->validate_user_permissions (3, true);
 
@@ -73,3 +73,7 @@ foreach ($content_text as $title2=>$text)  {
 # print modal
 $Modal->modal_id = "#modal1";
 $Modal->modal_print ($title, implode("\n", $content), $btn_text, "", true);
+
+
+// Write log :: object, object_id, tenant_id, user_id, action, public, text
+$Log->write ("zones", $zone->id, $zone->t_id, $user->id, "sync", true, "Zone AXFR sync executed");

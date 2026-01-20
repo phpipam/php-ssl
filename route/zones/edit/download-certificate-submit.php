@@ -16,7 +16,7 @@ ini_set('display_startup_errors', 0);
 # functions
 require('../../../functions/autoload.php');
 # validate user session
-$User->validate_session ();
+$User->validate_session (false, true, false);
 # validate permissions
 $User->validate_user_permissions (1, true);
 

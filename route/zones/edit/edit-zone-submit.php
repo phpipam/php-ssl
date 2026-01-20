@@ -9,7 +9,7 @@
 # functions
 require('../../../functions/autoload.php');
 # validate user session
-$User->validate_session ();
+$User->validate_session (false, true, true);
 # validate permissions
 $User->validate_user_permissions (3, true);
 
@@ -99,20 +99,26 @@ if ($_POST['type']=="axfr" && $_POST['action']!=="delete") {
 try {
 	// add
 	if($_POST['action']=="add") {
-		$Database->insertObject("zones", $update);
+		$new_zone_id = $Database->insertObject("zones", $update);
 		// ok
 		$Result->show("success", _("Zone created").".", false, false, false, false);
+		// Write log :: object, object_id, tenant_id, user_id, action, public, text
+		$Log->write ("zones", $new_zone_id, $tenant->id, $user->id, $_POST['action'], true, "Zone created");
 	}
 	// update
 	elseif($_POST['action']=="edit") {
 		$Database->updateObject("zones", $update);
 		// ok
 		$Result->show("success", _("Zone updated").".", false, false, false, false);
+		// Write log :: object, object_id, tenant_id, user_id, action, public, text
+		$Log->write ("zones", $zone->id, $tenant->id, $user->id, $_POST['action'], true, "Zone updated");
 	}
 	elseif($_POST['action']=="delete") {
 		$Database->deleteObject("zones", $update['id']);
 		// ok
 		$Result->show("success", _("Zone deleted").".", false, false, false, false);
+		// Write log :: object, object_id, tenant_id, user_id, action, public, text
+		$Log->write ("zones", $zone->id, $tenant->id, $user->id, $_POST['action'], true, "Zone deleted"." :: ".json_encode($zone));
 	}
 	else {
 		throw new exception("Invalid action");

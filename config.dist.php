@@ -60,6 +60,15 @@ $expired_days = 20;
 $expired_after_days = 7;
 
 /**
+ * Weather to log all object changes to database.
+ *
+ * If selected all changes to object will be written to database. DB might grow significantly.
+ *
+ * @var bool
+ */
+$log_object = true;
+
+/**
  * Mail sending parameters - move to database later !
  *
  * @var StdClass

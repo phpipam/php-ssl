@@ -27,6 +27,7 @@ include ("classes/class.Mail.php");
 include ("classes/class.Thread.php");
 include ("classes/class.AXFR.php");
 include ("classes/class.Agent.php");
+include ("classes/class.Log.php");
 
 # load classes
 $Result       = new Result ();
@@ -41,6 +42,7 @@ $Cron         = new Cron ($Database, $User->get_current_user());
 $Tenants      = new Tenants ($Database);
 $Zones        = new Zones ($Database, $User->get_current_user());
 $Certificates = new Certificates ($Database, $User->get_current_user());
+$Log 		  = new Log ($Database);
 
 # save user to local var
 $user = $User->get_current_user();

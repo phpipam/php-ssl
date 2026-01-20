@@ -9,7 +9,7 @@
 # functions
 require('../../../functions/autoload.php');
 # validate user session
-$User->validate_session ();
+$User->validate_session (false, true, true);
 # validate permissions
 $User->validate_user_permissions (2, true);
 
@@ -58,9 +58,11 @@ foreach ($_POST as $k=>$p) {
 
 # ok, validations passed, insert
 try {
-	foreach ($out as $o) {
-		$Database->updateObject("hosts", ["id"=>$_POST['id'], "h_recipients"=>implode(";", $out)]);
-	}
+	$Database->updateObject("hosts", ["id"=>$_POST['id'], "h_recipients"=>implode(";", $out)]);
+
+	// Write log :: object, object_id, tenant_id, user_id, action, public, text
+	$Log->write ("hosts", $_POST['id'], $tenant->id, $user->id, "edit", true, "Recipients updated"." :: ".json_encode($out));
+
 } catch (Exception $e) {
 	$Result->show("danger", $e->getMessage(), true, false, false, false);
 }

@@ -9,7 +9,7 @@
 # functions
 require('../../../functions/autoload.php');
 # validate user session
-$User->validate_session ();
+$User->validate_session (false, true, false);
 # validate permissions
 $User->validate_user_permissions (2, true);
 
@@ -31,13 +31,22 @@ $content = [];
 # try to fetch certificate
 try {
     // update
-    if($_GET['type']=='ignore')
-	$Database->runQuery("update hosts set `ignore` = IF(`ignore`=1, 0, 1) where id = ?", [$_GET['host_id']]);
-	else
-	$Database->runQuery("update hosts set `mute` = IF(`mute`=1, 0, 1) where id = ?", [$_GET['host_id']]);
+    if($_GET['type']=='ignore') {
+		$Database->runQuery("update hosts set `ignore` = IF(`ignore`=1, 0, 1) where id = ?", [$_GET['host_id']]);
+		// Write log :: object, object_id, tenant_id, user_id, action, public, text
+		$Log->write ("hosts", $_GET['host_id'], $tenant->id, $user->id, "add", true, "Host SSL check changed");
+	}
+	else {
+		$Database->runQuery("update hosts set `mute` = IF(`mute`=1, 0, 1) where id = ?", [$_GET['host_id']]);
+		// Write log :: object, object_id, tenant_id, user_id, action, public, text
+		$Log->write ("hosts", $_GET['host_id'], $tenant->id, $user->id, "add", true, "Host mute changed");
+	}
 	// ok
 	$content[] = $Result->show("success", _("Updated").".", false, false, true, false);
 	$header_class = "success";
+
+
+
 } catch (Exception $e) {
     // print error
 	$content[] = $Result->show("danger", $e->getMessage(), false, false, true, false);

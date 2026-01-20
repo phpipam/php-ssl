@@ -17,7 +17,7 @@ if(!isset($is_from_fetch)) {
 			$hosts_grouped[$h->name][] = $h;
 		}
 		foreach($hosts_grouped as $group=>$host) {
-			print "<div style='padding:15px'>";
+			print "<div style='padding:10px 22px'>";
 			print "<div style='margin-bottom:5px'>"._("Zone")." <a href='/".$_params['tenant']."/zones/".$h->name."/'> ".$host[0]->name."</a> :</div>";
 
 			print "<div>";

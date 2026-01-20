@@ -9,7 +9,7 @@
 # functions
 require('../../../functions/autoload.php');
 # validate user session
-$User->validate_session ();
+$User->validate_session (false, true, true);
 # validate permissions
 $User->validate_user_permissions (2, true);
 
@@ -43,6 +43,10 @@ foreach ($_POST as $k=>$p) {
 		else {
 			$Result->show("danger", _("Invalid hostname").".", true, false, false, false);
 		}
+		// make sure it is inside domain !
+		if($Zones->is_host_inside_domain ($p, $zone->name)===false) {
+			$Result->show("danger", _("Hostname not in zone").".", true, false, false, false);
+		}
 	}
 	elseif (strpos($k, "pg-")!==false) {
 		if($Common->validate_int($p)) {
@@ -55,11 +59,13 @@ foreach ($_POST as $k=>$p) {
 # ok, validations passed, insert
 try {
 	foreach ($out as $o) {
-		$Database->insertObject("hosts", ["z_id"=>$_POST['zone_id'], "pg_id"=>$o['pg_id'], "hostname"=>$o['hostname']]);
+		$new_host_id = $Database->insertObject("hosts", ["z_id"=>$_POST['zone_id'], "pg_id"=>$o['pg_id'], "hostname"=>$o['hostname']]);
+		// Write log :: object, object_id, tenant_id, user_id, action, public, text
+		$Log->write ("hosts", $new_host_id, $tenant->id, $user->id, "add", true, "New host added to zone"." :: ".json_encode($o));
 	}
+	// ok
+	$Result->show("success", _("Hosts created").".", false, false, false, false);
+
 } catch (Exception $e) {
 	$Result->show("danger", $e->getMessage(), true, false, false, false);
 }
-
-# ok
-$Result->show("success", _("Hosts created").".", false, false, false, false);

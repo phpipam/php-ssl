@@ -7,9 +7,9 @@
 
 
 # functions
-require('../../functions/autoload.php');
+require('../../../functions/autoload.php');
 # validate user session
-$User->validate_session ();
+$User->validate_session (true, true, true);
 # validate permissions
 $User->validate_user_permissions (3, true);
 
@@ -83,6 +83,8 @@ try {
 		$Database->insertObject("cron", ["t_id"=>$new_tenant_id, "minute"=>$rand, "hour"=>3,   "day"=>"*", "weekday"=>"*", "script"=>"axfr_transfer"]);
 		// add default ports
 
+		// Write log :: object, object_id, tenant_id, user_id, action, public, text
+		$Log->write ("tenants", $new_tenant_id, $user->t_id, $user->id, $_POST['action'], true, "Tenant created", NULL, json_encode($update));
 		// ok
 		$Result->show("success", _("Tenant created").".", false, false, false, false);
 	}
@@ -91,11 +93,15 @@ try {
 		$Database->updateObject("tenants", $update);
 		// ok
 		$Result->show("success", _("Tenant updated").".", false, false, false, false);
+		// Write log :: object, object_id, tenant_id, user_id, action, public, text
+		$Log->write ("tenants", $tenant->id, $tenant->id, $user->id, $_POST['action'], true, "Tenant updated", json_encode($tenant), json_encode($update));
 	}
 	elseif($_POST['action']=="delete") {
 		$Database->deleteObject("tenants", $update['id']);
 		// ok
 		$Result->show("success", _("Tenant deleted").".", false, false, false, false);
+		// Write log :: object, object_id, tenant_id, user_id, action, public, text
+		$Log->write ("tenants", $tenant->id, $tenant->id, $user->id, $_POST['action'], true, "Tenant deleted", json_encode($tenant), NULL);
 	}
 	else {
 		throw new exception("Invalid action");

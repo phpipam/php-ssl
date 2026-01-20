@@ -7,7 +7,7 @@
 # functions
 require('../../../functions/autoload.php');
 # validate user session
-$User->validate_session ();
+$User->validate_session (false, true, false);
 # validate permissions
 $User->validate_user_permissions (3, true);
 
@@ -35,6 +35,9 @@ if($tenant===null) {
 # ok, validations passed, remove
 try {
 	$Database->deleteObject("certificates", $certificate->id);
+	// Write log :: object, object_id, tenant_id, user_id, action, public, text
+	$Log->write ("certificates", $certificate->id, $tenant->id, $user->id, "delete", true, "Certificate deleted"." :: ".json_encode($certificate));
+
 } catch (Exception $e) {
 	$Result->show("danger", $e->getMessage(), true, true, false, false);
 }
