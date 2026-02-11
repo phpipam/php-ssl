@@ -69,6 +69,8 @@ else {
 	$content[] = "		<input type='hidden' name='action' value='".$_GET['action']."'>";
 	if($user->admin !== "1" || $_GET['action']!=="add")
 	$content[] = "		<input type='hidden' name='id' value='".$_GET['id']."'>";
+	if($_GET['action']=="delete")
+	$content[] = "		<input type='hidden' id='target' name='target' value='/".$user->href."/tenants/'>";
 	$content[] = "	</td>";
 	$content[] = "	<td>";
 	$content[] = "</tr>";

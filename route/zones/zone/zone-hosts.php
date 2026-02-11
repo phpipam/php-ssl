@@ -26,14 +26,13 @@ else {
 	if(!isset($from_search)) {
 		print "<div class='text-left' style='margin-bottom:10px'>";
 		if(sizeof($zone_hosts)>1)
-		print '<a href="/" class="btn btn-sm btn-outline-secondary toggle-show-multiple"><i class="fa fa-pencil"></i> '._("Edit multiple").'</a>';
 		print '<a href="/route/error/modal.php" data-bs-toggle="modal" data-bs-target="#modal1" class="btn btn-outline-success btn-sm btn-5 d-none d-sm-inline-block"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-upload"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 9l5 -5l5 5" /><path d="M12 4l0 12" /></svg> '._("Import").'</a>';
 
 		// actions right
 		if(sizeof($zone_hosts)>0) {
 		print '<div class="btn-group float-end">';
-		print '<a href="/route/modals/zones/truncate.php?zone_id='.$zone->id.'&tenant='.$_params['tenant'].'" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal1"><i class="fa fa-trash" data-bs-toggle="tooltip" data-bs-placement="top" title="'._("Remove all hosts from zone").'"></i> '._("Remove all").'</a>';
-		print '<a href="/route/modals/zones/zone-cert-refresh-all.php?zone_id='.$zone->id.'&tenant='.$_params['tenant'].'" class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#modal1"><i class="fa fa-sync" data-bs-toggle="tooltip" data-bs-placement="top" title="'._("Rescan all hosts for new certificates").'"></i> '._("Rescan all").'</a>';
+		print '<a href="/route/modals/zones/truncate.php?tenant='.$_params['tenant'].'&zone_id='.$zone->id.'" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal1"><i class="fa fa-trash" data-bs-toggle="tooltip" data-bs-placement="top" title="'._("Remove all hosts from zone").'"></i> '._("Remove all").'</a>';
+		print '<a href="/route/modals/zones/zone-cert-refresh-all.php?tenant='.$_params['tenant'].'&zone_id='.$zone->id.'" class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#modal1"><i class="fa fa-sync" data-bs-toggle="tooltip" data-bs-placement="top" title="'._("Rescan all hosts for new certificates").'"></i> '._("Rescan all").'</a>';
 		print "</div>";
 		}
 
@@ -48,7 +47,6 @@ else {
 	// header
 	print "<thead>";
 	print "<tr>";
-	print " <th class='checkbox-hidden visually-hidden' data-width='10'><input type='checkbox' class='form-check-input select-all' name='select-all'></th>";
 	print "	<th class='actions d-none d-lg-table-cell text-center' data-width='30' data-width-unit='px' style='width:30px;'><i class='fa fa-check' data-bs-toggle='tooltip' data-bs-placement='top'></i></th>";
 	print "	<th>"._("Hostname")."</th>";
 
@@ -88,7 +86,6 @@ else {
 
 		print "<tbody>";
 		print "<tr>";
-		print " <td class='checkbox-hidden visually-hidden'></td>";;
 		print "	<td colspan=12> <div class='alert alert-info'>"._("No hosts")."</div></td>";
 		print "</tr>";
 		print "</tbody>";
@@ -142,9 +139,6 @@ else {
 
 			// line
 			print "<tr class='table-hosts text-$textclass_error'>";
-
-			// checkbox
-			print " <td title='checkbox' class='checkbox-hidden visually-hidden'><input type='checkbox' class='form-check-input select-current' data-type='hosts' name='item-{$t->id}'></td>";
 
 			// icon
 			print '	<td><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-server"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v2a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3" /><path d="M3 15a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v2a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3l0 -2" /><path d="M7 8l0 .01" /><path d="M7 16l0 .01" /></svg></td>';
@@ -238,7 +232,7 @@ else {
 			if($t->mute=="1")
 			print '			<a class="dropdown-item" href="/route/modals/zones/host_ignore_mute.php?type=mute&tenant='.$_params['tenant'].'&zone_id='.$zone->id.'&host_id='.$t->id.'" data-bs-toggle="modal" data-bs-target="#modal1"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-volume-3 dropdown-item-icon text-red"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 15h-2a1 1 0 0 1 -1 -1v-4a1 1 0 0 1 1 -1h2l3.5 -4.5a.8 .8 0 0 1 1.5 .5v14a.8 .8 0 0 1 -1.5 .5l-3.5 -4.5" /><path d="M16 10l4 4m0 -4l-4 4" /></svg>'._("Enable notification").'</a>';
 			else
-			print '			<a class="dropdown-item" href="/route/modals/zones/host_ignore_mute.php?type=mute&tenant='.$_params['tenant'].'&zone_id='.$zone->id.'&host_id='.$t->id.'" data-bs-toggle="modal" data-bs-target="#modal1"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline text-red icon-tabler-volume dropdown-item-icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 8a5 5 0 0 1 0 8" /><path d="M17.7 5a9 9 0 0 1 0 14" /><path d="M6 15h-2a1 1 0 0 1 -1 -1v-4a1 1 0 0 1 1 -1h2l3.5 -4.5a.8 .8 0 0 1 1.5 .5v14a.8 .8 0 0 1 -1.5 .5l-3.5 -4.5" /></svg>'._("Disable notification").'</a>';
+			print '			<a class="dropdown-item" href="/route/modals/zones/host_ignore_mute.php?type=mute&tenant='.$_params['tenant'].'&zone_id='.$zone->id.'&host_id='.$t->id.'" data-bs-toggle="modal" data-bs-target="#modal1"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline  icon-tabler-volume dropdown-item-icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 8a5 5 0 0 1 0 8" /><path d="M17.7 5a9 9 0 0 1 0 14" /><path d="M6 15h-2a1 1 0 0 1 -1 -1v-4a1 1 0 0 1 1 -1h2l3.5 -4.5a.8 .8 0 0 1 1.5 .5v14a.8 .8 0 0 1 -1.5 .5l-3.5 -4.5" /></svg>'._("Disable notification").'</a>';
 			// ssl check
 			if($t->ignore=="1")
 			print '			<a class="dropdown-item" href="/route/modals/zones/host_ignore_mute.php?type=ignore&tenant='.$_params['tenant'].'&zone_id='.$zone->id.'&host_id='.$t->id.'" data-bs-toggle="modal" data-bs-target="#modal1"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-rosette-discount-check-off dropdown-item-icon text-red"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 12l2 2l1.5 -1.5m2 -2l.5 -.5" /><path d="M8.887 4.89a2.2 2.2 0 0 0 .863 -.53l.7 -.7a2.2 2.2 0 0 1 3.12 0l.7 .7c.412 .41 .97 .64 1.55 .64h1a2.2 2.2 0 0 1 2.2 2.2v1c0 .58 .23 1.138 .64 1.55l.7 .7a2.2 2.2 0 0 1 0 3.12l-.7 .7a2.2 2.2 0 0 0 -.528 .858m-.757 3.248a2.193 2.193 0 0 1 -1.555 .644h-1a2.2 2.2 0 0 0 -1.55 .64l-.7 .7a2.2 2.2 0 0 1 -3.12 0l-.7 -.7a2.2 2.2 0 0 0 -1.55 -.64h-1a2.2 2.2 0 0 1 -2.2 -2.2v-1a2.2 2.2 0 0 0 -.64 -1.55l-.7 -.7a2.2 2.2 0 0 1 0 -3.12l.7 -.7a2.2 2.2 0 0 0 .64 -1.55v-1c0 -.604 .244 -1.152 .638 -1.55" /><path d="M3 3l18 18" /></svg>'._("Enable SSL check").'</a>';

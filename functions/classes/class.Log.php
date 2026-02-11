@@ -23,6 +23,8 @@ class Log extends Common {
 		"user",
 		"zones",
 		"hosts",
+		"agents",
+		"ignored",
 		"certificates",
 		"scanning"
 		];
@@ -157,6 +159,15 @@ class Log extends Common {
 	}
 
 
+	/**
+	 * Get logs
+	 * @method get_logs
+	 * @param  [type] $user
+	 * @param  bool $new_only
+	 * @param  bool $public
+	 * @param  int $limit
+	 * @return [type]
+	 */
 	public function get_logs ($user = null, $new_only = false, $public = false, $limit = 10) {
 		try {
 			// only new
@@ -191,6 +202,34 @@ class Log extends Common {
 		return $logs;
 	}
 
+	/**
+	 * Get specific log
+	 * @method get_log_by_id
+	 * @param  int $id
+	 * @param  string $user
+	 * @return object
+	 */
+	public function get_log_by_id ($id = 0, $user = null) {
+		try {
+			// fetch
+			if($user->admin=="1")
+			$log = $this->Database->getObjectQuery("select * from logs where id = ?", [$id]);
+			else
+			$log = $this->Database->getObjectQuery("select * from logs where id = ? and object_t_id = ?", [$id, $user->t_id]);
+			// return
+			return $log;
+
+		} catch (Exception $e) {
+			$this->errors[] = $e->getMessage();
+		}
+	}
+
+	/**
+	 * Get number of new logs for user
+	 * @method count_new_logs
+	 * @param  object|null $user
+	 * @return number
+	 */
 	public function count_new_logs ($user = null) {
 		try {
 			// fetch
@@ -202,4 +241,195 @@ class Log extends Common {
 			$this->errors[] = $e->getMessage();
 		}
 	}
+
+	/**
+	 * Fetch all unique log tenants
+	 * @method get_all_log_tenants
+	 * @return array
+	 */
+	public function get_all_log_tenants () {
+		try {
+			// fetch
+			return $this->Database->getObjectsQuery("select distinct(object_t_id) as tid from logs");
+		} catch (Exception $e) {
+			var_dump($e->getMessage());
+			$this->errors[] = $e->getMessage();
+			return [];
+		}
+	}
+
+	/**
+	 * Truncate logs for specific tenants
+	 * @method truncate_logs
+	 * @param  array $tenant_ids
+	 * @return bool
+	 */
+	public function truncate_logs ($tenant_ids = []) {
+		try {
+			// delete
+			$this->Database->getObjectQuery("delete from logs where object_t_id in (".implode(",", $tenant_ids).") ");
+			// update user id's
+			$this->Database->getObjectQuery("update users set notif_id = 0 where t_id in (".implode(",", $tenant_ids).") ");
+			// return
+			return true;
+
+		} catch (Exception $e) {
+			$this->errors[] = $e->getMessage();
+			return false;
+		}
+	}
+
+	/**
+	 * Format logging entry
+	 * @method format_log_entry
+	 * @param  object $l
+	 * @param  string $user
+	 * @return object
+	 */
+	public function format_log_entry ($l, $user = null) {
+		// object
+		$l->object  = $this->format_log_object ($l->object, $user->href, $l->id);
+		// diff
+		$l->diff    = $this->format_log_diff ($l->json_object_old, $l->json_object_new, $l->id);
+		// action
+		$l->action  = $this->format_log_action_badge ($l->action);
+		// id
+		$l->id 	    = $this->format_log_id ($l->id, $user->href);
+		// sate
+		$l->date    = $this->format_log_date ($l->date);
+		// content
+		$l->text    = $this->format_log_content ($l->text);
+
+		// return
+		return $l;
+	}
+
+	/**
+	 * Format log id link
+	 * @method format_log_id
+	 * @param  int $logid
+	 * @param  string $href
+	 * @return string
+	 */
+	public function format_log_id ($logid = 0, $href = "") {
+		return "<span class='badge'><a href='/".$href."/logs/".$logid."/'>".$logid."</a></span>";
+	}
+
+	/**
+	 * Format log object
+	 * @method format_log_object
+	 * @param  string $object
+	 * @param  string $href
+	 * @param  int $logid
+	 * @return string
+	 */
+	public function format_log_object ($object = "", $href = "", $logid = 0) {
+		return "<a class='btn btn-sm' href='/".$href."/logs/".$logid."/'>".ucwords($object)." :: ".$logid."</a>";
+	}
+
+	/**
+	 * Format diff / sho
+	 * @method format_log_diff
+	 * @param  string $old
+	 * @param  string $new
+	 * @param  int $logid
+	 * @return string
+	 */
+	public function format_log_diff ($old = "", $new = "", $logid = 0) {
+		return strlen($old)>0||strlen($new)>0 ?
+			"<a class='btn btn-sm' data-bs-toggle='modal' data-bs-target='#modal1' href='/route/modals/logs/show.php?id=".$logid."'><svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='icon icon-tabler icons-tabler-outline icon-tabler-zoom-code'><path stroke='none' d='M0 0h24v24H0z' fill='none'/><path d='M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0' /><path d='M21 21l-6 -6' /><path d='M8 8l-2 2l2 2' /><path d='M12 8l2 2l-2 2' /></svg> Show</a>"
+			: "";
+	}
+
+	/**
+	 * Format date
+	 * @method format_log_date
+	 * @param  string $date
+	 * @return string
+	 */
+	public function format_log_date ($date = '') {
+		return "<span class='text-secondary'>".$date."</span>";
+	}
+
+	/**
+	 * Format badge
+	 * @method format_log_action_badge
+	 * @param  string $action
+	 * @return string
+	 */
+	public function format_log_action_badge ($action = "") {
+		switch($action) {
+			case 'add'      : return "<span class='badge bg-teal-lt'>"._("Create")."</span>"; break;
+			case 'delete'   : return "<span class='badge bg-red-lt'>"._("Delete")."</span>"; break;
+			case 'login'    : return "<span class='badge bg-info-lt'>"._("Login")."</span>"; break;
+			case 'edit'     : return "<span class='badge bg-info-lt'>"._("Edit")."</span>"; break;
+			case 'truncate' : return "<span class='badge bg-orange-lt'>"._("Truncate")."</span>"; break;
+			case 'refresh'  : return "<span class='badge bg-teal-lt'>"._("Refresh")."</span>"; break;
+			case 'sync'     : return "<span class='badge bg-teal-lt'>"._("Zone sync")."</span>"; break;
+			default         : return "<span class='badge'>".$action."</span>"; break;
+		}
+	}
+
+	public function format_log_content ($text = "") {
+		return "<div class='text-truncate' style='max-width:500px'>".$text."</div>";
+	}
+
+
+    /**
+     * Returns prettified json to display
+     *
+     * @access public
+     * @param mixed $json
+     * @return void
+     */
+    public function pretty_json($json) {
+
+        $result      = '';
+        $pos         = 0;
+        $strLen      = strlen($json);
+        $indentStr   = '  ';
+        $newLine     = "\n";
+        $prevChar    = '';
+        $outOfQuotes = true;
+
+        for ($i=0; $i<=$strLen; $i++) {
+
+            // Grab the next character in the string.
+            $char = substr($json, $i, 1);
+
+            // Are we inside a quoted string?
+            if ($char == '"' && $prevChar != '\\') {
+                $outOfQuotes = !$outOfQuotes;
+
+            // If this character is the end of an element,
+            // output a new line and indent the next line.
+            } else if(($char == '}' || $char == ']') && $outOfQuotes) {
+                $result .= $newLine;
+                $pos --;
+                for ($j=0; $j<$pos; $j++) {
+                    $result .= $indentStr;
+                }
+            }
+
+            // Add the character to the result string.
+            $result .= $char;
+
+            // If the last character was the beginning of an element,
+            // output a new line and indent the next line.
+            if (($char == ',' || $char == '{' || $char == '[') && $outOfQuotes) {
+                $result .= $newLine;
+                if ($char == '{' || $char == '[') {
+                    $pos ++;
+                }
+
+                for ($j = 0; $j < $pos; $j++) {
+                    $result .= $indentStr;
+                }
+            }
+
+            $prevChar = $char;
+        }
+
+        return $result;
+    }
 }

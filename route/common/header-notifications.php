@@ -38,31 +38,36 @@ if($num>50) { $num = "50+"; }
 			$btn_disabled = $num==0 ? "disabled" : "";
 
 			// loop
-			foreach ($logs as $l) {
-				// new or already read ?
-				$span_class = $l->id > $user->notif_id ? "bg-red badge-blink" : "";
-				// user
-				$user_print = isset($all_users[$l->object_u_id]) ? $all_users[$l->object_u_id]->name : "system";
-				// action
-				switch ($l->action) {
-					case "add"     : $l->action = "created"; break;
-					case "delete"  : $l->action = "deleted"; break;
-					case "refresh" : $l->action = "updated"; break;
-				}
-				// remove s
-				$l->object = substr($l->object, 0, -1);
+			if(sizeof($logs)>0) {
+				foreach ($logs as $l) {
+					// new or already read ?
+					$span_class = $l->id > $user->notif_id ? "bg-red badge-blink" : "";
+					// user
+					$user_print = isset($all_users[$l->object_u_id]) ? $all_users[$l->object_u_id]->name : "system";
+					// action
+					switch ($l->action) {
+						case "add"     : $l->action = "created"; break;
+						case "delete"  : $l->action = "deleted"; break;
+						case "refresh" : $l->action = "updated"; break;
+					}
+					// remove s
+					$l->object = substr($l->object, 0, -1);
 
-				// item
-				print '<div class="list-group-item">';
-				print '	<div class="row align-items-center">';
-				print '		<div class="col-auto"><span class="badge '.$span_class.'"></span></div>';
-				print '		<div class="col text-truncate">';
-				print '			<span class="float-end text-secondary" style="font-size:10px">'.$l->date.'</span>';
-				print '			<a href="/'.$user->href.'/logs/'.$l->id.'/" class="text-body d-block" style="margin-bottom:5px">'.ucwords(_($l->object))." "._($l->action).'</a>';
-				print '			<div class="d-block text-secondary text-truncate mt-n1">'._($l->text).' by '.$user_print.'</div>';
-				print '		</div>';
-				print '	</div>';
-				print '</div>';
+					// item
+					print '<div class="list-group-item">';
+					print '	<div class="row align-items-center">';
+					print '		<div class="col-auto"><span class="badge '.$span_class.'"></span></div>';
+					print '		<div class="col text-truncate">';
+					print '			<span class="float-end text-secondary" style="font-size:10px">'.$l->date.'</span>';
+					print '			<a href="/'.$user->href.'/logs/'.$l->id.'/" class="text-body d-block" style="margin-bottom:5px">'.ucwords(_($l->object))." "._($l->action).'</a>';
+					print '			<div class="d-block text-secondary text-truncate mt-n1">'._($l->text).' by '.$user_print.'</div>';
+					print '		</div>';
+					print '	</div>';
+					print '</div>';
+				}
+			}
+			else {
+				print "<div class='alert alert-info'>"._("No logs available")."</div>";
 			}
 			?>
 

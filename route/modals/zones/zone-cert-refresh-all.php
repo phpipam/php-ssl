@@ -46,7 +46,8 @@ try {
 			$ip = !isset($host_certificate['ip']) ? $SSL->resolve_ip($host->hostname) : $host_certificate['ip'];
 			// if Id of certificate changed
 			if($host->c_id!=$cert_id) {
-				$SSL->assign_host_certificate ($host->hostname, $ip, $host->host_id, $cert_id, $host_certificate['port'], $execution_time);
+				$SSL->assign_host_certificate ($host->hostname, $ip, $host->host_id, $cert_id, $host_certificate['port'], $execution_time, $host_certificate['tls_proto']);
+
 			}
 		}
 	}

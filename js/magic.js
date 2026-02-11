@@ -4,13 +4,6 @@ $(document).ready(function () {
 function showSpinner() { $('div.loading').css("display","flex") }
 function hideSpinner() { $('div.loading').fadeOut('fast'); }
 
-/**
- * Show / hide checkboxes
- */
-$('.toggle-show-multiple').click(function() {
-	$('.checkbox-hidden').toggleClass('visually-hidden');
-	return false;
-})
 
 /**
  * Select all checkboxes
@@ -65,6 +58,7 @@ $(document).on("click", '.reload-window', function() {
     location.reload();
     return false;
 })
+
 
 /**
  * Tooltips
@@ -187,8 +181,3 @@ function createCookie(name,value,days) {
 
 // end jQuery
 })
-
-
-
-
-

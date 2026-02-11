@@ -15,6 +15,8 @@ class Cron extends Common {
 
 	private $Database = false;
 
+	private $exec_time = false;
+
 
 	public function __construct (Database_PDO $Database, $user = NULL) {
 		// Save database object
@@ -35,6 +37,19 @@ class Cron extends Common {
 		}
 		// result
 		return $this->cronjobs;
+	}
+
+	public function fetch_cronjob ($tenant_id= 0, $script = "") {
+		try {
+			if ($this->validate_script ($script)) {
+				throw new Exception ("Invalid script");
+			}
+			return $this->Database->getObjectQuery("select * from cron where t_id = ? and  order by hour,minute asc");
+
+		} catch (Exception $e) {
+			$this->errors[] = $e->getMessage();
+			return false;
+		}
 	}
 
 	public function fetch_tenant_cronjobs ($reindex = false) {
@@ -102,12 +117,16 @@ class Cron extends Common {
 	}
 
 	public function execute_cronjobs ($execution_time,  $cli_arguments = []) {
+
+		// save time
+		$this->exec_time = $execution_time;
+
 		if(sizeof($this->cronjobs)>0) {
 			foreach ($this->cronjobs as $j) {
 				// does it need to be executed?
 				if ($this->needs_execution($j, $cli_arguments)) {
 					// update time
-					$this->update_crontime_execution ($j->id, $execution_time);
+					$this->update_crontime_execution ($j->id,);
 					// execute script
 					include(dirname(__FILE__)."/../cron/{$j->script}.php");
 				}
@@ -115,78 +134,76 @@ class Cron extends Common {
 		}
 	}
 
-	private function update_crontime_execution ($cron_id = 0, $execution_time = NULL) {
+	/**
+	 * Update last execution time for specific script
+	 * @method update_crontime_execution
+	 * @param  int $cron_id
+	 * @return void
+	 */
+	private function update_crontime_execution ($cron_id = 0) {
 		try {
-			$this->Database->runQuery("update cron set last_executed = ? where id = ?", [$execution_time, $cron_id]);
+			$this->Database->runQuery("update cron set last_executed = ? where id = ?", [$this->exec_time, $cron_id]);
 		} catch (Exception $e) {
 			$this->errors[] = "Unable to update cron execution time";
 		}
 	}
 
-
-
-
-	private function needs_execution ($j, $cli_arguments = []) {
+	/**
+	 * Checks if cronjob needs to be executed
+	 * @method needs_execution
+	 * @param  [type] $crontab_entry ('15 * * 1 *')
+	 * @param  [type] $j
+	 * @param  array $cli_arguments
+	 * @return [type]
+	 */
+	private function needs_execution ($crontab_entry = "", $cli_arguments = []) {
 		// cli overrides
 		if (isset($cli_arguments[1]) && isset($cli_arguments[2])) {
-			if($j->t_id == $cli_arguments[1] && $this->validate_script($j->script) && $j->script==$cli_arguments[2] ) {
+			if($crontab_entry->t_id == $cli_arguments[1] && $this->validate_script($crontab_entry->script) && $crontab_entry->script==$cli_arguments[2] ) {
 				return true;
 			}
 		}
-		// validations
-		if (!$this->validate_script($j->script)) 		  { return false; }
-		if (!$this->needs_execution_weekday($j->weekday)) { return false; }
-		if (!$this->needs_execution_day($j->day)) 		  { return false; }
-		if (!$this->needs_execution_hour($j->hour))   	  { return false; }
-		if (!$this->needs_execution_minute($j->minute))   { return false; }
-		// ok
-		return true;
+		// validate script
+		if (!$this->validate_script($crontab_entry->script)) {
+			 return false;
+		}
+
+		// current time
+		$time = explode(' ', date('i G j n w', strtotime($this->exec_time)));
+		// crontab
+		$crontab = explode(' ', "{$crontab_entry->minute} {$crontab_entry->hour} {$crontab_entry->day} {$crontab_entry->month} {$crontab_entry->weekday}");
+
+		// check each value
+		foreach ($crontab as $k=>&$v){
+			$time[$k] = intval($time[$k]);
+			$v = explode(',', $v);
+			foreach ($v as &$v1) {
+				$v1 = preg_replace(array('/^\*$/', '/^\d+$/', '/^(\d+)\-(\d+)$/', '/^\*\/(\d+)$/'),array('true', $time[$k].'===\0', '(\1<='.$time[$k].' and '.$time[$k].'<=\2)', $time[$k].'%\1===0'),$v1);
+			}
+			$v='('.implode(' or ', $v).')';
+		}
+		$crontab = implode(' and ', $crontab);
+		return eval('return '.$crontab.';');
 	}
 
+	/**
+	 * Script validator
+	 * @method validate_script
+	 * @param  string $script
+	 * @return [type]
+	 */
 	private function validate_script ($script = "") {
 		return in_array($script, $this->valid_cronjob_scripts) ? true : false;
 	}
 
-	private function needs_execution_weekday ($weekday = "") {
-		return ($weekday == "*" || date('w')==$weekday) ? true : false;
-	}
-
-	private function needs_execution_day ($day = "") {
-		return ($day == "*" || date('d')==$day) ? true : false;
-	}
-
-	private function needs_execution_hour ($hour = "") {
-		if ($hour == "*") 	{ return true; }
-		if (date('G')==$hour) { return true; }
-		// */
-		if (strpos($hour, "*/")!==false) {
-			$hour_divider = str_replace("*/", "", $hour);
-			$divided = (int) date('G')/$hour_divider;
-			if (floor($divided) == $divided) {
-				return true;
-			}
-		}
-		// default not valie
-		return false;
-	}
-
-	private function needs_execution_minute ($minute = "") {
-		$nowminute = (int) date('i');
-
-		if ($minute == "*") 	{ return true; }
-		if ($nowminute==$minute) { return true; }
-		// */
-		if (strpos($minute, "*/")!==false) {
-			$minute_divider = str_replace("*/", "", $minute);
-			$divided = $nowminute/$minute_divider;
-			if (floor($divided) == $divided) {
-				return true;
-			}
-		}
-		// default not valie
-		return false;
-	}
-
+	/**
+	 * Random function generation
+	 * @method rand
+	 * @param  int $min
+	 * @param  int $max
+	 * @param  int $step
+	 * @return numeric
+	 */
 	public function rand ($min = 0, $max = 60, $step = 5) {
 	    // Generate a random number between 0 and 12
 	    $randomNumber = rand($min, ($max-$step)/$step);

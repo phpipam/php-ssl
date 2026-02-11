@@ -22,7 +22,7 @@ $_POST = $User->strip_input_tags ($_POST);
 
 # fetch zone
 if($_POST['action']!="add")
-$zone = $Zones->get_zone ($_POST['tenant'], $_POST['zone_id']);
+$zone = $Zones->get_zone_raw ($_POST['zone_id']);
 # fetch tentant
 $tenant = $Tenants->get_tenant_by_href ($_POST['tenant']);
 
@@ -104,9 +104,6 @@ if ($_POST['type']=="axfr" && $_POST['action']!=="delete") {
 if($_POST['action']=="edit"){
 	$is_change = false;
 
-	// description fix ker mergamo select iz 2 baz !
-	$zone->description = $zone->z_description;
-
 	foreach ($update as $k=>$u) {
 		if ($zone->$k!==$u) {
 			$is_change = true;
@@ -124,18 +121,22 @@ try {
 	// add
 	if($_POST['action']=="add") {
 		$new_zone_id = $Database->insertObject("zones", $update);
+		// new zone - same but updated
+		$new_zone = $Zones->get_zone_raw ($new_zone_id);
 		// ok
 		$Result->show("success", _("Zone created").".", false, false, false, false);
 		// Write log :: object, object_id, tenant_id, user_id, action, public, text
-		$Log->write ("zones", $new_zone_id, $tenant->id, $user->id, $_POST['action'], true, "Zone $update[name] created", NULL, json_encode($update));
+		$Log->write ("zones", $new_zone_id, $tenant->id, $user->id, $_POST['action'], true, "Zone $update[name] created", NULL, json_encode($new_zone));
 	}
 	// update
 	elseif($_POST['action']=="edit") {
 		$Database->updateObject("zones", $update);
 		// ok
 		$Result->show("success", _("Zone updated").".", false, false, false, false);
+		// new zone - same but updated
+		$new_zone = $Zones->get_zone_raw ($_POST['zone_id']);
 		// Write log :: object, object_id, tenant_id, user_id, action, public, text
-		$Log->write ("zones", $zone->id, $tenant->id, $user->id, $_POST['action'], true, "Zone $update[name] updated", json_encode($zone), json_encode($update));
+		$Log->write ("zones", $zone->id, $tenant->id, $user->id, $_POST['action'], true, "Zone $update[name] updated", json_encode($zone), json_encode($new_zone));
 	}
 	elseif($_POST['action']=="delete") {
 		$Database->deleteObject("zones", $update['id']);

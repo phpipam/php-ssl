@@ -78,6 +78,8 @@ else {
 	$content[] = "		<input type='hidden' name='action' value='".$_GET['action']."'>";
 	if($user->admin !== "1" || $_GET['action']!=="add")
 	$content[] = "		<input type='hidden' name='tenant' value='".$_GET['tenant']."'>";
+	if($_GET['action']=="delete")
+	$content[] = "		<input type='hidden' id='target' name='target' value='/".$user->href."/zones/'>";
 	$content[] = "		<input type='hidden' name='zone_id' value='{$zone->id}'>";
 	$content[] = "	</td>";
 	$content[] = "	<td>";

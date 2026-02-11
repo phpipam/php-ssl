@@ -22,6 +22,8 @@ $User->validate_tenant (false, true);
 
 # get tenant
 $tenant = $Tenants->get_tenant_by_href ($_GET['tenant']);
+# get host
+$host = $Zones->get_host ($_GET['host_id']);
 
 // title
 $title = $_GET['type']=="ignore" ? _("Ignore host check") : _("Mute host");
@@ -30,16 +32,20 @@ $content = [];
 
 # try to fetch certificate
 try {
+	// validate
+	if(is_null($host)) {
+		throw new exception ('Invalid host');
+	}
     // update
     if($_GET['type']=='ignore') {
 		$Database->runQuery("update hosts set `ignore` = IF(`ignore`=1, 0, 1) where id = ?", [$_GET['host_id']]);
 		// Write log :: object, object_id, tenant_id, user_id, action, public, text
-		$Log->write ("hosts", $_GET['host_id'], $tenant->id, $user->id, "add", true, "Host SSL check changed");
+		$Log->write ("hosts", $_GET['host_id'], $tenant->id, $user->id, "edit", true, "Host ".$host->hostname." SSL check changed");
 	}
 	else {
 		$Database->runQuery("update hosts set `mute` = IF(`mute`=1, 0, 1) where id = ?", [$_GET['host_id']]);
 		// Write log :: object, object_id, tenant_id, user_id, action, public, text
-		$Log->write ("hosts", $_GET['host_id'], $tenant->id, $user->id, "add", true, "Host mute changed");
+		$Log->write ("hosts", $_GET['host_id'], $tenant->id, $user->id, "edit", true, "Host ".$host->hostname." mute changed");
 	}
 	// ok
 	$content[] = $Result->show("success", _("Updated").".", false, false, true, false);

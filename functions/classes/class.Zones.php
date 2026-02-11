@@ -143,6 +143,10 @@ class Zones extends Common {
 		}
 	}
 
+	public function get_zone_raw ($zone_id = 0) {
+		return $this->Database->getObjectQuery("select * from zones where id = ?", [$zone_id]);
+	}
+
 	/**
 	 * Makes sure added hostname is inside domain !
 	 * @method is_host_inside_domain

@@ -29,6 +29,7 @@ $Cron->fetch_cronjobs ();
 
 # set date
 $date = date("Y-m-d H:i:s");
+//$date = ("2026-02-11 10:10:00");
 
 # exceute them
 $Cron->execute_cronjobs ($date, $argv);

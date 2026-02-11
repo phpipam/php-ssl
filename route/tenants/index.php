@@ -37,20 +37,20 @@ else {
 	print '<div class="card">';
 
 	print "<div class='table-responsive'>";
-	print "<table class='table table-hover table-md table-vcenter card-table table-striped align-top'>";
+	print "<table class='table table-hover align-top table-md' data-toggle='table' data-classes='table table-hover table-sm' data-cookie='false' data-pagination='true' data-page-size='250' data-page-list='[250,250,500,All]' data-search='true' data-icons-prefix='fa' data-icon-size='xs' data-show-footer='false' data-smart-display='true' showpaginationswitch='true'>";
 
 	// header
 	print "<thead>";
 	print "<tr>";
 	print "	<th>"._("Name")."</th>";
-	print "	<th>"._("ID")."</th>";
+	print "	<th data-padding='10' data-padding-units='px' data-width='20' data-width-unit='px' >"._("ID")."</th>";
 	print "	<th>"._("Status")."</th>";
 	print "	<th>"._("Description")."</th>";
-	print "	<th class='text-center' style='width:20px;padding:0.5rem 0rem' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Agents")."'>".$url_items["scanning"]["icon"]."</th>";
-	print "	<th class='text-center' style='width:20px;padding:0.5rem 0rem' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Zones")."'>".$url_items["zones"]["icon"]."</th>";
-	print "	<th class='text-center' style='width:20px;padding:0.5rem 0rem' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Users")."'>".$url_items["users"]["icon"]."</th>";
-	print "	<th class='text-center' style='width:15px;padding:0.5rem 0rem'><i class='fa fa-pencil' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Edit tenant")."'></i></th>";
-	print "	<th class='text-center' style='width:15px;padding:0.5rem 0rem'><i class='fa fa-remove' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Delete tenant")."'></i></th>";
+	print "	<th class='text-center' style='width:20px;padding:0.5rem 0rem' data-width='20' data-width-unit='px' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Agents")."'>".$url_items["scanning"]["icon"]."</th>";
+	print "	<th class='text-center' style='width:20px;padding:0.5rem 0rem' data-width='20' data-width-unit='px' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Zones")."'>".$url_items["zones"]["icon"]."</th>";
+	print "	<th class='text-center' style='width:20px;padding:0.5rem 0rem' data-width='20' data-width-unit='px' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Users")."'>".$url_items["users"]["icon"]."</th>";
+	print "	<th class='text-center' style='width:15px;padding:0.5rem 0rem' data-width='20' data-width-unit='px'></th>";
+	print "	<th class='text-center' style='width:15px;padding:0.5rem 0rem' data-width='20' data-width-unit='px'></th>";
 	print "</tr>";
 	print "</thead>";
 
@@ -66,22 +66,22 @@ else {
 
 	print "<tr>";
 	print "	<td>".$url_items["tenants"]['icon']." <a href='/route/modals/tenants/edit.php?id=".$t->id."&action=edit' data-bs-toggle='modal' data-bs-target='#modal1' style='color:var(--tblr-primary-color);'>".$t->name."</a></td>";
-	print "	<td><span class='badge'>".$t->id."</span></td>";
+	print "	<td><span class='badge' style='width:100%'>".$t->id."</span></td>";
 	print "	<td>".$status."</td>";
 	print "	<td class='text-muted'>".$t->description."</td>";
-	print "	<td class='text-center' style='padding:0.5rem 0.1rem;'><span class='badge'>".$agents."</span></td>";
-	print "	<td class='text-center' style='padding:0.5rem 0.1rem;'><span class='badge'>".$zones."</span></td>";
-	print "	<td class='text-center' style='padding:0.5rem 0.1rem;'><span class='badge'>".$users."</span></td>";
+	print "	<td class='text-center' style='padding:0.5rem 0.1rem;'><span class='badge' style='width:100%'>".$agents."</span></td>";
+	print "	<td class='text-center' style='padding:0.5rem 0.1rem;'><span class='badge' style='width:100%'>".$zones."</span></td>";
+	print "	<td class='text-center' style='padding:0.5rem 0.1rem;'><span class='badge' style='width:100%'>".$users."</span></td>";
 	print "	<td class='text-center' style='padding:0.5rem 0.2rem;padding-left:0.5rem;border-left:1px solid var(--tblr-border-color);'>
 					<a href='/route/modals/tenants/edit.php?id=".$t->id."&action=edit' data-bs-toggle='modal' data-bs-target='#modal1'>
-						<span class='badge badge-outline text-info'>
+						<span class='badge badge-outline text-info' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Edit tenant")."'>
 						<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='icon icon-tabler icons-tabler-outline icon-tabler-edit'><path stroke='none' d='M0 0h24v24H0z' fill='none'/><path d='M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1' /><path d='M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415' /><path d='M16 5l3 3' /></svg>
 						</span>
 					</a>
 			</td>";
 	print "	<td class='text-center' style='padding:0.5rem 0.2rem;'>
 				<a href='/route/modals/tenants/edit.php?id=".$t->id."&action=delete' data-bs-toggle='modal' data-bs-target='#modal1' style='color:rgb(210,51,40) !important;'>
-					<span class='badge badge-outline text-red'>
+					<span class='badge badge-outline text-red' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Delete tenant")."'>
 						<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='icon icon-tabler icons-tabler-outline icon-tabler-trash'><path stroke='none' d='M0 0h24v24H0z' fill='none'/><path d='M4 7l16 0' /><path d='M10 11l0 6' /><path d='M14 11l0 6' /><path d='M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12' /><path d='M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3' /></svg>
 					</span>
 				</a>

@@ -46,6 +46,11 @@ body {
     left:0px;
 }
 
+
+pre.diff {
+    margin:1rem;
+}
+
 .dashboard.row > .col-sm-6,
 .dashboard.row > .col-sm-12 {
     margin-bottom: 20px;
@@ -286,4 +291,29 @@ border-color: color-mix(in srgb,var(--tblr-cyan-lt) calc(var(--tblr-bg-opacity,1
 
 .bootstrap-table .fixed-table-container .fixed-table-body {
     overflow: visible;
+}
+.bootstrap-table .fixed-table-container .table.table-sm .th-inner {
+padding: .25rem .5rem;
+}
+
+
+
+
+
+.page-item.page-next, .page-item.page-prev {
+    flex: 0 0;
+}
+
+.bootstrap-table .fixed-table-container .fixed-table-body .fixed-table-loading.open {
+    color: var(--tblr-info);
+/*     padding: 120px 10px !important; */
+/*     background: var(--tblr-navbar-bg); */
+/*     background-color: color-mix(in srgb,var(--tblr-info-lt) calc(var(--tblr-bg-opacity,1) * 100%),transparent)!important; */
+    border-radius: 6px;
+    background: var(--tblr-body-bg);
+    margin-top: 0px;
+/*     background: color-mix(in srgb, var(--tblr-alert-color) 10%, transparent); */
+}
+.loading-wrap {
+    position: relative;
 }

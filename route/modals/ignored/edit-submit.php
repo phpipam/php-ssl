@@ -7,7 +7,7 @@
 
 
 # functions
-require('../../functions/autoload.php');
+require('../../../functions/autoload.php');
 # validate user session
 $User->validate_session ();
 # validate permissions
@@ -68,14 +68,20 @@ if($_POST['action']!="add") {
 try {
 	// add
 	if($_POST['action']=="add") {
-		$Database->insertObject("ignored_issuers", $update);
+		$new_ignored_id = $Database->insertObject("ignored_issuers", $update);
 		// ok
 		$Result->show("success", _("Ignored issuer created").".", false, false, false, false);
+		// add id
+		$update['id'] = $new_ignored_id;
+		// Write log :: object, object_id, tenant_id, user_id, action, public, text
+		$Log->write ("ignored", $new_ignored_id, $tenant->id, $user->id, $_POST['action'], true, "Ignored issuer $update[name] created", null, json_encode($update));
 	}
 	elseif($_POST['action']=="delete") {
 		$Database->deleteObject("ignored_issuers", $update['id']);
 		// ok
 		$Result->show("success", _("Ignored issuer deleted").".", false, false, false, false);
+		// Write log :: object, object_id, tenant_id, user_id, action, public, text
+		$Log->write ("ignored", $issuer->id, $issuer->t_id, $user->id, $_POST['action'], true, "Ignored issuer $update[name] deleted", json_encode($issuer), null);
 	}
 	else {
 		throw new exception("Invalid action");

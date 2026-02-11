@@ -67,6 +67,8 @@ $update = [
 // edit,delete - add key
 if($_POST['action']!="add") {
 	$update['id'] = $tenant->id;
+	$update['order'] = $tenant->order;
+	$update['admin'] = $tenant->admin;
 }
 
 
@@ -104,8 +106,11 @@ try {
 		// add default ports
 		$Database->insertObject("ssl_port_groups", ["t_id"=>$new_tenant_id, "name"=>"pg_ssl", "ports"=>"443"]);
 
+		// get tenant
+		$new_tenant = $Tenants->get_tenant_by_href ($update['href']);
+
 		// Write log :: object, object_id, tenant_id, user_id, action, public, text
-		$Log->write ("tenants", $new_tenant_id, $user->t_id, $user->id, $_POST['action'], true, "New tenant created", NULL, json_encode($update));
+		$Log->write ("tenants", $new_tenant_id, $new_tenant_id, $user->id, $_POST['action'], true, "New tenant created", NULL, json_encode($new_tenant));
 		// ok
 		$Result->show("success", _("Tenant created").".", false, false, false, false);
 	}
@@ -114,8 +119,10 @@ try {
 		$Database->updateObject("tenants", $update);
 		// ok
 		$Result->show("success", _("Tenant updated").".", false, false, false, false);
+		// get tenant
+		$new_tenant = $Tenants->get_tenant_by_href ($update['href']);
 		// Write log :: object, object_id, tenant_id, user_id, action, public, text
-		$Log->write ("tenants", $tenant->id, $tenant->id, $user->id, $_POST['action'], true, "Tenant $update[name] updated", json_encode($tenant), json_encode($update));
+		$Log->write ("tenants", $tenant->id, $tenant->id, $user->id, $_POST['action'], true, "Tenant $update[name] updated", json_encode($tenant), json_encode($new_tenant));
 	}
 	elseif($_POST['action']=="delete") {
 		$Database->deleteObject("tenants", $update['id']);

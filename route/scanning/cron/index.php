@@ -59,11 +59,15 @@ else {
 	print "<thead>";
 	print "<tr>";
 	print "	<th data-field='name'>"._("Name")."</th>";
-	print "	<th data-width='100' data-width-unit='px' data-field='minute' class='text-center d-none d-lg-table-cell'>"._("Minute")."</th>";
-	print "	<th data-width='100' data-width-unit='px'  data-field='hour' class='text-center d-none d-lg-table-cell'>"._("Hour")."</th>";
-	print "	<th data-width='100' data-width-unit='px' data-field='day' class='text-center d-none d-lg-table-cell'>"._("Day")."</th>";
-	print "	<th data-width='100' data-width-unit='px' data-field='weekday' class='text-center d-none d-lg-table-cell'>"._("Weekday")."</th>";
+	print "	<th data-width='80' data-width-unit='px' data-field='lastCheckSec' class='text-center d-none d-lg-table-cell'></th>";
+	print "	<th data-width='50' data-width-unit='px' data-field='minute' class='text-center d-none d-lg-table-cell'>"._("Min")."</th>";
+	print "	<th data-width='50' data-width-unit='px' data-field='hour' class='text-center d-none d-lg-table-cell'>"._("Hour")."</th>";
+	print "	<th data-width='50' data-width-unit='px' data-field='day' class='text-center d-none d-lg-table-cell'>"._("Day")."</th>";
+	print "	<th data-width='50' data-width-unit='px' data-field='month' class='text-center d-none d-lg-table-cell'>"._("MON")."</th>";
+	print "	<th data-width='50' data-width-unit='px' data-field='weekday' class='text-center d-none d-lg-table-cell'>"._("WKD")."</th>";
 	print "	<th data-width='150' data-width-unit='px' data-field='check' class='text-center d-none d-lg-table-cell' style='width:150px;'>"._("Last executed")."</th>";
+	print "	<th data-width='50' data-width-unit='px' data-field='next' class='text-center d-none'></th>";
+	print "	<th data-width='30' data-width-unit='px' data-field='actions' class='text-center'></th>";
 	print "</tr>";
 	print "</thead>";
 
@@ -74,7 +78,7 @@ else {
 
 		if($user->admin=="1") {
 			print "<tr class='header'>";
-			print "	<td colspan=10 style='padding-top:25px'>".$url_items["tenants"]['icon']." "._("Tenant")." <a href='/".$user->href."/tenants/".$tenants[$tenant_id]->href."/' style='color:var(--tblr-info);'>".$tenants[$tenant_id]->name."</a></td>";
+			print "	<td colspan=8 style='padding-top:25px'>".$url_items["tenants"]['icon']." "._("Tenant")." <a href='/".$user->href."/tenants/".$tenants[$tenant_id]->href."/' style='color:var(--tblr-info);'>".$tenants[$tenant_id]->name."</a></td>";
 			print "</tr>";
 		}
 
@@ -87,12 +91,17 @@ else {
 				$t->hour = "-";
 				$t->day = "-";
 				$t->weekday = "-";
-				$t->last_executed = "-";
+				$t->month = "-";
+				$t->last_executed = "Never";
 
 				$trclass = "text-danger";
 			}
 			else {
 				$trclass = "";
+
+				if($t->last_executed==NULL) {
+					$t->last_executed = "<span class='text-danger'>Never</span>";
+				}
 			}
 
 			if($t->script=="update_certificates")		{ $script_name = "Update SSL certificates"; }
@@ -103,11 +112,23 @@ else {
 
 			print "<tr class='$trclass'>";
 			print "	<td style='padding-left:15px'><span class='text-secondary'>".$url_items['scanning']['submenu']['cron']['icon']." </span>".$script_name."</td>";
+			print "	<td class='text-muted text-center d-none d-lg-table-cell lastCheckSec' style='width:50px'></td>";
 			print "	<td class='text-muted text-center d-none d-lg-table-cell'>".$t->minute."</td>";
 			print "	<td class='text-muted text-center d-none d-lg-table-cell'>".$t->hour."</td>";
 			print "	<td class='text-muted text-center d-none d-lg-table-cell'>".$t->day."</td>";
-			print "	<td class='text-muted text-center d-none d-lg-table-cell'>".$t->weekday."</td>";
+			print "	<td class='text-muted text-center d-none d-lg-table-cell'>".$t->month."</td>";
+			print "	<td class='text-muted text-center d-none d-lg-table-cell lastCheck'>".$t->weekday."</td>";
 			print "	<td class='text-muted'>".$t->last_executed."</span></td>";
+			// minutes
+			if($t->minute!="-")
+			print "	<td class='d-none nextCheck'>{$t->minute} {$t->hour} {$t->day} {$t->month} {$t->weekday}</span></td>";
+			else
+			print "	<td class='d-none nextCheck'></span></td>";
+			// actions
+			print "	<td class='text-muted text-center d-none d-lg-table-cell' style='width:20px;'>";
+			print '<span class="badge badge-outline text-info"><a href="/route/modals/cron/edit.php?tenant='.$tenant_id.'&type='.$t->script.'" data-bs-toggle="modal" data-bs-target="#modal1"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-pencil"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" /><path d="M13.5 6.5l4 4" /></svg></a></span>';
+			print "</td>";
+
 			print "</tr>";
 		}
 	}
@@ -118,3 +139,57 @@ else {
 ?>
 
 </div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/later@1.2.0/later.min.js"></script>
+
+<script type="text/javascript">
+function formatHMS(totalSeconds) {
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+
+    return (
+        String(h).padStart(2, '0') + ":" +
+        String(m).padStart(2, '0') + ":" +
+        String(s).padStart(2, '0')
+    );
+}
+
+function updateNextCheckSeconds() {
+    $("tr").each(function () {
+        var cronExpr = $(this).find("td.nextCheck").text().trim();
+        // if (!cronExpr) return;
+        if (!cronExpr) {
+        	 $(this).find("td.lastCheckSec").html("<span class='badge text-danger' style='width:100%'>Never</span>");
+        	 return;
+		}
+
+        try {
+            var sched = later.parse.cron(cronExpr);
+            var next = later.schedule(sched).next(1);
+
+            if (!next) {
+                $(this).find("td.lastCheckSec").html(" -- ");
+                return;
+            }
+
+            var now = new Date();
+            var diffSec = Math.max(0, Math.floor((next - now) / 1000));
+
+            if(diffSec>1800)
+            $(this).find("td.lastCheckSec").html("<span class='badge' style='width:100%'>"+formatHMS(diffSec)+"</span>");
+        	else if(diffSec>900)
+            $(this).find("td.lastCheckSec").html("<span class='badge text-blue' style='width:100%'>"+formatHMS(diffSec)+"</span>");
+        	else
+            $(this).find("td.lastCheckSec").html("<span class='badge text-green' style='width:100%'>"+formatHMS(diffSec)+"</span>");
+
+
+        } catch (e) {
+            $(this).find("td.lastCheckSec").html("-");
+        }
+    });
+}
+updateNextCheckSeconds();
+setInterval(updateNextCheckSeconds, 1000);
+</script>

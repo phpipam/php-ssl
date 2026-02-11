@@ -146,7 +146,10 @@ class Modal {
             $html[] = " if(cnt2 > 0) { ";
             $html[] = "     tmout = setTimeout(function() {show_reset()},1000)";
             $html[] = " } else { ";
+            $html[] = "     if($('#target').val()===undefined)";
             $html[] = "     window.location.reload();";
+            $html[] = "     else";
+            $html[] = "     window.location = $('#target').val();";
             $html[] = " }";
             $html[] = "}";
 

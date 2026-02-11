@@ -62,10 +62,10 @@ print "	<th data-field='type' style='width:50px;' data-width='50' data-width-uni
 print "	<th data-field='desc' class='d-none d-lg-table-cell'>"._("Description")."</th>";
 print "	<th data-field='agent' class='d-none d-lg-table-cell'>"._("Agent")."</th>";
 print "	<th data-field='check' class='d-none d-lg-table-cell' style='width:150px;'>"._("Last check")."</th>";
-print "	<th data-field='hosts' class='text-center' data-width='40' data-width-unit='px' style='width:40px;' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Hosts")."'>".'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-server"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v2a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3" /><path d="M3 15a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v2a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3l0 -2" /><path d="M7 8l0 .01" /><path d="M7 16l0 .01" /></svg>'."</th>";
-print "	<th data-field='certs' class='text-center' data-width='40' data-width-unit='px' style='width:40px;' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Certificates")."'>".$url_items["certificates"]['icon']."</th>";
-print "	<th data-field='expire_soon' class='text-center text-warning' data-width='40' data-width-unit='px' style='width:40px;' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Expire soon")."'>".$url_items["certificates"]['icon']."</th>";
-print "	<th data-field='expired' class='text-center text-danger' data-width='40' data-width-unit='px' style='width:40px;' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Expired")."'>".$url_items["certificates"]['icon']."</th>";
+print "	<th data-field='hosts' class='text-center' data-width='55' data-width-unit='px' style='width:40px;' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Hosts")."'>".'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-server"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v2a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3" /><path d="M3 15a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v2a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3l0 -2" /><path d="M7 8l0 .01" /><path d="M7 16l0 .01" /></svg>'."</th>";
+print "	<th data-field='certs' class='text-center' data-width='55' data-width-unit='px' style='width:60px;' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Certificates")."'>".$url_items["certificates"]['icon']."</th>";
+print "	<th data-field='expire_soon' class='text-center text-warning' data-width='55' data-width-unit='px' style='width:40px;' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Expire soon")."'>".$url_items["certificates"]['icon']."</th>";
+print "	<th data-field='expired' class='text-center text-danger' data-width='55' data-width-unit='px' style='width:40px;' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Expired")."'>".$url_items["certificates"]['icon']."</th>";
 print "</tr>";
 print "</thead>";
 
@@ -120,14 +120,14 @@ else {
 
 			print "<tr>";
 			print "	<td><span class='$icon_color' style='color:#ccc;padding:0px 5px;'>".$url_items["zones"]['icon']." <strong><a href='/".$t->href."/zones/".$t->name."/' style='color:var(--tblr-info);'>".$t->name." $status</td>";
-			print "	<td><span class='badge badge-outline text-azure $t->type'>".$t->type."</span></td>";
+			print "	<td><span class='badge bg-azure-lt $t->type'>".$t->type."</span></td>";
 			print "	<td class='text-muted d-none d-lg-table-cell'>".$t->description."</td>";
-			print "	<td class='text-muted d-none d-lg-table-cell'><span class='badge bg-azure-lt'>$aicon</span> ".$t->agname."</td>";
+			print "	<td class='text-muted d-none d-lg-table-cell'><span class='badge'>$aicon</span> ".$t->agname."</td>";
 			print "	<td class='text-muted d-none d-lg-table-cell' style='font-size:11px;width:140px'>".$last_check."</td>";
-			print "	<td class='text-center'><span class='badge badge-outline text-default' style='width:100%'>".$hosts."</span></td>";
-			print "	<td class='text-center'><span class='badge badge-outline text-default' style='width:100%'>".$certs."</span></td>";
-			print "	<td class='text-center'><span class='badge badge-outline text-default $warning_class' style='width:100%'>".$expire_soon."</span></td>";
-			print "	<td class='text-center'><span class='badge badge-outline text-default $danger_class' style='width:100%'>".$expired_certs_cnt."</span></td>";
+			print "	<td class='text-center'><span class='badge' style='width:100%'>".$hosts."</span></td>";
+			print "	<td class='text-center'><span class='badge' style='width:100%'>".$certs."</span></td>";
+			print "	<td class='text-center'><span class='badge $warning_class' style='width:100%'>".$expire_soon."</span></td>";
+			print "	<td class='text-center'><span class='badge $danger_class' style='width:100%'>".$expired_certs_cnt."</span></td>";
 			print "</tr>";
 		}
 		}
