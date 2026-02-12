@@ -549,20 +549,21 @@ class SSL extends Common {
 	/**
 	 * Assigns certificate to host
 	 * @method assign_host_certificate
-	 * @param  object $hostname
-	 * @param  string $ip
-	 * @param  int $host_id
-	 * @param  int $cert_id
+	 * @param  [type] $host
+	 * @param  [type] $ip
 	 * @param  int $port
-	 * @param  datetime $execution_time
-	 * @return void
+	 * @param  bool $certificate
+	 * @param  string $tls_version
+	 * @param  [type] $execution_time
+	 * @param  [type] $user_id
+	 * @return [type]
 	 */
-	public function assign_host_certificate ($host = "", $ip = "", $host_id = 0, $cert_id = 0, $port = 0, $execution_time, $tls_version, $serial = "") {
+	public function assign_host_certificate ($host = null, $ip = null, $port = 0, $certificate = false, $tls_version = "", $execution_time, $user_id = null) {
 		try {
-			$this->Database->runQuery("update hosts set c_id_old = c_id, c_id = ?, port = ?, ip = ?, last_change = ?, tls_version = ? where id = ?", [$cert_id, $port, $ip, $execution_time, $tls_version, $host_id]);
+			$this->Database->runQuery("update hosts set c_id_old = c_id, c_id = ?, port = ?, ip = ?, last_change = ?, tls_version = ? where id = ?", [$certificate->id, $port, $ip, $execution_time, $tls_version, $host->host_id]);
 	   		// Write log :: object, object_id, tenant_id, user_id, action, public, text
-	   		if(!isset($this->Log)) { $this->Log = new Log ($this->Database); }
-			$this->Log->write ("hosts", $host->id, $host->t_id, null, "refresh", true, "New certificate ".$serial." assigned to host ".$host->hostname, NULL, NULL);
+	   		if($this->Log==false) { $this->Log = new Log ($this->Database); }
+			$this->Log->write ("hosts", $host->host_id, $host->t_id, $user_id, "refresh", true, "New certificate assigned to host ".$host->hostname, NULL, json_encode($certificate));
 
 		} catch (Exception $e) {
 			$this->errors[] = $e->getMessage();

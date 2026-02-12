@@ -46,9 +46,11 @@ try {
 		$cert_id = $SSL->update_db_certificate ($host_certificate, $host->t_id, $host->z_id, $execution_time);
 		// get IP if not set from remote agent
 		$ip = !isset($host_certificate['ip']) ? $SSL->resolve_ip($host->hostname) : $host_certificate['ip'];
+		// get new cert
+		$certificate = $Database->getObject ("certificates", $cert_id);
 		// if Id of certificate changed
 		if($host->c_id!=$cert_id) {
-			$SSL->assign_host_certificate ($host, $ip, $host->host_id, $cert_id, $host_certificate['port'], $execution_time, $host_certificate['tls_proto'],$host_certificate['serial']);
+			$SSL->assign_host_certificate ($host, $ip, $host_certificate['port'], $certificate, $host_certificate['tls_proto'], $execution_time, $user->id);
 		}
 
 		// parse cert and set text
@@ -72,9 +74,6 @@ try {
 		$content[] = $Result->show("success", _("Certificate fetched"), false, false, true, false);
 		$content[] = "<hr>";
 		$content[] = implode("", $cert_text);
-
-		// Write log :: object, object_id, tenant_id, user_id, action, public, text
-		$Log->write ("hosts", $host->host_id, $user->t_id, $user->id, "refresh", true, "New certificate assigned to host ".$host->hostname, NULL, json_encode($host_certificate));
 	}
 	// error
 	else {
