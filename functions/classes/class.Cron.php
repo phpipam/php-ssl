@@ -1,7 +1,16 @@
 <?php
 
+/**
+ *
+ * Class to handle cron entries
+ *
+ */
 class Cron extends Common {
 
+	/**
+	 * Valid scripts
+	 * @var array
+	 */
 	private $valid_cronjob_scripts = [
 									"update_certificates"  => "update_certificates",
 									"axfr_transfer"        => "axfr_transfer",
@@ -9,15 +18,45 @@ class Cron extends Common {
 									"expired_certificates" => "expired_certificates"
 									];
 
+
+	public $valid_minutes_full = [0,5,10,15,20,25,30,35,40,45,50,55,60];
+	public $valid_minutes_wild = ["*/5","*/10","*/15","*/20","*/30"];
+
+	/**
+	 * All crnjobs
+	 * @var array
+	 */
 	private $cronjobs = [];
 
+	/**
+	 * User details
+	 * @var bool
+	 */
 	private $user = false;
 
+	/**
+	 * Database object
+	 * @var bool
+	 */
 	private $Database = false;
 
+	/**
+	 * Execution time
+	 * @var bool
+	 */
 	private $exec_time = false;
 
 
+
+
+
+	/**
+	 * Constructor
+	 *
+	 * @method __construct
+	 * @param  Database_PDO $Database
+	 * @param  object $user
+	 */
 	public function __construct (Database_PDO $Database, $user = NULL) {
 		// Save database object
 		$this->Database = $Database;
@@ -27,6 +66,11 @@ class Cron extends Common {
 		}
 	}
 
+	/**
+	 * Fetch all cronjobs
+	 * @method fetch_cronjobs
+	 * @return array
+	 */
 	public function fetch_cronjobs () {
 		// Fetch all cronjobs
 		try {
@@ -39,12 +83,19 @@ class Cron extends Common {
 		return $this->cronjobs;
 	}
 
+	/**
+	 * Fetch specific cronjob
+	 * @method fetch_cronjob
+	 * @param  int $tenant_id
+	 * @param  string $script
+	 * @return bool|object
+	 */
 	public function fetch_cronjob ($tenant_id= 0, $script = "") {
 		try {
-			if ($this->validate_script ($script)) {
+			if (!$this->validate_script ($script)) {
 				throw new Exception ("Invalid script");
 			}
-			return $this->Database->getObjectQuery("select * from cron where t_id = ? and  order by hour,minute asc");
+			return $this->Database->getObjectQuery("select * from cron where t_id = ? and script = ? order by hour,minute asc", [$tenant_id, $script]);
 
 		} catch (Exception $e) {
 			$this->errors[] = $e->getMessage();
@@ -52,6 +103,12 @@ class Cron extends Common {
 		}
 	}
 
+	/**
+	 * Fetch all cronjobs for tenant or all (admin)
+	 * @method fetch_tenant_cronjobs
+	 * @param  bool $reindex
+	 * @return array
+	 */
 	public function fetch_tenant_cronjobs ($reindex = false) {
 		// Fetch all cronjobs
 		try {
@@ -77,13 +134,22 @@ class Cron extends Common {
 		return $cronjobs;
 	}
 
+	/**
+	 * Return array of valid scriots
+	 * @method get_valid_scripts
+	 * @return [type]
+	 */
 	public function get_valid_scripts () {
 		return $this->valid_cronjob_scripts;
 	}
 
+	/**
+	 * Add names to scripts
+	 * @method name_script
+	 * @param  string $name
+	 * @return void
+	 */
 	public function name_script ($name = "") {
-
-
 		if ($name=="update_certificates") {
 			return [
 				"name" => "Update SSL certificates",
@@ -116,6 +182,13 @@ class Cron extends Common {
 		}
 	}
 
+	/**
+	 * Execute cronjobs at specific time
+	 * @method execute_cronjobs
+	 * @param  string $execution_time
+	 * @param  array $cli_arguments
+	 * @return void
+	 */
 	public function execute_cronjobs ($execution_time,  $cli_arguments = []) {
 
 		// save time
