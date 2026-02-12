@@ -115,7 +115,7 @@ else {
 
 	print "<tr>";
 	print "	<th>"._("Content")."</th>";
-	print "	<td>".$log_nice->text."</td>";
+	print "	<td>".$log->text."</td>";
 	print "</tr>";
 
 	print "<tr>";

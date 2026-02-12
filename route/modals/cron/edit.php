@@ -17,24 +17,15 @@ $_GET = $User->strip_input_tags ($_GET);
 # tenant
 $tenant = $Tenants->get_tenant_by_href ($_GET['tenant']);
 # script
-$script = $Database->getObject ("agents",$_GET['id']);
+$cronjob = $Cron->fetch_cronjob ($_GET['tenant'], $_GET['script']);
 
 #
 # title
 #
 $title = _("Edit cronjob");
 
-# validate action
-if(!$User->validate_action($_GET['action'])) {
-	# content
-	$content      = [];
-	$content[]    = $Result->show("danger", _("Invalid action"), false, false, true);
-	$header_class = "danger";
-	# btn
-	$btn_text = "";
-}
-# rtenant validation
-elseif($user->admin !== "1" && $user->t_id!=$_GET['tenant']) {
+# tenant validation
+if($user->admin !== "1" && $user->t_id!=$cronjob->t_id) {
 	# content
 	$content      = [];
 	$content[]    = $Result->show("danger", _("Admin user required"), false, false, true);
@@ -42,24 +33,18 @@ elseif($user->admin !== "1" && $user->t_id!=$_GET['tenant']) {
 	# btn
 	$btn_text = "";
 }
-# validate agent
-elseif ($_GET['action']!=="add" && is_null($agent)) {
+# validate script
+elseif (is_null($cronjob)) {
 	# content
 	$content      = [];
-	$content[]    = $Result->show("danger", _("Invalid agent"), false, false, true);
+	$content[]    = $Result->show("danger", _("Invalid script"), false, false, true);
 	$header_class = "danger";
 	# btn
 	$btn_text = "";
 }
 else {
-
-	$header_class = $_GET['action']=="delete" ? "danger" : "success";
-
 	// content
 	$content = [];
-
-	// disabled
-	$disabled = $_GET['action']=="delete" ? "disabled" : "";
 
 	// import form
 	$content[] = "<form id='modal-form'>";
@@ -67,42 +52,95 @@ else {
 	// name
 	$content[] = "<tbody class='name'>";
 	$content[] = "<tr>";
-	$content[] = "	<th style='width:100px;'>"._("Agent name")."</th>";
+	$content[] = "	<th style='width:100px;'>"._("Script")."</th>";
 	$content[] = "	<td>";
-	$content[] = "		<input type='text' class='form-control form-control-sm' name='name' value='".@$agent->name."' $disabled>";
-	$content[] = "		<input type='hidden' class='form-control form-control-sm' name='t_id' value='".@$tenant->id."' $disabled>";
-	$content[] = "		<input type='hidden' name='action' value='".$_GET['action']."'>";
-	if($user->admin !== "1" || $_GET['action']!=="add")
-	$content[] = "		<input type='hidden' name='id' value='".$_GET['id']."'>";
+	$content[] = "		<input type='text' class='form-control form-control-sm disabled' name='script' value='{$cronjob->script}' disabled>";
 	$content[] = "	</td>";
 	$content[] = "	<td>";
 	$content[] = "</tr>";
-	// URL
+
+	// minute
 	$content[] = "<tr>";
-	$content[] = "	<th style='width:100px;'>"._("URL")."</th>";
+	$content[] = "	<th>"._("Minute")."</th>";
 	$content[] = "	<td>";
-	$content[] = "		<input type='text' class='form-control form-control-sm' name='url' value='".@$agent->url."' $disabled>";
+	$content[] = ' 		<input name="minute" class="form-control form-control-sm" value='.$cronjob->minute.'>';
 	$content[] = "	</td>";
+	$content[] = "	<td>";
 	$content[] = "</tr>";
-	// description
+
+	// hour
 	$content[] = "<tr>";
-	$content[] = "	<th style='width:100px;'>"._("Description")."</th>";
+	$content[] = "	<th>"._("Hour")."</th>";
 	$content[] = "	<td>";
-	$content[] = "		<input type='text' class='form-control form-control-sm' name='comment' value='".@$agent->comment."' $disabled>";
+	$content[] = ' 		<input name="hour" class="form-control form-control-sm" value='.$cronjob->hour.'>';
 	$content[] = "	</td>";
 	$content[] = "	<td>";
 	$content[] = "</tr>";
-	$content[] = "</tbody>";
+
+	// day
+	$content[] = "<tr>";
+	$content[] = "	<th>"._("Day")."</th>";
+	$content[] = "	<td>";
+	$content[] = ' 		<input name="day" class="form-control form-control-sm" value='.$cronjob->day.'>';
+	$content[] = "	</td>";
+	$content[] = "	<td>";
+	$content[] = "</tr>";
+
+	// month
+	$content[] = "<tr>";
+	$content[] = "	<th>"._("Month")."</th>";
+	$content[] = "	<td>";
+	$content[] = ' 		<input name="month" class="form-control form-control-sm" value='.$cronjob->month.'>';
+	$content[] = "	</td>";
+	$content[] = "	<td>";
+	$content[] = "</tr>";
+
+	// weekday
+	$content[] = "<tr>";
+	$content[] = "	<th>"._("weekday")."</th>";
+	$content[] = "	<td>";
+	$content[] = ' 		<input name="weekday" class="form-control form-control-sm" value='.$cronjob->weekday.'>';
+	$content[] = "	</td>";
+	$content[] = "	<td>";
+	$content[] = "</tr>";
 
 	$content[] = "</table>";
 	$content[] = "</form>";
 
+
+
+	// text
+	$content[] = "<hr>";
+	$content[] = "<span class='text-secondary'>";
+	$content[] = "Following entries are supported withing it own range:<br>";
+	$content[] = "<ul>";
+	$content[] = "	<li>Wildcard (*) - Any</li>";
+	$content[] = "	<li>Single number</li>";
+	$content[] = "	<li>Step functions (*/2)</li>";
+	$content[] = "	<li>Range (1-4)</li>";
+	$content[] = "	<li>List (3,5,7)</li>";
+	$content[] = "</ul>";
+	$content[] = "</span>";
+
+
+
+	//
+	// Support :
+	//
+	// 	wildcard (*)
+	// 	single number (2)
+	// 	range (3-5)
+	// 	list (3,5,7)
+	// 	step function: (*/2, */10)
+	//
+
+
 	#
 	# button text
 	#
-	$btn_text = _(ucwords($_GET['action']))." "._("agent");
+	$btn_text = _("Edit cronjob");
 }
 
 
 # print modal
-$Modal->modal_print ($title, implode("\n", $content), $btn_text, "/route/modals/agents/edit-submit.php", false, $header_class);
+$Modal->modal_print ($title, implode("\n", $content), $btn_text, "/route/modals/cron/edit-submit.php", false, "info");

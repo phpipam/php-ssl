@@ -23,12 +23,12 @@ $certificate = $Certificates->get_certificate ($_GET['serial'], $_params['tenant
 $tenant      = $Tenants->get_tenant_by_href ($_GET['tenant']);
 
 # validate cert
-if(sizeof($certificate)==0) {
+if(is_null($certificate)) {
 	$Result->show("danger", _("Invalid serial").".", true, true, false, false);
 }
 
 # validate tenant
-if($tenant===null) {
+if(is_null($tenant)) {
 	$Result->show("danger", _("Invalid tenant").".", true, true, false, false);
 }
 
