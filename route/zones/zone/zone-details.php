@@ -204,7 +204,7 @@ print "</div>";
 // axfr
 if ($zone->type=="axfr") {
 	$zone->tsig = $zone->tsig=="" ? "<span class='text-muted'>/</span>" : $zone->tsig;
-	$zone->delete_records = $zone->delete_records==1 ? "<span class='badge badge-outline text-red'>Yes</span>" : "<span class='badge badge-outline text-green'>No</span>";
+	$zone->delete_records = $zone->delete_records==1 ? "<span class='badge text-red'>Yes</span>" : "<span class='badge badge-outline text-green'>No</span>";
 	$zone->record_types = explode(",", $zone->record_types);
 
 	print "<div class='col-6' style='margin-top:20px'>";
@@ -236,7 +236,7 @@ if ($zone->type=="axfr") {
 	print "	<th>"._("Valid records")."</th>";
 	print "	<td>";
 	foreach ($zone->record_types as $r) {
-		print "<span class='badge badge-outline text-default' style='margin-right:2px'>$r</span>";
+		print "<span class='badge text-default' style='margin-right:2px'>$r</span>";
 	}
 	print "</td>";
 	print "</tr>";

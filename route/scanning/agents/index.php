@@ -92,7 +92,7 @@ else {
 		if($user->admin=="1") {
 			print "<tr class='header'>";
 			print "	<td colspan=10 style='padding-top:25px'>".$url_items["tenants"]['icon']." "._("Tenant")." <a href='/".$user->href."/tenants/".$tenants[$tenant_id]->href."/' style='color:var(--tblr-info);'>".$tenants[$tenant_id]->name."</a>";
-			print '<a href="/route/modals/agents/edit.php?action=add&tenant='.$tenants[$tenant_id]->href.'" data-bs-toggle="modal" class="btn btn-sm btn-outline-success float-end"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-2"><path d="M12 5l0 14"></path><path d="M5 12l14 0"></path></svg> '._("New agent").'</a>';
+			print '<a href="/route/modals/agents/edit.php?action=add&tenant='.$tenants[$tenant_id]->href.'" data-bs-toggle="modal" class="btn btn-sm text-green bg-info-lt  text-green float-end"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-2"><path d="M12 5l0 14"></path><path d="M5 12l14 0"></path></svg> '._("New agent").'</a>';
 			print "</td>";
 			print "</tr>";
 		}
@@ -129,7 +129,7 @@ else {
 				// actions
 				print "	<td class='text-center' style='padding:0.5rem 0.2rem;width:20px;border-left:1px solid var(--tblr-table-border-color);'>";
 				print "		<a href='/route/modals/agents/edit.php?id=".$a->id."&action=edit&tenant=".$a->t_id."' data-bs-toggle='modal' data-bs-target='#modal1'>";
-				print "		<span class='badge badge-outline text-info'>";
+				print "		<span class='badge text-info'>";
 				print '			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-edit"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" /><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415" /><path d="M16 5l3 3" /></svg>';
 				print "		</span>";
 				print "		</a>";
@@ -137,15 +137,15 @@ else {
 				// edit
 				print "	<td class='text-center' style='padding:0.5rem 0.2rem;width:20px'>";
 				print "		<a href='/route/modals/agents/refresh.php?id=".$a->id."&tenant=".$a->t_id."' data-bs-toggle='modal' data-bs-target='#modal1'>";
-				print "		<span class='badge badge-outline text-light'>";
+				print "		<span class='badge text-light'>";
 				print '			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-refresh"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" /><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" /></svg>';
 				print "		</span>";
 				print "		</a>";
 				print "</td>";
 				// delete
-				print "	<td class='text-center' style='padding:0.5rem 0.2rem;width:20px;'>";
+				print "	<td class='text-center' style='padding:0.5rem 0.1rem;width:10px;'>";
 				print "		<a href='/route/modals/agents/edit.php?id=".$a->id."&action=delete&tenant=".$a->t_id."' data-bs-toggle='modal' data-bs-target='#modal1'>";
-				print "		<span class='badge badge-outline text-red'>";
+				print "		<span class='badge text-red'>";
 				print '			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-trash"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>';
 				print "</span>";
 				print "	</a>";
