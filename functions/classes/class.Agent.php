@@ -227,15 +227,13 @@ class Agent {
 						}
 			        }
 
+			        // update db
+			        $Database->updateObject("agents", $update);
+
 			        // single ?
 			        if($return) {
 			        	return ["error"=>curl_error($API_conn), "info"=>curl_getinfo($API_conn), "data"=>$resp_arr];
 			        }
-
-			        var_dump($update);
-
-			        // update db
-			        $Database->updateObject("agents", $update);
 
 			        // unset
 			        curl_close($API_conn);
