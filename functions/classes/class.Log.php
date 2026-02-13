@@ -295,8 +295,10 @@ class Log extends Common {
 		$l->diff    = $this->format_log_diff ($l->json_object_old, $l->json_object_new, $l->id);
 		// action
 		$l->action  = $this->format_log_action_badge ($l->action);
+		// id - check if unread
+		$is_unread = $user->notif_id !== null && $l->id > $user->notif_id;
 		// id
-		$l->id 	    = $this->format_log_id ($l->id, $user->href);
+		$l->id 	    = $this->format_log_id ($l->id, $user->href, $is_unread);
 		// sate
 		$l->date    = $this->format_log_date ($l->date);
 		// content
@@ -311,10 +313,12 @@ class Log extends Common {
 	 * @method format_log_id
 	 * @param  int $logid
 	 * @param  string $href
+	 * @param  bool $is_unread
 	 * @return string
 	 */
-	public function format_log_id ($logid = 0, $href = "") {
-		return "<span class='badge'><a href='/".$href."/logs/".$logid."/'>".$logid."</a></span>";
+	public function format_log_id ($logid = 0, $href = "", $is_unread = false) {
+		$red_dot = $is_unread ? "<span class='badge bg-red badge-blink'></span>" : "";
+		return "<span class='badge'><a href='/".$href."/logs/".$logid."/'>".$logid."</a></span> ".$red_dot;
 	}
 
 	/**
