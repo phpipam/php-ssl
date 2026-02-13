@@ -47,6 +47,7 @@ if($num>50) { $num = "50+"; }
 					// action
 					switch ($l->action) {
 						case "add"     : $l->action = "created"; break;
+						case "edit"     : $l->action = "updated"; break;
 						case "delete"  : $l->action = "deleted"; break;
 						case "refresh" : $l->action = "updated"; break;
 					}

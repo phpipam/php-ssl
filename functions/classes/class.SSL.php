@@ -563,7 +563,7 @@ class SSL extends Common {
 			$this->Database->runQuery("update hosts set c_id_old = c_id, c_id = ?, port = ?, ip = ?, last_change = ?, tls_version = ? where id = ?", [$certificate->id, $port, $ip, $execution_time, $tls_version, $host->host_id]);
 	   		// Write log :: object, object_id, tenant_id, user_id, action, public, text
 	   		if($this->Log==false) { $this->Log = new Log ($this->Database); }
-			$this->Log->write ("hosts", $host->host_id, $host->t_id, $user_id, "refresh", true, "New certificate assigned to host ".$host->hostname, NULL, json_encode($certificate));
+			$this->Log->write ("hosts", $host->host_id, $host->t_id, $user_id, "refresh", true, "New certificate assigned to host ".$host->hostname, json_encode($host->c_id_old), json_encode($host->c_id));
 
 		} catch (Exception $e) {
 			$this->errors[] = $e->getMessage();
