@@ -35,7 +35,7 @@ if($tenant===null) {
 
 # create hosts to insert
 foreach ($_POST as $k=>$p) {
-	if (strpos($k, "hostname-")!==false && strlen($p)>0) {
+	if (strpos($k, "hostname-")!==false) {
 		// domain ?
 		if($zone->is_domain=="1") {
 			// append domain if they are not same !
@@ -51,9 +51,10 @@ foreach ($_POST as $k=>$p) {
 		}
 
 		// not domain
-		if($Common->validate_hostname($p)) {
+		if($Common->validate_hostname($p) || strlen($p)>0) {
+			// remove dots in case hostname is empty
 			$index = substr($k, 9);
-			$out[$index]['hostname'] = $p;
+			$out[$index]['hostname'] = trim($p, ".");
 		}
 		else {
 			$Result->show("danger", _("Invalid hostname").".", true, false, false, false);

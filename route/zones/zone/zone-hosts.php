@@ -78,8 +78,7 @@ else {
 	print "	<th data-field='serial_html'>"._("Certificate")."</th>";
 	print "	<th data-field='domain_issuer' class='d-none d-lg-table-cell'>"._("Domain")." / "._("Issuer")."</th>";
 	print "	<th data-field='checked_changed' class='d-none d-xl-table-cell'>"._("Checked / Changed")."</th>";
-	print "	<th data-field='port_html' style='width:50px;' data-width='50' data-width-unit='px' class='d-none d-xl-table-cell'>"._("Port")."</th>";
-	print "	<th data-field='port_group' style='width:50px;' data-width='50' data-width-unit='px' class='d-none d-xl-table-cell'>"._("Port group")."</th>";
+	print "	<th data-field='port_html' style='width:50px;' data-width='50' data-width-unit='px' class='d-none d-xl-table-cell'>"._("Ports")."</th>";
 	print "	<th data-field='actions' style='width:50px;' data-width='50' data-width-unit='px' class='d-table-cell'></th>";
 
 	print "</tr>";
