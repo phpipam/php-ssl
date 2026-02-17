@@ -208,6 +208,9 @@ CREATE TABLE `tenants` (
 
 # Dump of table domains
 # ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `domains`;
+
 CREATE TABLE `domains` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(32) DEFAULT NULL,
