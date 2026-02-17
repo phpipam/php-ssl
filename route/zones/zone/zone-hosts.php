@@ -52,7 +52,7 @@ else {
 		data-search='true'
 		data-side-pagination='server'
 		data-server-sort='true'
-		data-ajax='ajaxRequest'
+		data-ajax='ajaxRequest2'
 		data-loading-template='loadingMessage'
 		data-loading-font-size='14'
 		data-icons-prefix='fa'
@@ -87,7 +87,7 @@ else {
 ?>
 
 <script>
-window.ajaxRequest = params => {
+window.ajaxRequest2 = params => {
     var zone_id = $('#zone_id').val();
     var search_term = $('#search_term').val();
     var data = params.data;
