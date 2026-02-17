@@ -36,16 +36,21 @@ try {
 	$query_all = "";
 	$vars      = [];
 
-	// zone_id is required
-	if(!isset($_POST['zone_id']) || !is_numeric($_POST['zone_id'])) {
-		throw new exception ("Invalid zone_id");
+	// Check if zone_id is provided
+	$has_zone_id = isset($_POST['zone_id']) && is_numeric($_POST['zone_id']);
+	
+	if(!$has_zone_id) {
+		// No zone_id - query all hosts
+		$query 	   .= "select h.id, h.z_id, h.c_id, h.hostname, h.ip, h.port, h.pg_id, h.ignore, h.mute, h.h_recipients, h.last_check, h.last_change, h.tls_version, h.z_id, z.name as zone_name, z.t_id, t.href as tenant_href, t.name as tenant_name, c.certificate, c.expires, c.serial as cert_serial from hosts h left join zones z on h.z_id = z.id left join tenants t on z.t_id = t.id left join certificates c on h.c_id = c.id where 1=1 ";
+		$query_all .= "select count(*) as cnt from hosts h left join zones z on h.z_id = z.id left join tenants t on z.t_id = t.id left join certificates c on h.c_id = c.id where 1=1 ";
 	}
-	$zone_id = $_POST['zone_id'];
-
-	// formulate query - fetch host details with certificate data
-	$query 	   .= "select h.id, h.z_id, h.c_id, h.hostname, h.ip, h.port, h.pg_id, h.ignore, h.mute, h.h_recipients, h.last_check, h.last_change, h.tls_version, h.z_id, z.name as zone_name, z.t_id, t.href as tenant_href, t.name as tenant_name, c.certificate, c.expires, c.serial as cert_serial from hosts h left join zones z on h.z_id = z.id left join tenants t on z.t_id = t.id left join certificates c on h.c_id = c.id where h.z_id = :zone_id ";
-	$query_all .= "select count(*) as cnt from hosts h left join zones z on h.z_id = z.id left join tenants t on z.t_id = t.id left join certificates c on h.c_id = c.id where h.z_id = :zone_id ";
-	$vars['zone_id'] = $zone_id;
+	else {
+		// Specific zone
+		$zone_id = $_POST['zone_id'];
+		$query 	   .= "select h.id, h.z_id, h.c_id, h.hostname, h.ip, h.port, h.pg_id, h.ignore, h.mute, h.h_recipients, h.last_check, h.last_change, h.tls_version, h.z_id, z.name as zone_name, z.t_id, t.href as tenant_href, t.name as tenant_name, c.certificate, c.expires, c.serial as cert_serial from hosts h left join zones z on h.z_id = z.id left join tenants t on z.t_id = t.id left join certificates c on h.c_id = c.id where h.z_id = :zone_id ";
+		$query_all .= "select count(*) as cnt from hosts h left join zones z on h.z_id = z.id left join tenants t on z.t_id = t.id left join certificates c on h.c_id = c.id where h.z_id = :zone_id ";
+		$vars['zone_id'] = $zone_id;
+	}
 
 	// not admin ?
 	if($user->admin=="0") {

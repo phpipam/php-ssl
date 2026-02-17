@@ -1,4 +1,6 @@
-<?php if(!isset($from_search)) { ?>
+<?php
+
+if(!isset($from_search)) { ?>
 <div class="page-header">
 	<h2 class="page-title"><?php print $url_items['certificates']['icon']." "._("Certificates"); ?></h2>
 	<hr>
@@ -20,9 +22,10 @@
 print '<div class="card">';
 print '<div class="card-header">';
 print '<ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs" role="tablist">';
+$current_app = isset($_params['app']) ? $_params['app'] : 'all';
 foreach ($url_items["certificates"]["submenu"] as $k=>$m) {
 
-	$active = $_params['app']==$k ? "active" : "";
+	$active = $current_app==$k ? "active" : "";
 
 
 	if($k=="expire_soon") 		{ $textcol = "orange"; }
@@ -42,15 +45,18 @@ print '</div>';
 
 print '<div class="card-body" style="padding-left:0px;padding-right:0px">';
 
+}
+else {
+print '<div class="card-body" style="padding-left:0px;padding-right:0px">';
+}
 ?>
 
-<?php
-$filter = $_params['app'];
-?>
+<?php $filter = isset($_params['app']) ? $_params['app'] : 'all'; ?>
 
 <div class='table-responsive'>
 <input type="hidden" id="filter_type" value="<?php print $filter; ?>">
 <input type="hidden" id="user_href" value="<?php print $user->href; ?>">
+<input type="hidden" id="search_term" value="<?php print isset($_params['search']) ? $_params['search'] : ''; ?>">
 <table
 	class="table table-hover align-top table-md"
 	data-classes='table table-hover table-sm'
@@ -75,8 +81,8 @@ $filter = $_params['app'];
 	<tr>
 		<?php if($user->admin=="1") { ?>
 		<th data-field="tid" data-sortable="true" class="d-none d-lg-table-cell"><?php print _("Tenant"); ?></th>
-		<th data-field="zone" data-sortable="true" class="d-none d-lg-table-cell"><?php print _("Zone"); ?></th>
 		<?php } ?>
+		<th data-field="zone" data-sortable="true" class="d-none d-lg-table-cell"><?php print _("Zone"); ?></th>
 		<th data-field="serial" data-sortable="true"><?php print _("Serial number"); ?></th>
 		<th data-field="common_name" data-sortable="true"><?php print _("Common name"); ?></th>
 		<th data-field="issued_by" data-sortable="true" class="d-none d-lg-table-cell"><?php print _("Issued by"); ?></th>
@@ -95,8 +101,12 @@ $filter = $_params['app'];
 window.ajaxRequest = params => {
     var filter = $('#filter_type').val();
     var href = $('#user_href').val();
+    var search_term = $('#search_term').val();
     var data = params.data;
     data.filter = filter;
+    if(search_term) {
+        data.search = search_term;
+    }
     data.href = href;
     $.ajax({
         type: "POST",
@@ -129,4 +139,3 @@ table tr td:nth-child(1) {
     white-space: nowrap;
 }
 </style>
-<?php } ?>

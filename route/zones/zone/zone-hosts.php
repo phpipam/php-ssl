@@ -1,9 +1,6 @@
 <?php
-
 # validate user session
 $User->validate_session ();
-
-$show_details = 1;
 
 // header
 if(!isset($from_search)) {
@@ -19,8 +16,6 @@ if (!is_object($zone) && !isset($from_search)) {
 	print '</div>';
 }
 else {
-	# all port groups
-	$all_port_groups = $SSL->get_all_port_groups ();
 
 	# top buttons
 	if(!isset($from_search)) {
@@ -40,9 +35,11 @@ else {
 	print "<div class='card' style='margin:$margin'>";
 
 	print "<input type='hidden' id='zone_id' value='".@$zone->id."'>";
+	print "<input type='hidden' id='search_term' value='".(@$_params['search'])."'>";
 
-	print "<table class='table table-hover align-top table-sm'
-		id='table'
+	print "<table
+		class='table table-hover align-top table-sm'
+		id='zone_hosts'
 		data-toggle='table'
 		data-mobile-responsive='true'
 		data-check-on-init='true'
@@ -92,8 +89,16 @@ else {
 <script>
 window.ajaxRequest = params => {
     var zone_id = $('#zone_id').val();
+    var search_term = $('#search_term').val();
     var data = params.data;
-    data.zone_id = zone_id;
+    // If zone_id exists, use it; otherwise it's a search across all zones
+    if(zone_id) {
+        data.zone_id = zone_id;
+    }
+    // If search_term exists, use it
+    if(search_term) {
+        data.search = search_term;
+    }
     $.ajax({
         type: "POST",
         url: '/route/ajax/zone-hosts.php',
