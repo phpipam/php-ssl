@@ -126,7 +126,7 @@ else {
 			print "	<td class='d-none nextCheck'></span></td>";
 			// actions
 			print "	<td class='text-muted text-center d-none d-lg-table-cell' style='width:20px;'>";
-			print '<span class="badge badge-outline text-info"><a href="/route/modals/cron/edit.php?tenant='.$tenant_id.'&script='.$t->script.'" data-bs-toggle="modal" data-bs-target="#modal1"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-pencil"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" /><path d="M13.5 6.5l4 4" /></svg></a></span>';
+			print '<span class="badge text-info"><a href="/route/modals/cron/edit.php?tenant='.$tenant_id.'&script='.$t->script.'" data-bs-toggle="modal" data-bs-target="#modal1"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-pencil"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" /><path d="M13.5 6.5l4 4" /></svg></a></span>';
 			print "</td>";
 
 			print "</tr>";
@@ -161,7 +161,7 @@ function updateNextCheckSeconds() {
         var cronExpr = $(this).find("td.nextCheck").text().trim();
         // if (!cronExpr) return;
         if (!cronExpr) {
-        	 $(this).find("td.lastCheckSec").html("<span class='badge text-danger' style='width:100%'>Never</span>");
+        	 $(this).find("td.lastCheckSec").html("<span class='badge text-red bg-info-lt ' style='width:100%'>Never</span>");
         	 return;
 		}
 
@@ -178,11 +178,11 @@ function updateNextCheckSeconds() {
             var diffSec = Math.max(0, Math.floor((next - now) / 1000));
 
             if(diffSec>1800)
-            $(this).find("td.lastCheckSec").html("<span class='badge' style='width:100%'>"+formatHMS(diffSec)+"</span>");
+            $(this).find("td.lastCheckSec").html("<span class='badge bg-info-lt ' style='width:100%'>"+formatHMS(diffSec)+"</span>");
         	else if(diffSec>900)
-            $(this).find("td.lastCheckSec").html("<span class='badge text-blue' style='width:100%'>"+formatHMS(diffSec)+"</span>");
+            $(this).find("td.lastCheckSec").html("<span class='badge text-info bg-info-lt ' style='width:100%'>"+formatHMS(diffSec)+"</span>");
         	else
-            $(this).find("td.lastCheckSec").html("<span class='badge text-green' style='width:100%'>"+formatHMS(diffSec)+"</span>");
+            $(this).find("td.lastCheckSec").html("<span class='badge text-green bg-info-lt ' style='width:100%'>"+formatHMS(diffSec)+"</span>");
 
 
         } catch (e) {
