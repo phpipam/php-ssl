@@ -48,6 +48,9 @@ try {
 			$certificate = $Database->getObject ("certificates", $cert_id);
 			// if Id of certificate changed
 			if($host->c_id!=$cert_id) {
+				// get new cert
+				$certificate = $Database->getObject ("certificates", $cert_id);
+				// update host
 				$SSL->assign_host_certificate ($host, $ip, $host_certificate['port'], $certificate, $host_certificate['tls_proto'], $execution_time, $user->id);
 			}
 		}
