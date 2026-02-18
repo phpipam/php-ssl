@@ -14,6 +14,12 @@ class Log extends Common {
 	private $Database = false;
 
 	/**
+	 * Last insert id
+	 * @var null
+	 */
+	public $last_id = null;
+
+	/**
 	 * Allowed Objects
 	 * @var [type]
 	 */
@@ -28,7 +34,8 @@ class Log extends Common {
 		"certificates",
 		"scanning",
 		"portgroups",
-		"cron"
+		"cron",
+		"logs"
 		];
 
 	/**
@@ -42,6 +49,7 @@ class Log extends Common {
 		"refresh",
 		"login",
 		"truncate",
+		"rollback",
 		"sync"
 		];
 
@@ -56,7 +64,7 @@ class Log extends Common {
 	}
 
 
-	public function write ($object = "", $object_id = null, $object_t_id = null, $object_u_id = null, $action = null, bool $public = false, $text = "", $json_object_old = null, $json_object_new = null) {
+	public function write ($object = "", $object_id = null, $object_t_id = null, $object_u_id = null, $action = null, bool $public = false, $text = "", $json_object_old = null, $json_object_new = null, $is_revertable = false) {
 		try {
 			// fix string(null) for json objects. Comes with json_encode (NULL)
 			if($json_object_old=="null") $json_object_old = NULL;
@@ -79,6 +87,7 @@ class Log extends Common {
 				"object_u_id"     => $object_u_id,
 				"action"          => $action,
 				"public"          => (int) $public,
+				"is_revertable"   => $is_revertable === true ? "1" : "0",
 				"text"            => $text
 			];
 
@@ -90,7 +99,7 @@ class Log extends Common {
 			}
 
 			// insert
-			$this->Database->insertObject("logs", $insert);
+			$this->last_id = $this->Database->insertObject("logs", $insert);
 		}
 		catch (Exception $e) {
 			print "<div class='alert alert-warning'>Error: ".$e->getMessage()."</div>";
@@ -374,6 +383,7 @@ class Log extends Common {
 			case 'truncate' : return "<span class='badge bg-orange-lt'>"._("Truncate")."</span>"; break;
 			case 'refresh'  : return "<span class='badge bg-teal-lt'>"._("Refresh")."</span>"; break;
 			case 'sync'     : return "<span class='badge bg-teal-lt'>"._("Zone sync")."</span>"; break;
+			case 'rollback' : return "<span class='badge bg-purple-lt'>"._("Rollback")."</span>"; break;
 			default         : return "<span class='badge'>".$action."</span>"; break;
 		}
 	}

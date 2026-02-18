@@ -317,6 +317,7 @@ CREATE TABLE `logs` (
   `text` text DEFAULT NULL,
   `json_object_old` text DEFAULT NULL,
   `json_object_new` text DEFAULT NULL,
+  `is_revertable` tinyint(1) NOT NULL DEFAULT 0,
   `date` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `object_id` (`object_id`),

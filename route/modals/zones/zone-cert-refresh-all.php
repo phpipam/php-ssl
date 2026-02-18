@@ -35,27 +35,34 @@ $title = _("Refresh all host certificates");
 
 # ok, validations passed, insert
 try {
-	// loop
-	foreach ($zone_hosts as $host) {
-		// fetch cert
-		$host_certificate = $SSL->fetch_website_certificate ($host, $execution_time, $tenant->id);
-		// update cert if fopund
-		if ($host_certificate!==false) {
-			$cert_id = $SSL->update_db_certificate ($host_certificate, $host->t_id, $host->z_id, $execution_time);
-			// get IP if not set from remote agent
-			$ip = !isset($host_certificate['ip']) ? $SSL->resolve_ip($host->hostname) : $host_certificate['ip'];
-			// if Id of certificate changed
-			if($host->c_id!=$cert_id) {
-				// get new cert
-				$certificate = $Database->getObject ("certificates", $cert_id);
-				// save
-				$SSL->assign_host_certificate ($host, $ip, $host_certificate['port'], $certificate, $host_certificate['tls_proto'], $execution_time, $user->id);
+	// do we have some ?
+	if(sizeof($zone_hosts)==0) {
+		// content
+		$content[] = $Result->show("info", _("Zone has no hosts").".", false, false, true, true);
+	}
+	else {
+		// loop
+		foreach ($zone_hosts as $host) {
+			// fetch cert
+			$host_certificate = $SSL->fetch_website_certificate ($host, $execution_time, $tenant->id);
+			// update cert if fopund
+			if ($host_certificate!==false) {
+				$cert_id = $SSL->update_db_certificate ($host_certificate, $host->t_id, $host->z_id, $execution_time);
+				// get IP if not set from remote agent
+				$ip = !isset($host_certificate['ip']) ? $SSL->resolve_ip($host->hostname) : $host_certificate['ip'];
+				// if Id of certificate changed
+				if($host->c_id!=$cert_id) {
+					// get new cert
+					$certificate = $Database->getObject ("certificates", $cert_id);
+					// save
+					$SSL->assign_host_certificate ($host, $ip, $host_certificate['port'], $certificate, $host_certificate['tls_proto'], $execution_time, $user->id);
+				}
 			}
 		}
-	}
 
-	// content
-	$content[] = $Result->show("success", _("All certificates fetched"), false, false, true, true);
+		// content
+		$content[] = $Result->show("success", _("All certificates fetched"), false, false, true, true);
+	}
 } catch (Exception $e) {
 	// error
 	$content[] = $Result->show("danger", $e->getMessage().".", false, false, true, true);

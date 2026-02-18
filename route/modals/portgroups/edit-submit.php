@@ -103,7 +103,7 @@ try {
 		# get port group
 		$port_group = $Database->getObject ("ssl_port_groups",$new_pg_id);
 		# Write log :: object, object_id, tenant_id, user_id, action, public, text
-		$Log->write ("portgroups", $new_pg_id, $tenant->id, $user->id, $_POST['action'], true, "Port group $update[name] created", null, json_encode($port_group));
+		$Log->write ("portgroups", $new_pg_id, $tenant->id, $user->id, $_POST['action'], true, "Port group $update[name] created", null, json_encode(["portgroups"=>["0"=>$port_group]]));
 	}
 	# update
 	elseif($_POST['action']=="edit") {
@@ -113,14 +113,14 @@ try {
 		# get port group
 		$port_group_new = $Database->getObject ("ssl_port_groups",$port_group->id);
 		# Write log :: object, object_id, tenant_id, user_id, action, public, text
-		$Log->write ("portgroups", $port_group->id, $tenant->id, $user->id, $_POST['action'], true, "Port group $update[name] updated", json_encode($port_group), json_encode($port_group_new));
+		$Log->write ("portgroups", $port_group->id, $tenant->id, $user->id, $_POST['action'], true, "Port group $update[name] updated", json_encode(["portgroups"=>["0"=>$port_group]]), json_encode(["portgroups"=>["0"=>$port_group_new]]), true);
 	}
 	elseif($_POST['action']=="delete") {
 		$Database->deleteObject("ssl_port_groups", $update['id']);
 		# ok
 		$Result->show("success", _("Port group deleted").".", false, false, false, false);
 		# Write log :: object, object_id, tenant_id, user_id, action, public, text
-		$Log->write ("portgroups", $port_group->id, $tenant->id, $user->id, $_POST['action'], true, "Port group ".$port_group->name." deleted", json_encode($port_group), null);
+		$Log->write ("portgroups", $port_group->id, $tenant->id, $user->id, $_POST['action'], true, "Port group ".$port_group->name." deleted", json_encode(["portgroups"=>["0"=>$port_group]]), null, true);
 	}
 	else {
 		throw new exception("Invalid action");

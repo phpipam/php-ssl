@@ -44,7 +44,7 @@ if($host===null) {
 try {
 	$Database->deleteObject("hosts", $_GET['host_id']);
 	// Write log :: object, object_id, tenant_id, user_id, action, public, text
-	$Log->write ("hosts", $_GET['host_id'], $tenant->id, $user->id, "delete", true, "Host ".$host->hostname." deleted", json_encode($host), NULL);
+	$Log->write ("hosts", $_GET['host_id'], $tenant->id, $user->id, "delete", true, "Host ".$host->hostname." deleted", json_encode(["hosts"=>["0"=>$host]]), NULL, true);
 } catch (Exception $e) {
 	$Result->show("danger", $e->getMessage(), true, true, false, false);
 }

@@ -161,16 +161,22 @@ class Certificates extends Common
 	 * @param  array $href
 	 * @return object
 	 */
-	public function get_certificate($serial = "", $href = "")
+	public function get_certificate($serial = "", $href = "", $join = true)
 	{
 		// fetch
 		try {
 			// admins, ignore href
 			if ($this->user->admin == "1") {
+				if ($join)
 				$cert = $this->Database->getObjectQuery("select *,c.id as id from certificates as c JOIN tenants as t ON c.t_id = t.id and c.serial = ?", [$serial]);
+				else
+				$cert = $this->Database->getObjectQuery("select * from certificates where serial = ?", [$serial]);
 			}
 			else {
+				if($join)
 				$cert = $this->Database->getObjectQuery("select *,c.id as id from certificates as c JOIN tenants as t ON c.t_id = t.id and c.serial = ? and t.href = ?", [$serial, $href]);
+				else
+				$cert = $this->Database->getObjectQuery("select * from certificates where serial = ?", [$serial]);
 			}
 		}
 		catch (Exception $e) {

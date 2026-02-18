@@ -126,7 +126,7 @@ try {
 		// ok
 		$Result->show("success", _("Zone created").".", false, false, false, false);
 		// Write log :: object, object_id, tenant_id, user_id, action, public, text
-		$Log->write ("zones", $new_zone_id, $tenant->id, $user->id, $_POST['action'], true, "Zone $update[name] created", NULL, json_encode($new_zone));
+		$Log->write ("zones", $new_zone_id, $tenant->id, $user->id, $_POST['action'], true, "Zone $update[name] created", NULL, json_encode(["zones"=>["0"=>$new_zone]]));
 	}
 	// update
 	elseif($_POST['action']=="edit") {
@@ -136,14 +136,14 @@ try {
 		// new zone - same but updated
 		$new_zone = $Zones->get_zone_raw ($_POST['zone_id']);
 		// Write log :: object, object_id, tenant_id, user_id, action, public, text
-		$Log->write ("zones", $zone->id, $tenant->id, $user->id, $_POST['action'], true, "Zone $update[name] updated", json_encode($zone), json_encode($new_zone));
+		$Log->write ("zones", $zone->id, $tenant->id, $user->id, $_POST['action'], true, "Zone $update[name] updated", json_encode(["zones"=>["0"=>$zone]]), json_encode(["zones"=>["0"=>$new_zone]]), true);
 	}
 	elseif($_POST['action']=="delete") {
 		$Database->deleteObject("zones", $update['id']);
 		// ok
 		$Result->show("success", _("Zone deleted").".", false, false, false, false);
 		// Write log :: object, object_id, tenant_id, user_id, action, public, text
-		$Log->write ("zones", $zone->id, $tenant->id, $user->id, $_POST['action'], true, "Zone ".$zone->name." deleted", json_encode($zone), NULL);
+		$Log->write ("zones", $zone->id, $tenant->id, $user->id, $_POST['action'], true, "Zone ".$zone->name." deleted", json_encode(["zones"=>["0"=>$zone]]), NULL, true);
 	}
 	else {
 		throw new exception("Invalid action");

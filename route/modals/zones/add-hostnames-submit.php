@@ -83,7 +83,7 @@ try {
 		// insert
 		$new_host_id = $Database->insertObject("hosts", $new_object);
 		// Write log :: object, object_id, tenant_id, user_id, action, public, text
-		$Log->write ("hosts", $new_host_id, $tenant->id, $user->id, "add", true, "New host ".$o['hostname']." added to zone", NULL, json_encode($new_object));
+		$Log->write ("hosts", $new_host_id, $tenant->id, $user->id, "add", true, "New host ".$o['hostname']." added to zone", NULL, json_encode(["hosts"=>["0"=>$new_object]]));
 	}
 	// ok
 	$Result->show("success", _("Hosts created").".", false, false, false, false);

@@ -83,7 +83,7 @@ try {
 	# get updated cronjob
 	$cronjob_new = $Database->getObject ("cron", $cronjob->id);
 	# Write log
-	$Log->write ("cron", $cronjob->id, $tenant->id, $user->id, $_POST['action'], true, "Cronjob {$cronjob->script} updated", json_encode($cronjob), json_encode($cronjob_new));
+	$Log->write ("cron", $cronjob->id, $tenant->id, $user->id, $_POST['action'], true, "Cronjob {$cronjob->script} updated", json_encode(["cron"=>["0"=>$cronjob]]), json_encode(["cron"=>["0"=>$cronjob_new]]), true);
 } catch (Exception $e) {
 	$Result->show("danger", $e->getMessage(), true, false, false, false);
 }

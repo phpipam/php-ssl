@@ -84,7 +84,7 @@ else {
 	}
 
 	print "<tr>";
-	print "	<td>".$url_items["tenants"]['icon']." <a href='/route/modals/tenants/edit.php?id=".$t->id."&action=edit' data-bs-toggle='modal' data-bs-target='#modal1' class='".$tenant_name_class."'>".$t->name."</a>".$warning_icon."</td>";
+	print "	<td>".$url_items["tenants"]['icon']." ".$t->name." ".$warning_icon."</td>";
 	print "	<td><span class='badge' style='width:100%'>".$t->id."</span></td>";
 	print "	<td>".$status."</td>";
 	print "	<td class='text-muted'>".$t->description."</td>";

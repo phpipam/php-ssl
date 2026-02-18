@@ -74,14 +74,14 @@ try {
 		// add id
 		$update['id'] = $new_ignored_id;
 		// Write log :: object, object_id, tenant_id, user_id, action, public, text
-		$Log->write ("ignored", $new_ignored_id, $tenant->id, $user->id, $_POST['action'], true, "Ignored issuer $update[name] created", null, json_encode($update));
+		$Log->write ("ignored", $new_ignored_id, $tenant->id, $user->id, $_POST['action'], true, "Ignored issuer $update[name] created", null, json_encode(["ignored"=>["0"=>$issuer]]));
 	}
 	elseif($_POST['action']=="delete") {
 		$Database->deleteObject("ignored_issuers", $update['id']);
 		// ok
 		$Result->show("success", _("Ignored issuer deleted").".", false, false, false, false);
 		// Write log :: object, object_id, tenant_id, user_id, action, public, text
-		$Log->write ("ignored", $issuer->id, $issuer->t_id, $user->id, $_POST['action'], true, "Ignored issuer $update[name] deleted", json_encode($issuer), null);
+		$Log->write ("ignored", $issuer->id, $issuer->t_id, $user->id, $_POST['action'], true, "Ignored issuer $update[name] deleted", json_encode(["ignored"=>["0"=>$issuer]]), null, true);
 	}
 	else {
 		throw new exception("Invalid action");

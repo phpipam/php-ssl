@@ -33,15 +33,27 @@ $title = _("Zone hosts removal");
 try {
 	// get old hosts
 	$old_hosts = $Database->getObjectsQuery("select * from hosts where z_id = ?", $_GET['zone_id']);
-	// delete
-	$Database->runQuery("delete from hosts where z_id = ?", $_GET['zone_id']);
-	// ok
-	$content[] = $Result->show("success", _("All hosts in zone removed").".", false, false, true, true);
-	// header
-	$header_class = "success";
-	// Write log :: object, object_id, tenant_id, user_id, action, public, text
-	$Log->write ("zones", $_GET['zone_id'], $user->t_id, $user->id, "truncate", true, "Zone truncated", json_encode($old_hosts), NULL);
 
+	// do we have some ?
+	if(sizeof($old_hosts)==0) {
+		// no hosts
+		$content[] = $Result->show("info", _("Zone has no hosts").".", false, false, true, true);
+		// header
+		$header_class = "info";
+	}
+	else {
+		// delete
+		$Database->runQuery("delete from hosts where z_id = ?", $_GET['zone_id']);
+		// ok
+		$content[] = $Result->show("success", _("All hosts in zone removed").".", false, false, true, true);
+		// header
+		$header_class = "success";
+		// Write log :: object, object_id, tenant_id, user_id, action, public, text
+		$Log->write ("zones", $_GET['zone_id'], $user->t_id, $user->id, "truncate", true, "Zone truncated", json_encode(["hosts"=>$old_hosts]), NULL, true);
+
+		// revert ?
+		$content[] = "<a class='btn btn-sm btn-outline-info float-right pull-right' href='/".$user->href."/logs/".$Log->last_id."/'>"._("Rollback")."</a>";
+	}
 } catch (Exception $e) {
 	// error
 	$content[] = $Result->show("danger", $e->getMessage().".", false, false, true, true);
@@ -50,4 +62,4 @@ try {
 }
 
 // modal
-$Modal->modal_print ($title, implode("\n", $content), $btn_text, "", true, $header_class);
+$Modal->modal_print ($title, implode("\n", $content), "", "", true, $header_class);

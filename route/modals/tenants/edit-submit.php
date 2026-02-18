@@ -110,7 +110,7 @@ try {
 		$new_tenant = $Tenants->get_tenant_by_href ($update['href']);
 
 		// Write log :: object, object_id, tenant_id, user_id, action, public, text
-		$Log->write ("tenants", $new_tenant_id, $new_tenant_id, $user->id, $_POST['action'], true, "New tenant created", NULL, json_encode($new_tenant));
+		$Log->write ("tenants", $new_tenant_id, $new_tenant_id, $user->id, $_POST['action'], true, "New tenant created", NULL, json_encode(["tenants"=>["0"=>$new_tenant]]));
 		// ok
 		$Result->show("success", _("Tenant created").".", false, false, false, false);
 	}
@@ -122,14 +122,14 @@ try {
 		// get tenant
 		$new_tenant = $Tenants->get_tenant_by_href ($update['href']);
 		// Write log :: object, object_id, tenant_id, user_id, action, public, text
-		$Log->write ("tenants", $tenant->id, $tenant->id, $user->id, $_POST['action'], true, "Tenant $update[name] updated", json_encode($tenant), json_encode($new_tenant));
+		$Log->write ("tenants", $tenant->id, $tenant->id, $user->id, $_POST['action'], true, "Tenant $update[name] updated", json_encode(["tenants"=>["0"=>$tenant]]), json_encode(["tenants"=>["0"=>$new_tenant]]), true);
 	}
 	elseif($_POST['action']=="delete") {
 		$Database->deleteObject("tenants", $update['id']);
 		// ok
 		$Result->show("success", _("Tenant deleted").".", false, false, false, false);
 		// Write log :: object, object_id, tenant_id, user_id, action, public, text
-		$Log->write ("tenants", $tenant->id, $tenant->id, $user->id, $_POST['action'], true, "Tenant ".$tenant->name." deleted", json_encode($tenant), NULL);
+		$Log->write ("tenants", $tenant->id, $tenant->id, $user->id, $_POST['action'], true, "Tenant ".$tenant->name." deleted", json_encode(["tenants"=>["0"=>$tenant]]), NULL);
 	}
 	else {
 		throw new exception("Invalid action");

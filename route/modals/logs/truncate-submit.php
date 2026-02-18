@@ -48,7 +48,9 @@ try {
 		$Result->show("danger", $Log->errors, true, false, false, false);
 	}
 	else {
-		$Result->show("success", _("Logs truncated"), true, false, false, false);
+		$Result->show("success", _("Logs truncated"), false, false, false, false);
+		// Write log :: object, object_id, tenant_id, user_id, action, public, text
+		$Log->write ("logs", 0, $user->t_id, $user->id, "truncate", true, "Logs truncated", NULL, NULL);
 	}
 }
 catch (Exception $e) {

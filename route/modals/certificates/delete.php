@@ -32,11 +32,14 @@ if(is_null($tenant)) {
 	$Result->show("danger", _("Invalid tenant").".", true, true, false, false);
 }
 
+# refetch - needed for logging, raw object
+$certificate = $Certificates->get_certificate ($_GET['serial'], $_params['tenant'], false);
+
 # ok, validations passed, remove
 try {
 	$Database->deleteObject("certificates", $certificate->id);
 	// Write log :: object, object_id, tenant_id, user_id, action, public, text
-	$Log->write ("certificates", $certificate->id, $tenant->id, $user->id, "delete", true, "Certificate serial ".$certificate->serial." deleted", json_encode($certificate), NULL);
+	$Log->write ("certificates", $certificate->id, $tenant->id, $user->id, "delete", true, "Certificate serial ".$certificate->serial." deleted", json_encode(["certificates"=>["0"=>$certificate]]), NULL, true);
 
 } catch (Exception $e) {
 	$Result->show("danger", $e->getMessage(), true, true, false, false);

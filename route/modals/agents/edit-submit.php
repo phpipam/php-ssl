@@ -106,7 +106,7 @@ try {
 		// get agent
 		$agent = $Database->getObject ("agents",$new_agent_id);
 		// Write log :: object, object_id, tenant_id, user_id, action, public, text
-		$Log->write ("agents", $new_agent_id, $tenant->id, $user->id, $_POST['action'], true, "Agent $update[name] created", null, json_encode($agent));
+		$Log->write ("agents", $new_agent_id, $tenant->id, $user->id, $_POST['action'], true, "Agent $update[name] created", null, json_encode(["agents"=>["0"=>$agent]]));
 	}
 	// update
 	elseif($_POST['action']=="edit") {
@@ -116,14 +116,14 @@ try {
 		// get agent
 		$agent_new = $Database->getObject ("agents",$agent->id);
 		// Write log :: object, object_id, tenant_id, user_id, action, public, text
-		$Log->write ("agents", $agent->id, $tenant->id, $user->id, $_POST['action'], true, "Agent $update[name] updated", json_encode($agent), json_encode($agent_new));
+		$Log->write ("agents", $agent->id, $tenant->id, $user->id, $_POST['action'], true, "Agent $update[name] updated", json_encode(["agents"=>["0"=>$agent]]), json_encode(["agents"=>["0"=>$agent_new]]), true);
 	}
 	elseif($_POST['action']=="delete") {
 		$Database->deleteObject("agents", $update['id']);
 		// ok
 		$Result->show("success", _("Agent deleted").".", false, false, false, false);
 		// Write log :: object, object_id, tenant_id, user_id, action, public, text
-		$Log->write ("agents", $agent->id, $tenant->id, $user->id, $_POST['action'], true, "Agent $update[name] deleted", json_encode($agent), null);
+		$Log->write ("agents", $agent->id, $tenant->id, $user->id, $_POST['action'], true, "Agent $update[name] deleted", json_encode(["agents"=>["0"=>$agent]]), null, true);
 	}
 	else {
 		throw new exception("Invalid action");
