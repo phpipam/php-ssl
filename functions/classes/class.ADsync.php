@@ -5,7 +5,6 @@
  */
 class ADsync
 {
-
     /**
      * AD server details
      * @var array
@@ -29,6 +28,12 @@ class ADsync
      * @var bool
      */
     private $Database = false;
+
+    /**
+     * TMP user details 
+     * 
+     */
+    private $user_tmp = false;
 
     /**
      * Constructor
@@ -89,7 +94,7 @@ class ADsync
     /**
      * Init search
      * @method init_search
-     * @return [type]
+     * @return void
      */
     public function init_search()
     {
@@ -125,7 +130,7 @@ class ADsync
      * Get user info from AD
      * @method ad_user_info
      * @param  string $username
-     * @return array
+     * @return bool|array
      */
     public function ad_user_info($username = "")
     {
@@ -143,7 +148,7 @@ class ADsync
      * Get user info from AD by email
      * @method ad_user_info
      * @param  string $username
-     * @return array
+     * @return bool|array
      */
     public function ad_user_info_by_email($email = "")
     {
@@ -165,7 +170,7 @@ class ADsync
      * Get user info from AD
      * @method ad_user_info
      * @param  string $username
-     * @return array
+     * @return false|array
      */
     public function ad_user_photo($username = "")
     {
@@ -183,7 +188,7 @@ class ADsync
      * Get user info from AD - full DN
      * @method ad_user_info_by_dn
      * @param  string $username
-     * @return array
+     * @return false|array
      */
     public function ad_user_info_by_dn($dn)
     {

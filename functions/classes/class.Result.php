@@ -14,6 +14,16 @@ class Result
 	public $errors = [];
 
 	/**
+	 * @var bool
+	 */
+	private $die = false;
+
+	/**
+	 * @var string
+	 */
+	private $exit_method = "";
+
+	/**
 	 * Return array of errors
 	 * @method get_errors
 	 * @return array
@@ -69,7 +79,7 @@ class Result
 	/**
 	 * Print error
 	 * @method result_warning
-	 * @return [type]
+	 * @return void]
 	 */
 	public function result_warning()
 	{
@@ -91,7 +101,7 @@ class Result
 	 * @param bool $popup (default: false)					print result as popup
 	 * @param bool $inline (default: false)					return, not print
 	 * @param bool $popup2 (default: false)					close for JS for popup2
-	 * @return void
+	 * @return void|true|string
 	 */
 	public function show($class = "muted", $text = "No value provided", $die = "", $popup = false, $inline = false, $popup2 = false)
 	{
@@ -118,7 +128,7 @@ class Result
 				return true;
 			}
 			else {
-				return $this->throw_exception($text);
+				$this->throw_exception($text);
 			}
 		}
 		else {
@@ -162,7 +172,7 @@ class Result
 	 *
 	 * @access public
 	 * @param string $text (default: "No value provided")
-	 * @return void
+	 * @return string
 	 */
 	public function show_cli_message($text = "No value provided")
 	{
@@ -187,6 +197,17 @@ class Result
 	}
 
 	/**
+	 * Throw exception
+	 *
+	 * @access public
+	 * @param string $text (default: "")
+	 * @return void
+	 */
+	public function throw_exception($text = "")
+	{
+		throw new Exception($text);
+	}
+	/**
 	 * Show GUI result
 	 *
 	 * @access public
@@ -194,7 +215,7 @@ class Result
 	 * @param mixed $text
 	 * @param mixed $popup
 	 * @param mixed $popup2
-	 * @return void
+	 * @return string
 	 */
 	public function show_message($class, $text, $popup, $popup2)
 	{

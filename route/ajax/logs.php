@@ -87,7 +87,7 @@ try {
 			// all
 			$l = $Log->format_log_entry ($l, $user);
 			// add user
-			$l->user = $users[$l->user]->name;
+			$l->user = isset($users[$l->user]) ? $users[$l->user]->name : "System";
 
 			// remove diffs
 			unset($l->json_object_old);

@@ -63,6 +63,12 @@ class SSL extends Common
 	private $stream = false;
 
 	/**
+	 * Hostname
+	 * @var string
+	 */
+	private $hostname = "";
+
+	/**
 	 * Result
 	 * @var bool
 	 */
@@ -123,7 +129,7 @@ class SSL extends Common
 	{
 		// if set exit
 		if (sizeof($this->all_ports_groups) > 0) {
-			return true;
+			return $this->all_ports_groups;
 		}
 		// Fetch all ports
 		try {
@@ -199,7 +205,7 @@ class SSL extends Common
 	 *
 	 * @method fetch_website_certificate
 	 * @param  object $host
-	 * @param  datetime $execution_time
+	 * @param  string $execution_time
 	 * @param  int $tenant_id
 	 * @return array|false
 	 */
@@ -245,7 +251,6 @@ class SSL extends Common
 				// if not false quit, we found something
 				if ($certificate !== false) {
 					return $certificate;
-					break;
 				}
 				// restore error handler
 				restore_error_handler();
@@ -356,7 +361,7 @@ class SSL extends Common
 	 * @method process_fetch_result
 	 * @param  int $errno
 	 * @param  string $errstr
-	 * @param  datetime $execution_time
+	 * @param  string $execution_time
 	 * @param  int $port
 	 * @return array|false
 	 */
@@ -427,7 +432,7 @@ class SSL extends Common
 	 * @param  array $certificate
 	 * @param  int $tenant_id
 	 * @param  int $zone_id
-	 * @param  datetime $execution_time
+	 * @param  string $execution_time
 	 * @return int|void
 	 */
 	public function update_db_certificate($certificate = [], $tenant_id = 0, $zone_id = 0, $execution_time)
@@ -551,7 +556,7 @@ class SSL extends Common
 	 * @method update_host_last_check
 	 * @param  int $host_id
 	 * @param  string $ip
-	 * @param  datetime $execution_time
+	 * @param  string $execution_time
 	 * @return void
 	 */
 	private function update_host_last_check($host_id = 0, $ip = NULL, $execution_time = NULL)
@@ -582,7 +587,7 @@ class SSL extends Common
 	 * @param  int|null $user_id
 	 * @return void
 	 */
-	public function assign_host_certificate($host = null, $ip = null, $port = 0, $certificate = false, $tls_version = "", $execution_time, $user_id = null)
+	public function assign_host_certificate($host = null, $ip = null, $port = 0, $certificate = false, $tls_version = "", $execution_time = NULL, $user_id = null)
 	{
 		try {
 			$this->Database->runQuery("update hosts set c_id_old = c_id, c_id = ?, port = ?, ip = ?, last_change = ?, tls_version = ? where id = ?", [$certificate->id, $port, $ip, $execution_time, $tls_version, $host->host_id]);

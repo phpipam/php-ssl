@@ -11,15 +11,15 @@ class Certificates extends Common
 
 	/**
 	 * Database holder
-	 * @var bool
+	 * @var Database_PDO
 	 */
-	private $Database = false;
+	private $Database;
 
 	/**
 	 * User details
-	 * @var bool
+	 * @var object
 	 */
-	private $user = false;
+	private $user;
 
 	/**
 	 * Array of ignored issuers
@@ -33,9 +33,9 @@ class Certificates extends Common
 	 * Constructor
 	 * @method __construct
 	 * @param  Database_PDO $Database
-	 * @param  string $user
+	 * @param  object $user
 	 */
-	public function __construct(Database_PDO $Database, $user = "")
+	public function __construct(Database_PDO $Database, object $user = NULL)
 	{
 		// Save database object
 		$this->Database = $Database;
@@ -168,15 +168,15 @@ class Certificates extends Common
 			// admins, ignore href
 			if ($this->user->admin == "1") {
 				if ($join)
-				$cert = $this->Database->getObjectQuery("select *,c.id as id from certificates as c JOIN tenants as t ON c.t_id = t.id and c.serial = ?", [$serial]);
+					$cert = $this->Database->getObjectQuery("select *,c.id as id from certificates as c JOIN tenants as t ON c.t_id = t.id and c.serial = ?", [$serial]);
 				else
-				$cert = $this->Database->getObjectQuery("select * from certificates where serial = ?", [$serial]);
+					$cert = $this->Database->getObjectQuery("select * from certificates where serial = ?", [$serial]);
 			}
 			else {
-				if($join)
-				$cert = $this->Database->getObjectQuery("select *,c.id as id from certificates as c JOIN tenants as t ON c.t_id = t.id and c.serial = ? and t.href = ?", [$serial, $href]);
+				if ($join)
+					$cert = $this->Database->getObjectQuery("select *,c.id as id from certificates as c JOIN tenants as t ON c.t_id = t.id and c.serial = ? and t.href = ?", [$serial, $href]);
 				else
-				$cert = $this->Database->getObjectQuery("select * from certificates where serial = ?", [$serial]);
+					$cert = $this->Database->getObjectQuery("select * from certificates where serial = ?", [$serial]);
 			}
 		}
 		catch (Exception $e) {
@@ -331,6 +331,9 @@ class Certificates extends Common
 		if ($days > $max_days) {
 			return 3;
 		} // valid
+		else {
+			return 0;
+		}
 	}
 
 	/**
@@ -362,6 +365,9 @@ class Certificates extends Common
 		if ($status_int == 3) {
 			return "<span class='badge bg-green-lt $status_class' data-bs-toggle='tooltip' data-bs-placement='left' title='" . _("Valid") . "'> <span class='$span_hidden'>" . _("Valid") . "</span></span> ";
 		}
+
+		// default
+		return "<span class='badge bg-green-lt $status_class' data-bs-toggle='tooltip' data-bs-placement='left' title='" . _($text) . "'> <span class='$span_hidden'>" . _($text) . "</span></span> ";
 
 	}
 
@@ -497,8 +503,8 @@ class Certificates extends Common
 		return openssl_x509_parse($certificate) == false ? false : "crt";
 
 
-		$cert_res_pri = openssl_pkey_get_private($certificate, "");
-		$cert_res_pub = openssl_x509_read($certificate);
+	//$cert_res_pri = openssl_pkey_get_private($certificate, "");
+	//$cert_res_pub = openssl_x509_read($certificate);
 	}
 
 	/**
@@ -518,12 +524,12 @@ class Certificates extends Common
 			return false;
 		}
 		else {
-			return "cer";
-			// remove BEGIN / END Certificate
-			$exported_pub = str_replace("-----BEGIN CERTIFICATE-----" . PHP_EOL, "", $exported_pub);
-			$exported_pub = str_replace("-----END CERTIFICATE-----" . PHP_EOL, "", $exported_pub);
+			return true;
+		// remove BEGIN / END Certificate
+		//$exported_pub = str_replace("-----BEGIN CERTIFICATE-----" . PHP_EOL, "", $exported_pub);
+		//$exported_pub = str_replace("-----END CERTIFICATE-----" . PHP_EOL, "", $exported_pub);
 
-			$content = wordwrap(base64_decode($exported_pub), 64, "\r\n", true);
+		//$content = wordwrap(base64_decode($exported_pub), 64, "\r\n", true);
 		}
 	}
 
@@ -543,11 +549,11 @@ class Certificates extends Common
 	{
 		return false;
 
-		// parse
-		openssl_pkey_export($cert_res_pri, $exported_pri, $_GET['key']);
-		openssl_x509_export($cert_res_pub, $exported_pub); // binary to ascii (PEM)
-		// export to p12
-		openssl_pkcs12_export($cert_res_pub, $content, $cert_res_pri, $_GET['key']);
+	// parse
+	//openssl_pkey_export($cert_res_pri, $exported_pri, $_GET['key']);
+	//openssl_x509_export($cert_res_pub, $exported_pub); // binary to ascii (PEM)
+	// export to p12
+	//openssl_pkcs12_export($cert_res_pub, $content, $cert_res_pri, $_GET['key']);
 	}
 
 	/**

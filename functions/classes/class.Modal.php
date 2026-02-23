@@ -53,7 +53,7 @@ class Modal {
      * @access private
      * @param mixed $header (default: null)
      * @param mixed $header_class (default: "info")
-     * @return void
+     * @return string
      */
     private function modal_header ($header = null, $header_class = "info") {
         // define
@@ -76,7 +76,7 @@ class Modal {
      *
      * @access private
      * @param mixed $content
-     * @return void
+     * @return string
      */
     private function modal_body ($content) {
         // define
@@ -94,7 +94,7 @@ class Modal {
      *
      * @access private
      * @param mixed $footer_text
-     * @return void
+     * @return string
      */
     private function modal_footer ($footer_text, $reload, $header_class) {
         // reload ?
@@ -126,7 +126,7 @@ class Modal {
      *
      * @access private
      * @param mixed $action_script
-     * @return void
+     * @return string
      */
     private function modal_action ($action_script = "") {
         // define

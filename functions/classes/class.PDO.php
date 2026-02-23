@@ -18,6 +18,16 @@ abstract class DB
     protected $debug = false;
 
     /**
+     * result
+     *
+     * (default value: false)
+     *
+     * @var mixed
+     * @access private
+     */
+    private $Result = false;
+
+    /**
      * Default db username
      *
      * (default value: null)
@@ -122,6 +132,8 @@ abstract class DB
         if ($ssl) {
             $this->ssl = $ssl;
         }
+
+        $this->Result = new Result();
     }
 
     /**
@@ -951,7 +963,7 @@ abstract class DB
             $res = $this->getObjects($table, $sortField, $sortAsc);
         }
         catch (Exception $e) {
-            $this->Result->show_danger(_("Error: ") . $e->getMessage());
+            $this->Result->show('danger', _("Error: ") . $e->getMessage());
             return false;
         }
         # result
@@ -988,7 +1000,7 @@ abstract class DB
             $res = $this->getObjectQuery("SELECT * from `$table` where `$method` = ? limit 1;", array($value));
         }
         catch (Exception $e) {
-            $this->Result->show_danger(_("Error: ") . $e->getMessage());
+            $this->Result->show('danger', _("Error: ") . $e->getMessage());
             return false;
         }
         return $res;
@@ -1044,7 +1056,7 @@ abstract class DB
             $res = $this->getObjectsQuery("select distinct(`$field`) from `$table`;", array());
         }
         catch (Exception $e) {
-            $this->Result->show_danger(_("Error: ") . $e->getMessage());
+            $this->Result->show('danger', _("Error: ") . $e->getMessage());
             return false;
         }
         # result
@@ -1081,7 +1093,7 @@ abstract class DB
             $res = $this->insertObject($table, $values);
         }
         catch (Exception $e) {
-            $this->Result->show_danger(_("Error: ") . $e->getMessage());
+            $this->Result->show('danger', _("Error: ") . $e->getMessage());
             return false;
         }
         return true;
@@ -1121,7 +1133,7 @@ abstract class DB
             $res = $this->updateObject($table, $values, $key);
         }
         catch (Exception $e) {
-            $this->Result->show_danger(_("Error: ") . $e->getMessage());
+            $this->Result->show('danger', _("Error: ") . $e->getMessage());
             return false;
         }
         return true;
@@ -1133,7 +1145,7 @@ abstract class DB
      * @access public
      * @param mixed $table (default: null)
      * @param mixed $id
-     * @return void
+     * @return bool
      */
     public function remove_object($table = null, $id)
     {
@@ -1155,7 +1167,7 @@ abstract class DB
             $res = $this->deleteObject($table, $id);
         }
         catch (Exception $e) {
-            $this->Result->show_danger(_("Error: ") . $e->getMessage());
+            $this->Result->show('danger', _("Error: ") . $e->getMessage());
             return false;
         }
         return true;
@@ -1169,7 +1181,7 @@ abstract class DB
      * @param mixed $field
      * @param mixed $val (default: null)
      * @param bool $like (default: false)
-     * @return void
+     * @return int|false
      */
     public function count_database_objects($table, $field, $val = null, $like = false)
     {
@@ -1178,7 +1190,7 @@ abstract class DB
             $cnt = $this->numObjectsFilter($table, $field, $val, $like);
         }
         catch (Exception $e) {
-            $this->Result->show_danger(_("Error: ") . $e->getMessage());
+            $this->Result->show('danger', _("Error: ") . $e->getMessage());
             return false;
         }
         return $cnt;
@@ -1199,7 +1211,7 @@ abstract class DB
             $definition = $this->getTableDefinition($table);
         }
         catch (Exception $e) {
-            $this->Result->show_danger(_("Error: ") . $e->getMessage());
+            $this->Result->show('danger', _("Error: ") . $e->getMessage());
             return false;
         }
 
@@ -1255,7 +1267,7 @@ class Database_PDO extends DB
     /**
      * Result
      *
-     * @var obj
+     * @var object
      * @access private
      */
     public $Result;
@@ -1350,7 +1362,7 @@ class Database_PDO extends DB
      * makeDsn function
      *
      * @access protected
-     * @return void
+     * @return string
      */
     protected function makeDsn()
     {
@@ -1361,7 +1373,7 @@ class Database_PDO extends DB
      * more generic static useful methods
      *
      * @access public
-     * @return void
+     * @return array
      */
     public function getColumnInfo()
     {
@@ -1387,7 +1399,7 @@ class Database_PDO extends DB
      * getForeignKeyInfo function.
      *
      * @access public
-     * @return void
+     * @return array
      */
     public function getForeignKeyInfo()
     {

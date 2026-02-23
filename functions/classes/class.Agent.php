@@ -151,7 +151,7 @@ class Agent
 	/**
 	 * Return result
 	 * @method get_result
-	 * @return [type]
+	 * @return object|false
 	 */
 	public function get_result()
 	{

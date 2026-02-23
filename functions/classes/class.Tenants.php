@@ -3,7 +3,8 @@
 /**
  * Class to work with tenants
  */
-class Tenants extends Common {
+class Tenants extends Common
+{
 
 	/**
 	 * Database holder
@@ -19,7 +20,8 @@ class Tenants extends Common {
 	 * @method __construct
 	 * @param  Database_PDO $Database
 	 */
-	public function __construct (Database_PDO $Database) {
+	public function __construct(Database_PDO $Database)
+	{
 		// Save database object
 		$this->Database = $Database;
 	}
@@ -27,17 +29,19 @@ class Tenants extends Common {
 	/**
 	 * Gets tenants from database and reorders
 	 * @method get_all
-	 * @return [type]
+	 * @return array
 	 */
-	public function get_all () {
+	public function get_all()
+	{
 		try {
 			$tenants = $this->Database->getObjectsQuery("select * from tenants order by `order` asc,name asc");
-		} catch (Exception $e) {
+		}
+		catch (Exception $e) {
 			$this->errors[] = $e->getMessage();
-			$this->result_die ();
+			$this->result_die();
 		}
 		// reindex
-		if(sizeof($tenants)>0) {
+		if (sizeof($tenants) > 0) {
 			$tenants_new = [];
 			foreach ($tenants as $t) {
 				$tenants_new[$t->id] = $t;
@@ -52,19 +56,22 @@ class Tenants extends Common {
 	 * Returns tenant from URI href
 	 * @method get_tenant_by_href
 	 * @param  string $href
-	 * @return [type]
+	 * @return object|bool
 	 */
-	public function get_tenant_by_href ($href = "") {
+	public function get_tenant_by_href($href = "")
+	{
 		try {
-			if(is_numeric($href)) {
+			if (is_numeric($href)) {
 				return $this->Database->getObjectQuery("select * from tenants where id = ? ", [$href]);
 			}
 			else {
 				return $this->Database->getObjectQuery("select * from tenants where href = ? ", [$href]);
 			}
-		} catch (Exception $e) {
+		}
+		catch (Exception $e) {
 			$this->errors[] = $e->getMessage();
-			$this->result_die ();
+			$this->result_die();
+			return false;
 		}
 	}
 }
