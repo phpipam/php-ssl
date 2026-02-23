@@ -200,6 +200,18 @@ else {
 	</div>
 	</div>
 
+	<!-- Logs -->
+	<div class="col-12" style="margin-bottom: 15px;">
+	<div class="card">
+		<div class="card-header">
+			<?php print $url_items['logs']['icon']; ?> <?php print _("Certificate history"); ?>
+		</div>
+		<div class="card-content">
+			<?php include('certificate/certificate-logs.php'); ?>
+		</div>
+	</div>
+	</div>
+
 	</div>
 
 <?php } ?>

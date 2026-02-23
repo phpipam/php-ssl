@@ -14,7 +14,7 @@
 
 	  <div class="navbar-nav  flex-row order-md-last">
 
-	    <div class="nav-item d-n1one d-md-flex me-3">
+	    <div class="nav-item d-none d-lg-flex me-3">
 	      <div class="btn-list d-none d-md-flex">
 	        <a href="https://github.com/phpipam/php-ssl" class="btn btn-5" target="_blank" rel="noreferrer">
 	          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-2">
@@ -30,6 +30,29 @@
 	        </a> -->
 	      </div>
 	    </div>
+
+
+
+		<div class="nav-item">
+			<div class="my-2 my-md-0 flex-grow-1 flex-md-grow-0 order-first order-md-last">
+			  <form action="/<?php print $user->href; ?>/search/" method="get" autocomplete="off" novalidate="">
+			  	<input type="hidden" name="hosts" value="on">
+			  	<input type="hidden" name="certificates" value="on">
+			    <div class="input-icon">
+			      <span class="input-icon-addon">
+			        <!-- Download SVG icon from http://tabler.io/icons/icon/search -->
+			        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
+			          <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path>
+			          <path d="M21 21l-6 -6"></path>
+			        </svg>
+			      </span>
+			      <input type="text" class="form-control" placeholder="Search…" name="search" aria-label="Search" value="<?php print $_params['search']; ?>">
+			    </div>
+			  </form>
+			</div>
+		</div>
+
+
 
 		<div class="d-flex">
 

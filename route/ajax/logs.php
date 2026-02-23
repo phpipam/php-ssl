@@ -54,6 +54,25 @@ try {
 		$vars['search2'] = "%".$_POST['search']."%";
 		$vars['search']  = "%".$_POST['search']."%";
 	}
+	// object filter ?
+	if(strlen($_POST['object'])>0) {
+		$query        .= " and object = :object";
+		$query_all   .= " and object = :object";
+		$vars['object'] = $_POST['object'];
+	}
+	// object_id filter ?
+	if(is_numeric($_POST['object_id'])) {
+		// Check if serial is also provided for certificates - use OR
+		if($_POST['object'] === 'certificates' && strlen($_POST['serial']) > 0) {
+			$query        .= " and (object_id = :object_id or text like :serial)";
+			$query_all   .= " and (object_id = :object_id or text like :serial)";
+			$vars['serial'] = '%'.$_POST['serial'].'%';
+		} else {
+			$query        .= " and object_id = :object_id";
+			$query_all   .= " and object_id = :object_id";
+		}
+		$vars['object_id'] = $_POST['object_id'];
+	}
 	// order, sort
 	if (strlen($_POST['sort'])>0 && in_array($_POST['sort'], ['id','user','object','date','text'])) {
 		$query .= " order by ".$_POST['sort']." ";

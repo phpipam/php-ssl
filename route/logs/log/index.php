@@ -58,6 +58,10 @@ else {
 	$logdata1 = json_decode($log->json_object_old, true);
 	$logdata2 = json_decode($log->json_object_new, true);
 
+	// handle null values
+	if($logdata1 === null) { $logdata1 = []; }
+	if($logdata2 === null) { $logdata2 = []; }
+
 	// create keys
 	$logdata1 = create_keys ($logdata1, $logdata2);
 	$logdata2 = create_keys ($logdata2, $logdata1);
