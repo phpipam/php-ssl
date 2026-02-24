@@ -205,8 +205,18 @@ class User extends Common
 		if ($user->password == hash('sha512', $password)) {
 			// save user
 			$_SESSION['username'] = $user->email;
+			// redirect ?
+			if (isset($_SESSION['redirect_url'])) {
+				$redirect = $_SESSION['redirect_url'];
+				unset($_SESSION['redirect_url']);
+			}
+			else {
+				$redirect = "/";
+			}
+
 			// print ok
-			$this->show("success", _("Login successful"));
+			print $this->Result->show("success", _("Login successful"));
+			print "<div id='login_redirect'>" . $redirect . "</div>";
 			// log
 			global $Log;
 			$Log->write("user", $user->id, $user->t_id, $user->id, "login", false, "User has logged in");
@@ -272,8 +282,14 @@ class User extends Common
 			# success print
 			print $this->Result->show("success", _("Login successfull") . ".");
 			// where to ?
-			$user->home = strlen($user->home) > 0 ? $user->home : "/";
-			print "<div id='login_redirect'>" . $user->home . "</div>";
+			if (isset($_SESSION['redirect_url'])) {
+				$redirect = $_SESSION['redirect_url'];
+				unset($_SESSION['redirect_url']);
+			}
+			else {
+				$redirect = strlen($user->home) > 0 ? $user->home : "/";
+			}
+			print "<div id='login_redirect'>" . $redirect . "</div>";
 		}
 		else {
 			// print
@@ -317,11 +333,15 @@ class User extends Common
 	 * @param  bool $require_admin :: Refers to tenant logged in user belongs to must be admin.
 	 * @return void
 	 */
-	public function validate_session ($require_admin = false, $is_popup = false, $is_popup_result = false)
+	public function validate_session($require_admin = false, $is_popup = false, $is_popup_result = false)
 	{
 		// not logged in
 		if ($this->user === null) {
 			if (!$is_popup) {
+				// save redirect url
+				if (strpos($_SERVER['REQUEST_URI'], "/route/") === false) {
+					$_SESSION['redirect_url'] = $_SERVER['REQUEST_URI'];
+				}
 				header("Location: /login/");
 				die();
 			}
