@@ -49,7 +49,7 @@ window.ajaxRequestLogs = params => {
     var data = params.data;
     data.object = log_object;
     data.object_id = log_object_id;
-    if(log_serial) {
+    if(log_serial && log_serial.length > 0) {
         data.serial = log_serial;
     }
     $.ajax({

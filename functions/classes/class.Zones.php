@@ -8,7 +8,7 @@ class Zones extends Common
 
 	/**
 	 * Database holder
-	 * @var bool
+	 * @var Database_PDO|bool
 	 */
 	private $Database = false;
 

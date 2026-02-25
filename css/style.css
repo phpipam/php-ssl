@@ -78,6 +78,9 @@ input:-webkit-autofill:active  {
     align-items: center;
     vertical-align: middle;
 }
+table.table-td-top tr td {
+    vertical-align: top !important;
+}
 .table-zones-details tr.line td,
 .table-zones-details tr.line th {
     border-top: 1px solid var(--tblr-card-border-color)
