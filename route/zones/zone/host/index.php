@@ -19,15 +19,7 @@ if ($zone === null) {
 else {
 
 # fetch host with current certificate
-$host = $Database->getObjectQuery("
-	SELECT h.*, z.name as zone_name, z.t_id as t_id, t.href as tenant_href, t.name as tenant_name,
-	       t.recipients as tenant_recipients, c.certificate, c.serial as cert_serial
-	FROM hosts h
-	LEFT JOIN zones z ON h.z_id = z.id
-	LEFT JOIN tenants t ON z.t_id = t.id
-	LEFT JOIN certificates c ON h.c_id = c.id
-	WHERE h.hostname = ? AND z.id = ?
-", [$hostname, $zone->id]);
+$host = $Zones->get_host_with_certificate($hostname, $zone->id);
 
 # invalid host or access denied
 if ($host === null) {
@@ -45,12 +37,7 @@ else {
 # ---------- current certificate ----------
 $cert_parsed = $Certificates->parse_cert($host->certificate);
 $status      = $Certificates->get_status($cert_parsed, true, true, $hostname);
-
-if     ($status['code'] == 0)  { $textclass = 'secondary'; }
-elseif ($status['code'] == 1)  { $textclass = 'red'; }
-elseif ($status['code'] == 2)  { $textclass = 'orange'; }
-elseif ($status['code'] == 3)  { $textclass = 'green'; }
-else                           { $textclass = 'secondary'; }
+$textclass   = $Certificates->get_status_color($status['code']);
 
 $days_valid = isset($cert_parsed['custom_validDays']) ? $cert_parsed['custom_validDays'] : "/";
 if (is_numeric($days_valid)) {
@@ -78,15 +65,12 @@ $cert_old_days_class = "secondary";
 $cert_old_san_list   = [];
 
 if (!empty($host->c_id_old)) {
-	$cert_old = $Database->getObjectQuery("SELECT * FROM certificates WHERE id = ?", [$host->c_id_old]);
+	$cert_old = $Zones->get_host_old_certificate($host->c_id_old);
 	if ($cert_old) {
 		$cert_old_parsed = $Certificates->parse_cert($cert_old->certificate);
 		$cert_old_status = $Certificates->get_status($cert_old_parsed, true, false, "");
 
-		if     ($cert_old_status['code'] == 0)  { $cert_old_textclass = 'secondary'; }
-		elseif ($cert_old_status['code'] == 1)  { $cert_old_textclass = 'red'; }
-		elseif ($cert_old_status['code'] == 2)  { $cert_old_textclass = 'orange'; }
-		elseif ($cert_old_status['code'] == 3)  { $cert_old_textclass = 'green'; }
+		$cert_old_textclass = $Certificates->get_status_color($cert_old_status['code']);
 
 		$cert_old_days_valid = isset($cert_old_parsed['custom_validDays']) ? $cert_old_parsed['custom_validDays'] : "/";
 		if (is_numeric($cert_old_days_valid)) {

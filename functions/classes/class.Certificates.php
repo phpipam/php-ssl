@@ -337,6 +337,23 @@ class Certificates extends Common
 	}
 
 	/**
+	 * Returns Tabler color class name for a status code (e.g. 'red', 'orange', 'green', 'secondary')
+	 * @method get_status_color
+	 * @param  int $status_int
+	 * @return string
+	 */
+	public function get_status_color($status_int = 0)
+	{
+		switch ($status_int) {
+			case 1:  return 'red';
+			case 2:  return 'orange';
+			case 3:  return 'green';
+			case 10: return 'red';
+			default: return 'secondary';
+		}
+	}
+
+	/**
 	 * Returns certificate status in text - badge
 	 * @method get_status_text
 	 * @param  int $status_int

@@ -357,7 +357,7 @@ class Log extends Common
 	public function format_log_id($logid = 0, $href = "", $is_unread = false)
 	{
 		$red_dot = $is_unread ? "<span class='badge bg-red badge-blink'></span>" : "";
-		return "<span class='badge'><a href='/" . $href . "/logs/" . $logid . "/'>" . $logid . "</a></span> " . $red_dot;
+		return "<span class='badge'><a target='_blank' href='/" . $href . "/logs/" . $logid . "/'>" . $logid . "</a></span> " . $red_dot;
 	}
 
 	/**
@@ -370,7 +370,7 @@ class Log extends Common
 	 */
 	public function format_log_object($object = "", $href = "", $logid = 0)
 	{
-		return "<a class='btn btn-sm' href='/" . $href . "/logs/" . $logid . "/'>" . ucwords($object) . " :: " . $logid . "</a>";
+		return "<a class='btn btn-sm' target='_blank' href='/" . $href . "/logs/" . $logid . "/'>" . ucwords($object) . " :: " . $logid . "</a>";
 	}
 
 	/**
@@ -431,7 +431,7 @@ class Log extends Common
 
 	public function format_log_content($text = "")
 	{
-		return "<div class='text-truncate' style='max-width:500px'>" . $text . "</div>";
+		return "<div class='text-truncate-xs'>" . $text . "</div>";
 	}
 
 

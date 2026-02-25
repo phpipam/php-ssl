@@ -14,7 +14,7 @@ class Zones extends Common
 
 	/**
 	 * User object
-	 * @var object|bool
+	 * @var bool
 	 */
 	private $user = false;
 
@@ -24,9 +24,9 @@ class Zones extends Common
 	 * Constructor
 	 * @method __construct
 	 * @param  Database_PDO $Database
-	 * @param  object $user
+	 * @param  string $user
 	 */
-	public function __construct(Database_PDO $Database, $user = false)
+	public function __construct(Database_PDO $Database, $user = "")
 	{
 		// Save database object
 		$this->Database = $Database;

@@ -101,7 +101,7 @@
 </div>
 
 <style type="text/css">
-svg {
+.actions svg {
 	margin-right:20px;
 }
 </style>

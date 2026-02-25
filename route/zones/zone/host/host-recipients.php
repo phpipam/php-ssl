@@ -9,7 +9,7 @@ $icon_mail = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" vie
 		<div class='card'>
 			<div class='card-header'><?php print $icon_mail; ?> <?php print _("Notification recipients"); ?></div>
 			<div>
-			<table class='table table-borderless table-md table-hover table-zones-details'>
+			<table class='table table-borderless table-md table-hover table-zones-details table-td-top'>
 
 				<tr>
 					<td class='text-secondary' style='min-width:160px;width:180px;vertical-align:top;'><?php print _("Tenant recipients"); ?></td>

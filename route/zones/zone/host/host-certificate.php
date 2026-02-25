@@ -8,13 +8,13 @@ $icon_cert = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" vie
 	<div class='card-header'><?php print $icon_cert; ?> <?php print _("Current certificate"); ?></div>
 	<div>
 	<?php if ($cert_parsed === null || empty($cert_parsed)): ?>
-	<table class='table table-borderless table-md table-hover table-zones-details'>
+	<table class='table table-borderless table-md table-hover table-td-top table-zones-details'>
 		<tr>
 			<td colspan='2'><span class='text-secondary'><?php print _("No certificate data available."); ?></span></td>
 		</tr>
 	</table>
 	<?php else: ?>
-	<table class='table table-borderless table-md table-hover table-zones-details table-condensed'>
+	<table class='table table-borderless table-md table-hover table-td-top table-zones-details table-condensed'>
 
 		<tr>
 			<td class="text-secondary" style='min-width:160px;width:180px;'><?php print _("Status"); ?></td>
@@ -26,8 +26,8 @@ $icon_cert = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" vie
 		<tr>
 			<td class="text-secondary"><?php print _("Serial"); ?></td>
 			<td>
-				<a class='btn btn-sm' href='/<?php print $user->href; ?>/certificates/<?php print $cert_parsed['serialNumberHex']; ?>/'>
-					<?php print htmlspecialchars(chunk_split($cert_parsed['serialNumberHex'])); ?>
+				<a class='btn btn-sm' target="_blank" href='/<?php print $_params['tenant']; ?>/certificates/<?php print $zone->name; ?>/<?php print $cert_parsed['serialNumber']; ?>/'>
+					<?php print htmlspecialchars(chunk_split($cert_parsed['serialNumber'])); ?>
 				</a>
 			</td>
 		</tr>
@@ -56,7 +56,7 @@ $icon_cert = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" vie
 
 		<tr>
 			<td class="text-secondary"><?php print _("Valid to"); ?></td>
-			<td class='text-<?php print $textclass; ?>'><?php print isset($cert_parsed['custom_validTo']) ? htmlspecialchars($cert_parsed['custom_validTo']) : date("Y-m-d H:i:s", $cert_parsed['validTo_time_t']); ?></td>
+			<td class='text-<?php print $days_class; ?>'><?php print isset($cert_parsed['custom_validTo']) ? htmlspecialchars($cert_parsed['custom_validTo']) : date("Y-m-d H:i:s", $cert_parsed['validTo_time_t']); ?></td>
 		</tr>
 
 		<tr>
@@ -84,7 +84,11 @@ $icon_cert = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" vie
 
 		<tr>
 			<td class="text-secondary"><?php print _("Serial"); ?></td>
-			<td><?php print htmlspecialchars(chunk_split($cert_old_parsed['serialNumberHex'])); ?></td>
+			<td>
+				<a class='btn btn-sm' target="_blank"  href='/<?php print $_params['tenant']; ?>/certificates/<?php print $zone->name; ?>/<?php print $cert_old_parsed['serialNumber']; ?>/'>
+					<?php print htmlspecialchars(chunk_split($cert_old_parsed['serialNumber'])); ?>
+				</a>
+			</td>
 		</tr>
 
 		<tr>
@@ -111,7 +115,7 @@ $icon_cert = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" vie
 
 		<tr>
 			<td class="text-secondary"><?php print _("Valid to"); ?></td>
-			<td class='text-<?php print $cert_old_textclass; ?>'><?php print isset($cert_old_parsed['custom_validTo']) ? htmlspecialchars($cert_old_parsed['custom_validTo']) : date("Y-m-d H:i:s", $cert_old_parsed['validTo_time_t']); ?></td>
+			<td class='text-<?php print $cert_old_days_class; ?>'><?php print isset($cert_old_parsed['custom_validTo']) ? htmlspecialchars($cert_old_parsed['custom_validTo']) : date("Y-m-d H:i:s", $cert_old_parsed['validTo_time_t']); ?></td>
 		</tr>
 
 		<tr>
