@@ -100,7 +100,7 @@ try {
 			$tenant = $Database->getObject("tenants", $tenant_id);
 
 			// tenant recipients
-			$to = array_values(array_filter(
+			$email_to_tenant_recipents = array_values(array_filter(
 				array_map('trim', explode(";", str_replace(",", ";", $tenant->recipients))),
 				fn($e) => $Common->validate_mail($e)));
 
@@ -126,7 +126,7 @@ try {
 
 			// initialize per-recipient content: $content[$email] = [rows]
 			$content = [];
-			foreach ($to as $email) {
+			foreach ($email_to_tenant_recipents as $email) {
 				$content[$email] = $use_list ? $header_list : $header_table;
 			}
 
@@ -183,7 +183,7 @@ try {
 
 	                // add to tenant recipients
 	                $host_rows = $use_list ? $list_rows : $table_rows;
-	                foreach ($to as $email) {
+	                foreach ($email_to_tenant_recipents as $email) {
 	                	array_push($content[$email], ...$host_rows);
 	                }
 
@@ -205,18 +205,28 @@ try {
 
 	        	// close tables
 				foreach ($content as $email => &$rows) {
-					if (!$use_list && in_array($email, $to)) { $rows[] = "</tbody>"; }
+					if (!$use_list && in_array($email, $email_to_tenant_recipents)) { $rows[] = "</tbody>"; }
 					$rows[] = "</table>";
 				}
 				unset($rows);
 
 				// send to tenant recipients together
-				$Mail->send ("Telemach php-ssl :: changed certificates [".$tenant->name."]", $to, [], [], implode("\n", $content[$to[0]]), false);
+				$Mail->send ("Telemach php-ssl :: changed certificates [".$tenant->name."]", $email_to_tenant_recipents, [], [], implode("\n", $content[$email_to_tenant_recipents[0]]), false);
 
 				// send to per-host recipients individually, with tenant recipients CC'd
 		        foreach ($content as $email => $rows) {
-		        	if (!in_array($email, $to)) {
-		                $Mail->send ("Telemach php-ssl :: changed certificates [".$tenant->name."]", [$email], $to, [], implode("\n", $rows), false);
+		        	if (!in_array($email, $email_to_tenant_recipents)) {
+						// print "--------\n";
+						// print "Title: Telemach php-ssl :: changed certificates [".$tenant->name."]\n";
+						// print "Recipient:\n";
+						// print_r($email);
+						// print "Content:\n";
+						// print_r($rows);
+						// print "\n--------\n\n\n";
+
+
+		                // $Mail->send ("Telemach php-ssl :: changed certificates [".$tenant->name."]", [$email], $email_to_tenant_recipents, [], implode("\n", $rows), false);
+		                $Mail->send ("Telemach php-ssl :: changed certificates", [$email], [], $email_to_tenant_recipents, implode("\n", $rows), false);
 		        	}
 		        }
 	    	}

@@ -289,7 +289,7 @@ class mailer extends Common
 				}
 			}
 			if (is_array($bcc)) {
-				foreach ($cc as $t) {
+				foreach ($bcc as $t) {
 					$this->Php_mailer->addBCC($t);
 				}
 			}
