@@ -127,7 +127,7 @@ else {
 	print "	<td>".$log_nice->date."</td>";
 	print "</tr>";
 
-	if($User->get_user_permissions (3) && (strlen($log->json_object_old)>0 || strlen($log->json_object_new)>0) && $log->action!=="delete" && $log->action!=="add" && $log->action!=="refresh") {
+	if($User->get_user_permissions (3) && (strlen($log->json_object_old)>0 || strlen($log->json_object_new)>0) && $log->action!=="delete" && $log->action!=="add" && $log->action!=="refresh" && $log->action!=="notification") {
 		print "<tr>";
 		print "	<th>"._("Change")."</th>";
 		print "	<td>";
@@ -158,7 +158,7 @@ else {
 
 	print '<div></div>';
 
-	if($User->get_user_permissions (3) && (strlen($log->json_object_old)>0 || strlen($log->json_object_new)>0) ) {
+	if($User->get_user_permissions (3) && (strlen($log->json_object_old)>0 || strlen($log->json_object_new)>0) && $log->action!=="notification") {
 
 		// old
 		if (strlen($log->json_object_old)>0) {
@@ -196,6 +196,49 @@ else {
 			print "</div>";
 			print "</div>";
 		}
+	}
+
+
+	// email notification
+	if($log->action==="notification") {
+
+
+		print "<div class='col-xs-12 col-sm-12 col-md-6 col-lg-6' style='margin-top:10px;'>";
+		print "	<div class='card'>";
+
+		print " <div class='card-header'>"._("Email")."</div>";
+
+		print " <div class='card-content'>";
+
+		$maildata = json_decode($log->json_object_new);
+
+		print "<table class='table table-borderless table-md table-hover table-zones-details'>";
+
+		print "<tr>";
+		print "	<th>"._("Title")."</th>";
+		print "	<td>".$maildata->title."</td>";
+		print "</tr>";
+
+		print "<tr>";
+		print "	<th>"._("Email sent to")."</th>";
+		print "	<td>".implode("<br>", json_decode($log->json_object_old))."</td>";
+		print "</tr>";
+
+
+		print "<tr>";
+		print "	<th>"._("Content")."</th>";
+		print "	<td><div style='padding:10px;margin:0px;background:white;border-radius:6px'>".implode("\n",$maildata->data)."</div></td>";
+		print "</tr>";
+
+
+
+		print "</table>";
+
+		print "</div>";
+		print "</div>";
+		print "</div>";
+
+
 	}
 
 	print "</div>";

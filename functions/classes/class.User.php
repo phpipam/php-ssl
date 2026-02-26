@@ -84,7 +84,7 @@ class User extends Common
 	 * @method get_all
 	 * @return [type]
 	 */
-	public function get_all()
+	public function get_all($index = "id")
 	{
 		// fetch
 		try {
@@ -103,7 +103,7 @@ class User extends Common
 		if (sizeof($users) > 0) {
 			$users_new = [];
 			foreach ($users as $t) {
-				$users_new[$t->id] = $t;
+				$users_new[$t->{$index}] = $t;
 			}
 			$users = $users_new;
 		}

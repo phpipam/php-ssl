@@ -14,7 +14,6 @@ $Common   = new Common ();
 // $URL      = new URL ();
 $Database = new Database_PDO ();
 $Config   = new Config ($Database);
-$Log 	  = new Log ($Database);
 
 # script can only be run from cli
 if(php_sapi_name()!="cli") {
@@ -79,6 +78,11 @@ try {
 
 		// mail diff
 		if(sizeof($changed_hosts)>0) {
+
+			// all users
+			$User = new User ($Database);
+			$all_users = $User->get_all ("email");
+
 			// processed flag - we need it in case issuer is ignored !
 			$processed = 0;
 
@@ -213,20 +217,18 @@ try {
 				// send to tenant recipients together
 				$Mail->send ("Telemach php-ssl :: changed certificates [".$tenant->name."]", $email_to_tenant_recipents, [], [], implode("\n", $content[$email_to_tenant_recipents[0]]), false);
 
+		        // Log
+		        $Log = new Log ($Database);
+		        // Log
+		        $Log->write ("users", NULL, $tenant->id, null, "notification", true, "Certificate change notification email sent to all tenant admins for certificate change", json_encode($email_to_tenant_recipents), json_encode(["title"=>"Telemach php-ssl :: changed certificates [".$tenant->name."]", "data"=>$content[$email_to_tenant_recipents[0]]]), false);
+
 				// send to per-host recipients individually, with tenant recipients CC'd
 		        foreach ($content as $email => $rows) {
 		        	if (!in_array($email, $email_to_tenant_recipents)) {
-						// print "--------\n";
-						// print "Title: Telemach php-ssl :: changed certificates [".$tenant->name."]\n";
-						// print "Recipient:\n";
-						// print_r($email);
-						// print "Content:\n";
-						// print_r($rows);
-						// print "\n--------\n\n\n";
-
-
 		                // $Mail->send ("Telemach php-ssl :: changed certificates [".$tenant->name."]", [$email], $email_to_tenant_recipents, [], implode("\n", $rows), false);
 		                $Mail->send ("Telemach php-ssl :: changed certificates", [$email], [], $email_to_tenant_recipents, implode("\n", $rows), false);
+		                // Log
+		                $Log->write ("users", $all_users[$email]->id, $tenant->id, null, "notification", true, "Certificate change notification email sent to user ".$all_users[$email]->name." (".$email.")", json_encode([$email]), json_encode(["title"=>"Telemach php-ssl :: changed certificates", "data"=>$rows]), false);
 		        	}
 		        }
 	    	}

@@ -28,6 +28,8 @@ class URL extends Common
 		$this->process_path(@$uri['path']);
 		// validate
 		$this->validate_requested_uri();
+		// search
+		$this->process_search_string();
 	}
 
 	/**
@@ -106,6 +108,17 @@ class URL extends Common
 				$this->errors[] = "Invalid URI string";
 				$this->result_die();
 			}
+		}
+	}
+
+	/**
+	 * Remove if pasted back from email
+	 * @method process_search_string
+	 * @return void
+	 */
+	private function process_search_string () {
+		if (array_key_exists("search", $this->uri_params)) {
+			$this->uri_params['search'] = str_replace('%E2%80%8B', '', $this->uri_params['search']);
 		}
 	}
 

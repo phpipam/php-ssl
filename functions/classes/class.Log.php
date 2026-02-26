@@ -51,7 +51,8 @@ class Log extends Common
 		"login",
 		"truncate",
 		"rollback",
-		"sync"
+		"sync",
+		"notification"
 	];
 
 	/**
@@ -332,7 +333,7 @@ class Log extends Common
 		// object
 		$l->object = $this->format_log_object($l->object, $user->href, $l->id);
 		// diff
-		$l->diff = $this->format_log_diff($l->json_object_old, $l->json_object_new, $l->id);
+		$l->diff = $this->format_log_diff($l->json_object_old, $l->json_object_new, $l->id, $l->action);
 		// action
 		$l->action = $this->format_log_action_badge($l->action);
 		// id - check if unread
@@ -381,8 +382,11 @@ class Log extends Common
 	 * @param  int $logid
 	 * @return string
 	 */
-	public function format_log_diff($old = "", $new = "", $logid = 0)
+	public function format_log_diff($old = "", $new = "", $logid = 0, $action = "")
 	{
+		// notification
+		if ($action=="notification") return "";
+		// other
 		return strlen($old) > 0 || strlen($new) > 0 ?
 			"<a class='btn btn-sm' data-bs-toggle='modal' data-bs-target='#modal1' href='/route/modals/logs/show.php?id=" . $logid . "'><svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='icon icon-tabler icons-tabler-outline icon-tabler-zoom-code'><path stroke='none' d='M0 0h24v24H0z' fill='none'/><path d='M3 10a7 7 0 1 0 14 0a7 7 0 1 0 -14 0' /><path d='M21 21l-6 -6' /><path d='M8 8l-2 2l2 2' /><path d='M12 8l2 2l-2 2' /></svg> Show</a>"
 			: "";
@@ -415,15 +419,17 @@ class Log extends Common
 			case 'login':
 				return "<span class='badge bg-info-lt'>" . _("Login") . "</span>";
 			case 'edit':
-				return "<span class='badge bg-info-lt'>" . _("Edit") . "</span>";
+				return "<span class='badge bg-orange-lt'>" . _("Edit") . "</span>";
 			case 'truncate':
-				return "<span class='badge bg-orange-lt'>" . _("Truncate") . "</span>";
+				return "<span class='badge bg-red-lt'>" . _("Truncate") . "</span>";
 			case 'refresh':
-				return "<span class='badge bg-teal-lt'>" . _("Refresh") . "</span>";
+				return "<span class='badge bg-info-lt'>" . _("Refresh") . "</span>";
 			case 'sync':
-				return "<span class='badge bg-teal-lt'>" . _("Zone sync") . "</span>";
+				return "<span class='badge bg-info-lt'>" . _("Zone sync") . "</span>";
 			case 'rollback':
 				return "<span class='badge bg-purple-lt'>" . _("Rollback") . "</span>";
+			case 'notification':
+				return "<span class='badge bg-info-lt'>" . _("Notification") . "</span>";
 			default:
 				return "<span class='badge'>" . $action . "</span>";
 		}
