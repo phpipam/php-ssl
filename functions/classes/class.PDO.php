@@ -374,7 +374,7 @@ abstract class DB
      * @param mixed $tableName
      * @param mixed $obj
      * @param string $primarykey (default: 'id')
-     * @param mixed $primarykey2 (default: null)    
+     * @param mixed $primarykey2 (default: null)
      * @return bool
      */
     public function updateObject($tableName, $obj, $primarykey = 'id', $primarykey2 = null)

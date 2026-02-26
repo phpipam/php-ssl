@@ -115,9 +115,47 @@ The `pkey` table stores public keys separately so certificates sharing the same 
 
 `config.php` provides global defaults. The `Config` class reads the `config` DB table and composes per-tenant overrides. This means some settings (like `$expired_days`) can differ per tenant at runtime, even though `config.php` defines the baseline.
 
+### Global Variables in Route Files
+
+After `functions/autoload.php` runs, all route files and modal handlers have these globals in scope:
+
+| Variable | Type | Description |
+|----------|------|-------------|
+| `$Database` | `Database_PDO` | DB abstraction layer |
+| `$User` | `User` | Auth class; call `$User->validate_session()` to require login |
+| `$user` | `stdClass` | Current user row (`$user->tenant_id`, `$user->admin`, `$user->id`) |
+| `$_params` | `array` | Parsed URL: keys `tenant`, `route`, `app`, `id1` |
+| `$SSL` | `SSL` | SSL scanner |
+| `$Certificates` | `Certificates` | Certificate CRUD |
+| `$Zones` | `Zones` | Zone/host management |
+| `$Tenants` | `Tenants` | Tenant management |
+| `$Log` | `Log` | Audit logging |
+| `$Modal` | `Modal` | Modal HTML builder |
+| `$Result` | `Result` | JSON/alert response formatter |
+| `$Config` | `Config` | Per-tenant config overrides |
+| `$Cron` | `Cron` | Cron orchestration |
+
+### Class Inheritance
+
+`Validate` ← `Common` ← `SSL`, `User`, `URL`, `Config`, `Zones`
+
+All domain classes inherit shared utilities from `Common` (permalink generation, error handling, etc.), which itself extends `Validate` (input sanitization).
+
 ### Frontend
 
 Tabler 1.4.0 (Bootstrap-based admin UI) + jQuery 3.6.0 + Bootstrap-table 1.26.0. All JS/CSS libraries are bundled locally in `js/` and `css/`. Custom JS is in `js/magic.js`. Dark/light theme toggle is built in (stored in `$_SESSION['theme']`).
+
+**CSS/JS paths** are hardcoded as absolute paths (`/css/`, `/js/`) in `index.php` — they are not relative to `BASE`. If the app is not at the web root, the web server must be configured to serve these paths from the expected absolute locations.
+
+**Two modal sizes** are available globally:
+- `#modal1` — standard width (default when no `data-bs-target` is set)
+- `#modal2` — extra-large (`modal-xl`) for wide content; trigger with `data-bs-target="#modal2"`
+
+**AJAX data endpoints** in `route/ajax/` serve JSON rows for Bootstrap Table's server-side pagination (e.g., `route/ajax/certificates.php`, `route/ajax/zone-hosts.php`, `route/ajax/logs.php`). Add new bootstrap-table AJAX sources here.
+
+### Database Schema Management
+
+There is no migration system. Schema changes must be applied manually to the database and reflected in `db/SCHEMA.sql`. The only schema file is `db/SCHEMA.sql` (a full dump, not incremental migrations).
 
 ### Configuration (`config.php`)
 
