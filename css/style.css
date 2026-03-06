@@ -243,6 +243,13 @@ color: color-mix(in srgb,var(--tblr-cyan) calc(var(--tblr-text-opacity,1) * 100%
 background-color: color-mix(in srgb,var(--tblr-cyan-lt) calc(var(--tblr-bg-opacity,1) * 100%),transparent)!important;
 border-color: color-mix(in srgb,var(--tblr-cyan-lt) calc(var(--tblr-bg-opacity,1) * 100%),transparent)!important;
 
+
+/*     background: var(--tblr-bg-forms);
+    border: 0px solid var(--tblr-info);
+    color: var(--tblr-info);
+    color: var(--tblr-body-color);
+    font-size: 14px; */
+
 }
 .circle-text {
   font-size: 12px;
