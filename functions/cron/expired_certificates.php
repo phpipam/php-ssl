@@ -109,11 +109,12 @@ try {
                 // table-style section header rows
                 $table_section_rows = [
                     "<tr>",
-                    "  <td colspan='5' style='padding-top:20px;padding-bottom: 20px;'>".$Mail->font_title._($title)."</font></td>",
+                    "  <td colspan='6' style='padding-top:20px;padding-bottom: 20px;'>".$Mail->font_title._($title)."</font></td>",
                     "</tr>",
                     "<tr>",
                     "  <th style='border-bottom:2px solid #003551; text-align:left'>".$Mail->font_norm._("Certificate")."</font></th>",
                     "  <th style='border-bottom:2px solid #003551; text-align:left'>".$Mail->font_norm._("Serial")." / "._("Issuer")."</font></th>",
+                    "  <th style='border-bottom:2px solid #003551; text-align:left'>".$Mail->font_norm._("Zone")."</font></th>",
                     "  <th style='border-bottom:2px solid #003551; text-align:left'>".$Mail->font_norm._("Valid untill")."</font></th>",
                     "  <th style='border-bottom:2px solid #003551; text-align:center'>".$Mail->font_norm._("Expires")."</font></th>",
                     "  <th style='border-bottom:2px solid #003551; text-align:left'>".$Mail->font_norm._("Hosts")."</font></th>",
@@ -165,6 +166,7 @@ try {
                     $cert_parsed['subject']['CN']                = $Mail->prevent_linkable_text($cert_parsed['subject']['CN']);
                     $cert_parsed['extensions']['subjectAltName'] = $Mail->prevent_linkable_text($cert_parsed['extensions']['subjectAltName']);
                     $cert_parsed['issuer']['O']                  = $Mail->prevent_linkable_text($cert_parsed['issuer']['O']);
+                    $zone_name                                   = $Mail->prevent_linkable_text($c->zone_name ?? "/");
 
                     $td_style_title = "vertical-align:top;padding:1px 5px;white-space:nowrap;padding-left:0px;padding-bottom: 7px;padding-top:20px;";
                     $td_style       = "border-left:1px solid #ddd;vertical-align:top;padding:1px 5px;white-space:nowrap;padding-left:10px;";
@@ -174,6 +176,7 @@ try {
                         "<tr>",
                         "  <td style='border-bottom:1px solid #ddd;vertical-align:top;padding:2px 5px;white-space:nowrap;padding-left: 5px;'>".$Mail->font_bold.$cert_parsed['subject']['CN']."</font></td>",
                         "  <td style='border-bottom:1px solid #ddd;vertical-align:top;padding:2px 5px;'><strong><a href='https://".$mail_sender_settings->url."/".$tenant->href."/certificates/".$cert_parsed['serialNumber']."/'>".$Mail->font_bold.$cert_parsed['serialNumberHex']."</strong></font></a><br>".$Mail->font_norm.$cert_parsed['issuer']['O']."</font></td>",
+                        "  <td style='border-bottom:1px solid #ddd;vertical-align:top;padding:2px 5px;white-space:nowrap;padding-left: 5px;'>".$Mail->font_norm.$zone_name."</font></td>",
                         "  <td style='border-bottom:1px solid #ddd;vertical-align:top;padding:2px 5px;white-space:nowrap;padding-left: 5px;'>".$Mail->font_norm.str_replace(" ", "<br>", $cert_parsed['custom_validTo'])."</font></td>",
                         "  <td style='border-bottom:1px solid #ddd;vertical-align:top;padding:2px 5px;'>".$Mail->font_norm."<div style='color:$color;border-radius:4px;margin-top:5px;padding:2px 6px;border:1px solid $color;background:$color_bg;text-align: center;white-space:nowrap;'>".$cert_parsed['custom_validDays']." "._("days")."</div></font></td>",
                         "  <td style='border-bottom:1px solid #ddd;vertical-align:top;padding:2px 5px;'>".$Mail->font_ligh.implode("<br>", $all_hosts)."</font></td>",
@@ -184,6 +187,7 @@ try {
                     $list_rows = [
                         "<tr><td style='$td_style_title'>".$Mail->font_bold.$cert_parsed['subject']['CN']."</font></td></tr>",
                         "<tr><td style='$td_style'>".$Mail->font_norm._("Subject").": ".$cert_parsed['subject']['CN']."</font></td></tr>",
+                        "<tr><td style='$td_style'>".$Mail->font_norm._("Zone").": ".$zone_name."</font></td></tr>",
                         "<tr><td style='$td_style'>".$Mail->font_norm._("Status").": <span style='color:$color;padding:0px;margin:0px;'>".$status." (".$cert_parsed['custom_validDays']." "._("days").")</span> </font></td></tr>",
                         "<tr><td style='$td_style'>".$Mail->font_norm._("Issuer").": ".$cert_parsed['issuer']['O']."</font></td></tr>",
                         "<tr><td style='$td_style'>".$Mail->font_norm._("Serial").": <a href='https://".$mail_sender_settings->url."/".$tenant->href."/certificates/".$cert_parsed['serialNumber']."/' style='text-decoration:none;color:#333'>".$cert_parsed['serialNumberHex']."</a></font></td></tr>",
