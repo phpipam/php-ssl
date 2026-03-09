@@ -68,7 +68,7 @@ if($num>50) { $num = "50+"; }
 				}
 			}
 			else {
-				print "<div class='alert alert-info'>"._("No logs available")."</div>";
+				print "<div class='alert alert-info' style='margin:10px;'>"._("No logs available")."</div>";
 			}
 			?>
 
