@@ -18,6 +18,10 @@ if(!array_key_exists($_params['route'], $url_items)) {
 
 # include route
 if(file_exists(dirname(__FILE__)."/".$_params['route']."/index.php")) {
+	// breadcrumbs
+	print "<nav class='container-fluid pt-2 pb-0'>";
+	$Common->print_breadcrumbs();
+	print "</nav>";
 	include ($_params['route']."/index.php");
 	// set url
 	$_SESSION['url'] = "/".$_params['tenant']."/".$_params['route']."/";

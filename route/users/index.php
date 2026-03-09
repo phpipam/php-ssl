@@ -99,7 +99,7 @@ else {
 				print '
 				<div class="col col-12 col-sm-6 col-md-4 col-lg-4 col-xl-3">
 				<div class="card text-center" style="padding:0px;padding-top:10px;">
-                    <h3 class="m-0 mb-1"><a href="/'.$u_tenant_href.'/users/'.$u_id.'/" style="color:inherit">'.htmlspecialchars($u->name, ENT_QUOTES, 'UTF-8').'</a></h3>
+                    <h3 class="m-0 mb-1"><a href="/'.$u_tenant_href.'/users/'.htmlspecialchars($u->email, ENT_QUOTES, 'UTF-8').'/" style="color:inherit">'.htmlspecialchars($u->name, ENT_QUOTES, 'UTF-8').'</a></h3>
                     <div class="text-secondary">'.htmlspecialchars($u->email, ENT_QUOTES, 'UTF-8').'</div>
                     <div class="mt-2">
                       <span class="badge badge-outline text-red">'._($User->get_permissions_nice($u->permission)).'</span>

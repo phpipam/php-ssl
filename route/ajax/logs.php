@@ -119,7 +119,7 @@ try {
 				$u_obj = $users[$l->user];
 				$u_tenant_href = isset($all_tenants[$u_obj->t_id]) ? $all_tenants[$u_obj->t_id]->href : null;
 				$l->user = $u_tenant_href
-					? "<a href='/".$u_tenant_href."/users/".(int)$u_obj->id."/'>" . htmlspecialchars($u_obj->name, ENT_QUOTES, 'UTF-8') . "</a>"
+					? "<a href='/".$u_tenant_href."/users/".$u_obj->email."/'>" . htmlspecialchars($u_obj->name, ENT_QUOTES, 'UTF-8') . "</a>"
 					: htmlspecialchars($u_obj->name, ENT_QUOTES, 'UTF-8');
 			} else {
 				$l->user = "System";

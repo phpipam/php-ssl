@@ -19,6 +19,88 @@ class Common extends Validate
 	}
 
 	/**
+	 * Prints a Tabler breadcrumb nav based on the current $_params.
+	 * Last (active) item is not clickable; all preceding items are linked.
+	 *
+	 * URL structure: /{tenant}/{route}/{app}/{id1}/
+	 *
+	 * @method print_breadcrumbs
+	 * @return void
+	 */
+	public function print_breadcrumbs(): void
+	{
+		global $_params;
+
+		$tenant = $_params['tenant'] ?? '';
+		$route  = $_params['route']  ?? 'dashboard';
+		$app    = (isset($_params['app'])  && strlen($_params['app'])  > 0) ? $_params['app']  : null;
+		$id1    = (isset($_params['id1'])  && strlen($_params['id1'])  > 0) ? $_params['id1']  : null;
+
+		// Human-readable route names
+		$route_labels = [
+			'dashboard'    => _('Dashboard'),
+			'zones'        => _('Zones'),
+			'certificates' => _('Certificates'),
+			'scanning'     => _('Scanning'),
+			'logs'         => _('Logs'),
+			'users'        => _('Users'),
+			'tenants'      => _('Tenants'),
+			'user'         => _('User'),
+			'search'       => _('Search'),
+			'fetch'        => _('Fetch'),
+			'transform'    => _('Transform'),
+			'ignored'      => _('Ignored issuers'),
+		];
+
+		// Human-readable app names for specific route/app combinations
+		$sub_labels = [
+			'scanning' => ['agents' => _('Scan agents'), 'portgroups' => _('Port groups'), 'cron' => _('Cron jobs')],
+			'user'     => ['profile' => _('Profile')],
+		];
+
+		// Build items: [label, url]  — url===null means active/last (not clickable)
+		$items = [];
+
+		if ($route === 'dashboard') {
+			$items[] = [null];
+		} else {
+			$items[] = [_(''), "/{$tenant}/dashboard/"];
+
+			$route_label = $route_labels[$route] ?? ucfirst($route);
+
+			if ($app === null) {
+				$items[] = [$route_label, null];
+			} else {
+				$items[] = [$route_label, "/{$tenant}/{$route}/"];
+
+				$app_label = isset($sub_labels[$route][$app])
+					? $sub_labels[$route][$app]
+					: htmlspecialchars($app, ENT_QUOTES, 'UTF-8');
+
+				if ($id1 === null) {
+					$items[] = [$app_label, null];
+				} else {
+					$items[] = [$app_label, "/{$tenant}/{$route}/{$app}/"];
+					$items[] = [htmlspecialchars($id1, ENT_QUOTES, 'UTF-8'), null];
+				}
+			}
+		}
+
+		// Render — right-aligned, links in text-secondary, active item unstyled
+		$html = "<ol class='breadcrumb justify-content-end' aria-label='breadcrumbs'>\n";
+		foreach ($items as [$label, $url]) {
+			if ($url !== null) {
+				$html .= "  <li class='breadcrumb-item'><a class='text-secondary' href='" . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . "'>{$label}</a></li>\n";
+			} else {
+				$html .= "  <li class='breadcrumb-item active' aria-current='page'>{$label}</li>\n";
+			}
+		}
+		$html .= "</ol>\n";
+
+		print $html;
+	}
+
+	/**
 	 * Creates permalink
 	 * @method create_permalink
 	 * @param  string $title

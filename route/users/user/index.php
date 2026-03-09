@@ -4,16 +4,11 @@
 $User->validate_session();
 
 # user id from URL
-$view_user_id = isset($_params['app']) ? (int)$_params['app'] : 0;
+// $view_user_id = isset($_params['app']) ? (int)$_params['app'] : 0;
 
-if ($view_user_id < 1) {
-	print '<div class="page-header"><h2 class="page-title">'._("Invalid user").'</h2><hr></div>';
-	$Result->show("danger", _("Invalid user ID."), false);
-	return;
-}
 
 # fetch user
-$view_user = $Database->getObject("users", $view_user_id);
+$view_user = $Database->getObjectQuery("select * from users where email = ?", [$_params['app']]);
 
 if ($view_user === null) {
 	print '<div class="page-header"><h2 class="page-title">'._("Invalid user").'</h2><hr></div>';
