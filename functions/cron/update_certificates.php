@@ -74,7 +74,7 @@ try {
 		$Database = new Database_PDO ();
 
 		// get changed based on execution time !
-        $changed_hosts = $Database->getObjectsQuery("select *,h.id as id,a.name as agname,z.t_id as t_id from zones as z,hosts as h, certificates as c, agents as a where h.z_id = z.id and h.c_id = c.id and z.agent_id = a.id and h.last_change = ? and h.mute = 0 and z.t_id = ?", [$execution_time, $tenant_id]);
+        $changed_hosts = $Database->getObjectsQuery("select *,h.id as id,a.name as agname,z.t_id as t_id,z.name as zone_name from zones as z,hosts as h, certificates as c, agents as a where h.z_id = z.id and h.c_id = c.id and z.agent_id = a.id and h.last_change = ? and h.mute = 0 and z.t_id = ?", [$execution_time, $tenant_id]);
 
 		// mail diff
 		if(sizeof($changed_hosts)>0) {
@@ -120,6 +120,7 @@ try {
 				"<table border='0' cellpadding='3' cellspacing='0'>",
 				"<thead>",
 				"  <th style='border-bottom:2px solid #003551; text-align:left'>".$Mail->font_norm._("Hostname")." / "._("IP")."</font></th>",
+				"  <th style='border-bottom:2px solid #003551; text-align:left'>".$Mail->font_norm._("Zone")."</font></th>",
 				"  <th style='border-bottom:2px solid #003551; text-align:left'>".$Mail->font_norm._("Certificate")."</font></th>",
 				"  <th style='border-bottom:2px solid #003551; text-align:left'>".$Mail->font_norm._("Serial")." / "._("Issuer")."</font></th>",
 				"  <th style='border-bottom:2px solid #003551; text-align:left'>".$Mail->font_norm._("Valid to")."</font></th>",
@@ -155,6 +156,7 @@ try {
 					$cert_parsed['subject']['CN']                = $Mail->prevent_linkable_text($cert_parsed['subject']['CN']);
 					$cert_parsed['extensions']['subjectAltName'] = $Mail->prevent_linkable_text($cert_parsed['extensions']['subjectAltName']);
 					$cert_parsed['issuer']['O']                  = $Mail->prevent_linkable_text($cert_parsed['issuer']['O']);
+					$zone_name                                   = $Mail->prevent_linkable_text($c->zone_name ?? "/");
 
 	                $td_style_title = "vertical-align:top;padding:1px 5px;white-space:nowrap;padding-left:0px;padding-bottom: 7px;padding-top:20px;";
 	                $td_style       = "border-left:1px solid #ddd;vertical-align:top;padding:1px 5px;white-space:nowrap;padding-left:10px;";
@@ -164,6 +166,7 @@ try {
 	                $table_rows = [
 	                	"<tr>",
 	                	"  <td style='border-bottom:1px solid #ddd;vertical-align:top;'>".$Mail->font_bold.$c->hostname."<br>".$Mail->font_ligh.$c->ip."</font></td>",
+	                	"  <td style='border-bottom:1px solid #ddd;vertical-align:top;'>".$Mail->font_norm.$zone_name."</font></td>",
 	                	"  <td style='border-bottom:1px solid #ddd;vertical-align:top;'>".$Mail->font_norm.$cn_display."</font></td>",
 	                	"  <td style='border-bottom:1px solid #ddd;vertical-align:top;padding:2px 5px;'><strong><a href='https://".$mail_sender_settings->url."/".$tenant->href."/certificates/".$cert_parsed['serialNumber']."/'>".$Mail->font_bold.$cert_parsed['serialNumberHex']."</strong></font></a><br>".$Mail->font_norm.$cert_parsed['issuer']['O']."</font></td>",
 	                	"  <td style='border-bottom:1px solid #ddd;vertical-align:top;'>".$Mail->font_norm.str_replace(" ","<br>",$cert_parsed['custom_validTo'])."</font></td>",
@@ -175,6 +178,7 @@ try {
 	                $list_rows = [
 		                "<tr><td style='$td_style_title'>".$Mail->font_bold.$c->hostname."</font></td></tr>",
 		                "<tr><td style='$td_style'>".$Mail->font_norm._("IP").": ".$c->ip."</font></td></tr>",
+		                "<tr><td style='$td_style'>".$Mail->font_norm._("Zone").": ".$zone_name."</font></td></tr>",
 		                "<tr><td style='$td_style'>".$Mail->font_norm._("Subject").":</font> ".$Mail->font_bold.$cert_parsed['subject']['CN']."</font></td></tr>",
 		                "<tr><td style='$td_style'>".$Mail->font_norm._("Status").": <span style='color:$color;padding:0px;margin:0px;'>".$status." (".$cert_parsed['custom_validDays']." "._("days").")</span></font></td></tr>",
 		                "<tr><td style='$td_style'>".$Mail->font_norm._("Issuer").": ".$cert_parsed['issuer']['O']."</font></td></tr>",
