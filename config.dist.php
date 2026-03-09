@@ -91,5 +91,6 @@ $mail_sender_settings            = new StdClass ();
 $mail_sender_settings->mail_from = "SSL Certificate check";
 $mail_sender_settings->mail_addr = "noreply@mydomain.com";
 $mail_sender_settings->email     = "php-ssl@ydomain.com";		// help - mail footer
+$mail_sender_settings->www       = "https://mywebsite.com";
 $mail_sender_settings->bcc       = "";							// always BCC
 $mail_sender_settings->url       = "myurl";

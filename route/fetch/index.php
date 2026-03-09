@@ -46,7 +46,7 @@ $tenants = $Tenants->get_all ();
 				if($user->admin=="1")
 				$all_agents = $Database->getObjectsQuery("select * from agents");
 				else
-				$all_agents = $Database->getObjectsQuery("select * from agents where t_id = ?", [$user->t_id]);
+				$all_agents = $Database->getObjectsQuery("select * from agents where t_id = ? or id = 1", [$user->t_id]);
 
 				// print
 				if(is_array($all_agents)) {
