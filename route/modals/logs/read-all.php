@@ -9,7 +9,7 @@ try {
 	# functions
 	require('../../../functions/autoload.php');
 	# validate user session
-	$User->validate_session (true, true, true);
+	$User->validate_session (false, false, true);
 
 	// validate numeric
 	if(!is_numeric($_GET['id'])) {

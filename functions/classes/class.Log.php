@@ -262,7 +262,10 @@ class Log extends Common
 	{
 		try {
 			// fetch
+			if ($user->admin == "1")
 			$logs = $this->Database->getObjectQuery("select count(*) as cnt from logs where public = 1 and id > ?", $user->notif_id);
+			else
+			$logs = $this->Database->getObjectQuery("select count(*) as cnt from logs where public = 1 and id > ? and object_t_id = ?", $user->notif_id, $user->t_id);
 			// return
 			return is_null($logs->cnt) ? 0 : $logs->cnt;
 
