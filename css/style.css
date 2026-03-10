@@ -106,6 +106,12 @@ table.table-cert-details td hr {
 table.table-assigned-hosts td {
     padding:.1rem .25rem;
 }
+table.table-extensions {
+    margin-top: 30px;
+}
+table.table-extensions td {
+    font-size: var(--tblr-body-font-size);
+}
 
 a,a:hover {
 /*     color: var(--tblr-info); */

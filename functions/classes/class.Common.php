@@ -153,6 +153,54 @@ function php_feature_missing($required_extensions = null, $required_functions = 
 
 
 /**
+ * Check if required php features are missing
+ * @param  mixed $required_extensions
+ * @param  mixed $required_functions
+ * @return string|bool
+ */
+function php_feature_missing_all($required_extensions = null, $required_functions = null)
+{
+
+	$errors = [];
+
+	if (is_array($required_extensions)) {
+		foreach ($required_extensions as $ext) {
+			if (extension_loaded($ext))
+				continue;
+
+			$errors[] = $ext;
+		}
+	}
+
+	return $errors;
+}
+
+
+/**
+ * Returns a short purpose description for a known PHP extension used by this project.
+ *
+ * @param  string $extension  Extension name (e.g. 'curl', 'openssl')
+ * @return string|null        Purpose string, or null if extension is unknown
+ */
+function php_extension_purpose(string $extension): ?string
+{
+	$purposes = [
+		'curl'      => 'Remote agent communication via HTTP API calls',
+		'openssl'   => 'SSL/TLS certificate scanning, parsing and fingerprinting',
+		'pcntl'     => 'Multi-process forking for parallel host scanning',
+		'posix'     => 'Process management (PID, signals, FIFOs) companion to pcntl',
+		'pdo'       => 'Database abstraction layer (prepared statements, transactions)',
+		'pdo_mysql' => 'MySQL driver for PDO database connectivity',
+		'session'   => 'User authentication sessions and theme preference storage',
+		'hash'      => 'Password hashing (SHA-512) and CSRF token generation',
+		'gettext'   => 'Internationalisation — translates UI strings via _()',
+	];
+
+	return $purposes[strtolower($extension)] ?? null;
+}
+
+
+/**
  * Cronjob helpr function for scanning via forked process
  *
  * @method scan_host
