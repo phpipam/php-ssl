@@ -211,10 +211,11 @@ try {
 	        // added for ignored certs check
 	        if ($processed>0) {
 
-	        	// close tables
+	        	// close tables + footer
 				foreach ($content as $email => &$rows) {
 					if (!$use_list && in_array($email, $email_to_tenant_recipents)) { $rows[] = "</tbody>"; }
 					$rows[] = "</table>";
+					$rows[] = "<br><br>".$Mail->font_norm."Visit <a href='".$mail_sender_settings->www."' style='color:#003551;'>".$mail_sender_settings->www."</a></font>";
 				}
 				unset($rows);
 

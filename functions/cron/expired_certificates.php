@@ -217,9 +217,10 @@ try {
             }
         }
 
-        // close tables
+        // close tables + footer
         foreach ($content as $email => &$rows) {
             $rows[] = "</table>";
+            $rows[] = "<br><br>".$Mail->font_norm."Visit <a href='".$mail_sender_settings->www."' style='color:#003551;'>".$mail_sender_settings->www."</a></font>";
         }
         unset($rows);
 

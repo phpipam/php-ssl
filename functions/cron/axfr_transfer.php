@@ -99,9 +99,9 @@ try {
 				}
 
 				// loop and save
-				foreach ($items as $type=>$items) {
+				foreach ($items as $type=>$items1) {
 					$content[] = $Mail->font_title._($type)." for zone ".$zone->name."</font>:<br><br>";
-					foreach ($items as $item) {
+					foreach ($items1 as $item) {
 						$content[] = $Mail->font_norm.$item."</font><br>";
 					}
 					$content[] = "<br><hr style='border-bottom:none;border-top:1px solid #ccc;'>";
@@ -110,6 +110,9 @@ try {
 				// recipients
 				$to = explode(";", str_replace(",",";",$tenant->recipients));
 				$to = ["miha.petkovsek@telemach.si"];
+
+				// footer
+				$content[] = "<br><br>".$Mail->font_norm."Visit <a href='".$mail_sender_settings->www."' style='color:#003551;'>".$mail_sender_settings->www."</a></font>";
 
 				// send
 				$Mail->send ("Telemach php-ssl :: DNS changed hosts [".$tenant->name."]", $to, [], [], implode("\n", $content), false);
@@ -126,5 +129,3 @@ try {
 	$Common->errors[] = $e->getMessage();
 	$Common->result_die ();
 }
-
-
