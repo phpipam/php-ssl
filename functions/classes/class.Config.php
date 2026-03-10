@@ -39,7 +39,7 @@ class Config extends Common
 		// Save database object
 		$this->Database = $Database;
 		// get all configs
-		$this->get_db_config();
+		$this->get_db_config(true);
 		// compose per-tenant
 		$this->compose_config();
 	}
@@ -50,15 +50,20 @@ class Config extends Common
 	 * @method get_db_config
 	 * @return void
 	 */
-	public function get_db_config()
+	public function get_db_config($exception = false)
 	{
 		// fetch
 		try {
 			$config = $this->Database->getObjectsQuery("select * from config order by t_id asc");
 		}
 		catch (Exception $e) {
-			$this->errors[] = $e->getMessage();
-			$this->result_die();
+			if ($exception) {
+				throw new Exception ($e);
+			}
+			else {
+				$this->errors[] = $e->getMessage();
+				$this->result_die();
+			}
 		}
 		// compose
 		$this->full_config = $config;

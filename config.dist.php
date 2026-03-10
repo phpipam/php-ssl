@@ -10,6 +10,15 @@ $db['port'] = 3306;
 $db['ssl']  = false;
 
 /**
+ * Flag that determines if php-ssl is cconsidered installed.
+ *
+ * If false it will load installtion in case SQL connection fails
+ *
+ * @var bool
+ */
+$installed = false;
+
+/**
  * php debugging on/off
  *
  * true  = SHOW all php errors
@@ -23,16 +32,6 @@ $debugging = false;
  *	optional
  */
 $phpsessname = "phpssl";
-
-/**
- *	BASE definition if phpipam
- * 	is not in root directory (e.g. /phpipam/)
- *
- *  Also change
- *	RewriteBase / in .htaccess
- ******************************/
-if(!defined('BASE'))
-define('BASE', "/");
 
 /**
  * Error reporting

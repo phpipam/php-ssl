@@ -3,11 +3,33 @@
 # session
 ob_start();
 
-# autoload classes
-require ("functions/autoload.php");
 
-# check for config
-if (!$Common->config_exists()) { die(_("Config file missing")); }
+# check for config file
+if (!file_exists(dirname(__FILE__) . "/config.php") && $_SERVER['REQUEST_URI']!="/install/")
+{
+	// html
+	$title   = "Config file missing";
+	$url     = isset($_SERVER['HTTPS']) ? "https://" : "http://" .$_SERVER['SERVER_NAME'];
+	// error page
+	$error_title = "Configuration file is missing.";
+	$error_text = "To know how to connect to database config.php file needs to be present.<br>Please copy config.dist.php to config.php and change it accordingly.";
+
+	$_params = ['tenant'=>'error', "route"=>"generic"];
+}
+# install
+elseif ($_SERVER['REQUEST_URI']=="/install/")
+{
+	// html
+	$title   = "php-ssl installation";
+	$url     = isset($_SERVER['HTTPS']) ? "https://" : "http://" .$_SERVER['SERVER_NAME'];
+
+	$_params = ['tenant'=>'install'];
+}
+else
+{
+	# autoload classes
+	require ("functions/autoload.php");
+}
 
 # no cache headers
 header("Cache-Control: no-cache, must-revalidate"); //HTTP 1.1
@@ -22,8 +44,6 @@ if(!isset($_SESSION['theme'])) { $_SESSION['theme'] = "dark"; }
 <html lang="en" data-bs-theme-base="gray" data-theme="<?php print $_SESSION['theme']; ?>" data-bs-theme="<?php print $_SESSION['theme']; ?>" style="color-scheme: gray;">
 
 <head>
-	<base href="<?php print $url.BASE; ?>">
-
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 
@@ -41,34 +61,35 @@ if(!isset($_SESSION['theme'])) { $_SESSION['theme'] = "dark"; }
 	<title><?php print $title; ?></title>
 
 	<!-- css -->
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css"> -->
-	<!-- <link href="https://unpkg.com/bootstrap-table@1.19.1/dist/bootstrap-table.min.css" rel="stylesheet"> -->
 	<link href="/css/tabler.1.4.0.min.css" rel="stylesheet">
-	<!-- <link href="/css/bootstrap-table.1.19.1.min.css" rel="stylesheet"> -->
 	<link href="/css/bootstrap-table.1.26.0.min.css" rel="stylesheet">
-	<link rel="stylesheet" type="text/css" href="/css/style.css?v=<?php print md5(time()); ?>>">
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
 
 	<!-- js -->
-	<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script> -->
-    <!-- <script src="https://unpkg.com/@popperjs/core@2"></script> -->
-    <!-- <script src="https://unpkg.com/tippy.js@6"></script> -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script> -->
-	<!-- <script src="https://unpkg.com/bootstrap-table@1.19.1/dist/bootstrap-table.min.js"></script> -->
     <script src="/js/jquery-3.6.0.min.js"></script>
     <script src="/js/popper.2.11.8.js"></script>
     <script src="/js/tippy.js"></script>
 	<script src="/js/tabler.1.4.0.min.js"></script>
 	<script src="/js/bootstrap-table.1.26.0.min.js"></script>
-	<script src="/js/magic.js?v=<?php print md5(time()); ?>"></script>
-
+	<script src="/js/magic.js"></script>
 
 </head>
 
 <body>
 	<?php
+	// login and logout
 	if($_params['tenant']=="login" || $_params['tenant']=="logout") {
 		include ("route/login/index.php");
 	}
+	// generic errors
+	elseif ($_params['tenant']=="error" && $_params['route']=="generic") {
+		include ("route/error/generic.php");
+	}
+	// installation
+	elseif ($_params['tenant']=="install") {
+		include ("route/install/index.php");
+	}
+	// default
 	else {
 		// header
 		include ("route/common/header.php");
