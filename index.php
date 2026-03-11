@@ -15,15 +15,6 @@ if (!file_exists(dirname(__FILE__) . "/config.php") && $_SERVER['REQUEST_URI']!=
 
 	$_params = ['tenant'=>'error', "route"=>"generic"];
 }
-# install
-elseif ($_SERVER['REQUEST_URI']=="/install/")
-{
-	// html
-	$title   = "php-ssl installation";
-	$url     = isset($_SERVER['HTTPS']) ? "https://" : "http://" .$_SERVER['SERVER_NAME'];
-
-	$_params = ['tenant'=>'install'];
-}
 else
 {
 	# autoload classes

@@ -100,6 +100,12 @@ else
 
 			// do we need to install product ?
 			if (@$installed!==true) {
+
+				if (strpos($_SERVER['REQUEST_URI'], "/install")!==0) {
+					header('Location: /install/');
+					die();
+				}
+
 				// html
 				$title   = "php-ssl installation";
 				$url     = isset($_SERVER['HTTPS']) ? "https://" : "http://" .$_SERVER['SERVER_NAME'];

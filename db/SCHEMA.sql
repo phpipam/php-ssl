@@ -1,16 +1,3 @@
-# ************************************************************
-# Sequel Pro SQL dump
-# Version 4541
-#
-# http://www.sequelpro.com/
-# https://github.com/sequelpro/sequelpro
-#
-# Host: 127.0.0.1 (MySQL 5.5.5-10.5.9-MariaDB)
-# Database: php-ssl
-# Generation Time: 2024-03-26 14:23:42 +0000
-# ************************************************************
-
-
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -18,22 +5,6 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
-
-# Dump of table _ssl_ports
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `_ssl_ports`;
-
-CREATE TABLE `_ssl_ports` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `pg_id` int(11) unsigned NOT NULL,
-  `port` int(5) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `port_group` (`pg_id`),
-  CONSTRAINT `port_group` FOREIGN KEY (`pg_id`) REFERENCES `ssl_port_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 
 # Dump of table agents
@@ -201,6 +172,7 @@ CREATE TABLE `tenants` (
   `mail_style` enum('table','list') DEFAULT 'list',
   `remove_orphaned` tinyint(1) NOT NULL DEFAULT 1,
   `order` int(2) DEFAULT 99,
+  `log_retention` int(4) NOT NULL DEFAULT 30,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
