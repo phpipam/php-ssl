@@ -42,7 +42,7 @@
             $_params['route'] = "select";
 
             # valid
-            $valid_steps = ['select', 'manual', 'automatic', 'finish'];
+            $valid_steps = ['select', 'manual', 'automatic', 'automatic-execute', 'finish'];
 
             # select
             if(in_array($_params['route'], $valid_steps)) {
@@ -66,6 +66,6 @@
 
 
 
-  <div class="container container-tight py-4">
+  <div class="container container-tight py-4" style="max-width:600px">
     <?php include('steps.php'); ?>
 </div>

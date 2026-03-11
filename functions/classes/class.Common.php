@@ -19,6 +19,220 @@ class Common extends Validate
 	}
 
 	/**
+	 * Install the database: create DB, create app user, grant privileges, import SCHEMA.sql.
+	 * Checks that $installed === false before proceeding.
+	 * On any error after the database is created, rolls back by dropping it.
+	 *
+	 * @method install_database
+	 * @param  array $params  Keys: admin_user, admin_pass, db_host, db_port, db_name,
+	 *                              app_user, app_pass, app_user_host, reinstall (bool)
+	 * @return array  ['success' => bool, 'message' => string, 'log' => string[], 'errors' => string[]]
+	 */
+	public function install_database(array $params): array
+	{
+		global $installed;
+
+		// Safety check: refuse to run if already installed
+		if ($installed === true) {
+			return ['success' => false, 'errors' => ['Installation refused: $installed is set to true in config.php. Set it to false to reinstall.'], 'log' => []];
+		}
+
+		$admin_user    = trim($params['admin_user'] ?? '');
+		$admin_pass    = $params['admin_pass'] ?? '';
+		$db_host       = trim($params['db_host'] ?? '127.0.0.1');
+		$db_port       = (int)($params['db_port'] ?? 3306);
+		$db_name       = trim($params['db_name'] ?? '');
+		$app_user      = trim($params['app_user'] ?? '');
+		$app_pass      = $params['app_pass'] ?? '';
+		$app_user_host = trim($params['app_user_host'] ?? $db_host);
+		$reinstall     = !empty($params['reinstall']);
+
+		// Basic validation
+		if ($admin_user === '') return ['success' => false, 'errors' => ['Admin username is required.'], 'log' => []];
+		if ($db_name === '')    return ['success' => false, 'errors' => ['Database name is required.'], 'log' => []];
+		if ($app_user === '')   return ['success' => false, 'errors' => ['Application username is required.'], 'log' => []];
+
+		// Sanitize identifiers (only letters, digits, hyphens, underscores, dots are allowed)
+		$safe_id = '/^[a-zA-Z0-9_\-\.]+$/';
+		foreach (['db_name' => $db_name, 'app_user' => $app_user, 'app_user_host' => $app_user_host] as $field => $value) {
+			if (!preg_match($safe_id, $value)) {
+				return ['success' => false, 'errors' => ["Invalid characters in field: {$field}"], 'log' => []];
+			}
+		}
+
+		$schema_path = dirname(__FILE__) . '/../../db/SCHEMA.sql';
+		if (!file_exists($schema_path)) {
+			return ['success' => false, 'errors' => ['db/SCHEMA.sql not found.'], 'log' => []];
+		}
+
+		// Connect as admin (no specific database selected)
+		try {
+			$dsn = "mysql:host={$db_host};port={$db_port};charset=utf8";
+			$pdo = new PDO($dsn, $admin_user, $admin_pass, [
+				PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+				PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+			]);
+		} catch (PDOException $e) {
+			return ['success' => false, 'errors' => ['Failed to connect to MySQL: ' . $e->getMessage()], 'log' => []];
+		}
+
+		$db_created = false;
+		$log        = [];
+
+		try {
+			// Drop database if reinstall requested
+			if ($reinstall) {
+				$pdo->exec("DROP DATABASE IF EXISTS `{$db_name}`");
+				$log[] = "Dropped existing database `{$db_name}`.";
+			}
+
+			// Create database
+			$pdo->exec("CREATE DATABASE `{$db_name}` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci");
+			$db_created = true;
+			$log[] = "Created database `{$db_name}`.";
+
+			// Escape single quotes in password for inline SQL
+			$app_pass_esc = str_replace("'", "''", $app_pass);
+
+			// Create app user (handle pre-existing user gracefully)
+			try {
+				$pdo->exec("CREATE USER `{$app_user}`@`{$app_user_host}` IDENTIFIED BY '{$app_pass_esc}'");
+				$log[] = "Created user `{$app_user}`@`{$app_user_host}`.";
+			} catch (PDOException $ue) {
+				// Error 1396: user already exists, update password instead
+				if (strpos($ue->getMessage(), '1396') !== false || stripos($ue->getMessage(), 'already exists') !== false) {
+					$pdo->exec("ALTER USER `{$app_user}`@`{$app_user_host}` IDENTIFIED BY '{$app_pass_esc}'");
+					$log[] = "User `{$app_user}`@`{$app_user_host}` already existed; password updated.";
+				} else {
+					throw $ue;
+				}
+			}
+
+			// Grant all privileges on the new database
+			$pdo->exec("GRANT ALL PRIVILEGES ON `{$db_name}`.* TO `{$app_user}`@`{$app_user_host}`");
+			$pdo->exec("FLUSH PRIVILEGES");
+			$log[] = "Granted all privileges on `{$db_name}` to `{$app_user}`@`{$app_user_host}`.";
+
+			// Select the new database for schema import
+			$pdo->exec("USE `{$db_name}`");
+
+			// Import SCHEMA.sql
+			$sql        = file_get_contents($schema_path);
+			$statements = $this->split_sql_statements($sql);
+			$count      = 0;
+
+			foreach ($statements as $stmt) {
+				$stmt = trim($stmt);
+				if ($stmt === '') continue;
+				$pdo->exec($stmt);
+				$count++;
+			}
+
+			$log[] = "Imported {$count} SQL statements from SCHEMA.sql.";
+
+			return [
+				'success' => true,
+				'message' => 'Database installed successfully.',
+				'log'     => $log,
+			];
+
+		} catch (Exception $e) {
+			// Rollback: drop database if it was created during this run
+			if ($db_created) {
+				try {
+					$pdo->exec("DROP DATABASE IF EXISTS `{$db_name}`");
+					$log[] = "Rolled back: dropped database `{$db_name}`.";
+				} catch (Exception $re) {
+					$log[] = "Rollback failed: " . $re->getMessage();
+				}
+			}
+			return [
+				'success' => false,
+				'errors'  => [$e->getMessage()],
+				'log'     => $log,
+			];
+		}
+	}
+
+	/**
+	 * Split a SQL file into individual executable statements.
+	 * Strips line comments (-- and #). Preserves MySQL conditional comments.
+	 *
+	 * @method split_sql_statements
+	 * @param  string $sql
+	 * @return string[]
+	 */
+	private function split_sql_statements(string $sql): array
+	{
+		$statements  = [];
+		$current     = '';
+		$in_string   = false;
+		$string_char = '';
+		$len         = strlen($sql);
+
+		for ($i = 0; $i < $len; $i++) {
+			$ch = $sql[$i];
+
+			if ($in_string) {
+				$current .= $ch;
+				if ($ch === $string_char && ($i === 0 || $sql[$i - 1] !== '\\')) {
+					$in_string = false;
+				}
+				continue;
+			}
+
+			if ($ch === '"' || $ch === "'") {
+				$in_string   = true;
+				$string_char = $ch;
+				$current    .= $ch;
+				continue;
+			}
+
+			// Line comment: -- or #
+			if (($ch === '-' && ($sql[$i + 1] ?? '') === '-') || $ch === '#') {
+				while ($i < $len && $sql[$i] !== "\n") {
+					$i++;
+				}
+				$current .= "\n";
+				continue;
+			}
+
+			// Block comment
+			if ($ch === '/' && ($sql[$i + 1] ?? '') === '*') {
+				$is_conditional = ($sql[$i + 2] ?? '') === '!';
+				$block = '/';
+				$i++;
+				while ($i < $len) {
+					$block .= $sql[$i];
+					if ($sql[$i] === '/' && $sql[$i - 1] === '*') {
+						break;
+					}
+					$i++;
+				}
+				// Keep MySQL conditional comments (/*!...*/), drop regular comments
+				if ($is_conditional) {
+					$current .= $block;
+				}
+				continue;
+			}
+
+			if ($ch === ';') {
+				$statements[] = $current;
+				$current = '';
+				continue;
+			}
+
+			$current .= $ch;
+		}
+
+		if (trim($current) !== '') {
+			$statements[] = $current;
+		}
+
+		return $statements;
+	}
+
+	/**
 	 * Prints a Tabler breadcrumb nav based on the current $_params.
 	 * Last (active) item is not clickable; all preceding items are linked.
 	 *
@@ -156,7 +370,7 @@ function php_feature_missing($required_extensions = null, $required_functions = 
  * Check if required php features are missing
  * @param  mixed $required_extensions
  * @param  mixed $required_functions
- * @return string|bool
+ * @return array
  */
 function php_feature_missing_all($required_extensions = null, $required_functions = null)
 {

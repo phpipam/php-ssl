@@ -178,6 +178,13 @@ CREATE TABLE `tenants` (
 
 
 
+# Default tenant
+# ------------------------------------------------------------
+INSERT INTO `tenants` (`id`, `name`, `href`, `description`, `active`, `admin`, `recipients`, `mail_style`, `remove_orphaned`, `order`, `log_retention`)
+VALUES
+  (1, 'Administrators', 'admin', 'Administrator tenant', 1, 1, NULL, 'list', 1, 1, 30);
+
+
 # Dump of table domains
 # ------------------------------------------------------------
 
@@ -201,6 +208,13 @@ CREATE TABLE `domains` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 
+# Default local domain
+# ------------------------------------------------------------
+INSERT INTO `domains` (`id`, `name`, `type`, `account_suffix`, `base_dn`, `domain_controllers`, `use_ssl`, `use_tls`, `port`, `adminUsername`, `adminPassword`, `autocreateGroup`, `active`)
+VALUES
+  (1, 'local', 'local', '@local', '', '', 0, 0, 0, NULL, NULL, NULL, 'Yes');
+
+
 
 # Dump of table users
 # ------------------------------------------------------------
@@ -221,6 +235,13 @@ CREATE TABLE `users` (
   KEY `u_tenants` (`t_id`),
   CONSTRAINT `u_tenants` FOREIGN KEY (`t_id`) REFERENCES `tenants` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+# Default user
+# ------------------------------------------------------------
+INSERT INTO `users` (`id`, `t_id`, `email`, `password`, `name`, `permission`, `days`, `days_expired`, `notif_id`)
+VALUES
+  (1, 1, 'admin', 'c7ad44cbad762a5da0a452f9e854fdc1e0e7a52a38015f23f3eab1d80b931dd472634dfac71cd34ebc35d16ab7fb8a90c81f975113d6c7538dc69dd8de9077ec', 'Administrator', 3, 30, 30, 0);
 
 
 
