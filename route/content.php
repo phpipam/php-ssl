@@ -22,6 +22,7 @@ if(file_exists(dirname(__FILE__)."/".$_params['route']."/index.php")) {
 	print "<nav class='container-fluid pt-2 pb-0'>";
 	$Common->print_breadcrumbs();
 	print "</nav>";
+	$Common->print_system_warnings();
 	include ($_params['route']."/index.php");
 	// set url
 	$_SESSION['url'] = "/".$_params['tenant']."/".$_params['route']."/";

@@ -42,7 +42,7 @@
             $_params['route'] = "select";
 
             # valid
-            $valid_steps = ['select', 'manual', 'automatic', 'automatic-execute', 'finish'];
+            $valid_steps = ['select', 'manual', 'manual-verify', 'automatic', 'automatic-execute', 'finish'];
 
             # select
             if(in_array($_params['route'], $valid_steps)) {

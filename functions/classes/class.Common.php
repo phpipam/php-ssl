@@ -19,6 +19,43 @@ class Common extends Validate
 	}
 
 	/**
+	 * Print system warning alerts below breadcrumbs.
+	 * Checks:
+	 *   - $installed is not set or false
+	 *   - Logged-in user is using the default password (admin/admin)
+	 *
+	 * @method print_system_warnings
+	 * @return void
+	 */
+	public function print_system_warnings(): void
+	{
+		global $installed, $user;
+
+		$warnings = [];
+
+		// Check $installed flag
+		if (!isset($installed) || $installed !== true) {
+			$warnings[] = 'Application is not marked as installed. Open <code>config.php</code> and set <code>$installed = true;</code>';
+		}
+
+		// Check for default password (admin/admin — sha512 hash)
+		if (isset($user->password) && $user->password === hash('sha512', 'admin')) {
+			$warnings[] = 'You are using the <strong>default password</strong>. Please change it immediately in <a href="/' . htmlspecialchars($user->href ?? '', ENT_QUOTES) . '/user/profile/">your profile</a>.';
+		}
+
+		if (empty($warnings)) {
+			return;
+		}
+
+		foreach ($warnings as $warning) {
+			print "<div class='alert alert-warning container-fluid mt-2 mb-0' role='alert'>";
+			print "<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='icon alert-icon'><path stroke='none' d='M0 0h24v24H0z' fill='none'/><path d='M12 9v4' /><path d='M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.871l-8.106 -13.534a1.914 1.914 0 0 0 -3.274 0z' /></svg>";
+			print "<div>{$warning}</div>";
+			print "</div>\n";
+		}
+	}
+
+	/**
 	 * Install the database: create DB, create app user, grant privileges, import SCHEMA.sql.
 	 * Checks that $installed === false before proceeding.
 	 * On any error after the database is created, rolls back by dropping it.

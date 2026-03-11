@@ -1,18 +1,30 @@
 <?php
-// Pre-fill form fields from config.php values
 global $db, $installed;
 
 // Block access if already installed
 if ($installed === true) {
 	print '<div class="alert alert-danger">Installation is already complete (<code>$installed = true</code>).</div>';
+	$step_class_1 = "steps-red";
+	$step_class_2 = "steps-red";
+	$step_class_3 = "steps-red";
 	return;
 }
+
+// Generate CSRF token for the form (session may not be started in install context)
+if (session_status() === PHP_SESSION_NONE) {
+	session_start();
+}
+if (empty($_SESSION['install_csrf_token'])) {
+	$_SESSION['install_csrf_token'] = bin2hex(random_bytes(32));
+}
+$csrf_token = $_SESSION['install_csrf_token'];
 ?>
 
 <h2 class="mb-1 text-center">Automatic database installation</h2>
 <p class="text-secondary mb-4 text-center">Provide MySQL admin credentials to create the database, user, and import the schema.</p>
 
 <form action="/install/automatic-execute/" method="post">
+  <input type="hidden" name="csrf_token" value="<?php print htmlspecialchars($csrf_token, ENT_QUOTES); ?>">
 
   <h4 class="mb-2">Admin credentials</h4>
   <p class="text-secondary small mb-3">A MySQL user with privileges to create databases and users (e.g. <code>root</code>).</p>
@@ -34,17 +46,17 @@ if ($installed === true) {
   <div class="row g-3 mb-3">
     <div class="col-8">
       <label class="form-label">DB host</label>
-      <input type="text" name="db_host" class="form-control" value="<?php print htmlspecialchars($db['host'] ?? '127.0.0.1', ENT_QUOTES); ?>" readonly>
+      <input type="text" class="form-control" value="<?php print htmlspecialchars($db['host'] ?? '127.0.0.1', ENT_QUOTES); ?>" readonly>
     </div>
     <div class="col-4">
       <label class="form-label">Port</label>
-      <input type="number" name="db_port" class="form-control" value="<?php print (int)($db['port'] ?? 3306); ?>" readonly>
+      <input type="number" class="form-control" value="<?php print (int)($db['port'] ?? 3306); ?>" readonly>
     </div>
   </div>
 
   <div class="mb-4">
     <label class="form-label">Database name</label>
-    <input type="text" name="db_name" class="form-control" value="<?php print htmlspecialchars($db['name'] ?? 'php-ssl', ENT_QUOTES); ?>" readonly>
+    <input type="text" class="form-control" value="<?php print htmlspecialchars($db['name'] ?? 'php-ssl', ENT_QUOTES); ?>" readonly>
   </div>
 
   <hr class="my-4">
@@ -53,17 +65,17 @@ if ($installed === true) {
 
   <div class="mb-3">
     <label class="form-label">Username</label>
-    <input type="text" name="app_user" class="form-control" value="<?php print htmlspecialchars($db['user'] ?? '', ENT_QUOTES); ?>" readonly>
+    <input type="text" class="form-control" value="<?php print htmlspecialchars($db['user'] ?? '', ENT_QUOTES); ?>" readonly>
   </div>
 
   <div class="mb-3">
     <label class="form-label">Password</label>
-    <input type="text" name="app_pass" class="form-control" value="<?php print htmlspecialchars($db['pass'] ?? '', ENT_QUOTES); ?>" readonly>
+    <input type="password" class="form-control" value="<?php print htmlspecialchars($db['pass'] ?? '', ENT_QUOTES); ?>" readonly>
   </div>
 
   <div class="mb-4">
     <label class="form-label">User host</label>
-    <input type="text" name="app_user_host" class="form-control" value="<?php print htmlspecialchars($db['host'] ?? 'localhost', ENT_QUOTES); ?>" readonly>
+    <input type="text" class="form-control" value="<?php print htmlspecialchars($db['host'] ?? 'localhost', ENT_QUOTES); ?>" readonly>
   </div>
 
   <hr class="my-4">

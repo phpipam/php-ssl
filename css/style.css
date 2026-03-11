@@ -342,3 +342,19 @@ padding: .25rem .5rem;
 .loading-wrap {
     position: relative;
 }
+
+
+
+
+
+
+[data-bs-theme=dark] {
+    .alert-warning code {
+        background: color-mix(in srgb, var(--tblr-alert-color) 10%, transparent);
+        color: var(--tblr-table-color-state,var(--tblr-table-color-type,var(--tblr-table-color)));
+        border: 1px solid color-mix(in srgb, var(--tblr-alert-color) 20%, transparent);
+    }
+    a {
+        color: var(--tblr-alert-color);
+    }
+}

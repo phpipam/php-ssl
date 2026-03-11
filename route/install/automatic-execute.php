@@ -1,5 +1,5 @@
 <?php
-global $Common, $installed;
+global $Common, $installed, $db;
 
 // Block if already installed
 if ($installed === true) {
@@ -14,16 +14,31 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 	exit;
 }
 
-// Collect POST values (strip_tags is already applied by URL class for path params; sanitize here for POST)
+// Validate CSRF token
+if (session_status() === PHP_SESSION_NONE) {
+	session_start();
+}
+$expected_csrf = $_SESSION['install_csrf_token'] ?? '';
+$submitted_csrf = $_POST['csrf_token'] ?? '';
+if (empty($expected_csrf) || !hash_equals($expected_csrf, $submitted_csrf)) {
+	print '<div class="alert alert-danger"><strong>Error:</strong> Invalid or missing security token. Please go back and try again.</div>';
+	print '<div class="my-4"><a href="/install/automatic/" class="btn btn-primary w-100">Back</a></div>';
+	return;
+}
+// Invalidate token after single use
+unset($_SESSION['install_csrf_token']);
+
+// Config-derived values always come from config.php, never from POST
+// (readonly form fields are display-only — POST values for them are ignored)
 $params = [
 	'admin_user'    => strip_tags(trim($_POST['admin_user'] ?? '')),
 	'admin_pass'    => $_POST['admin_pass'] ?? '',
-	'db_host'       => strip_tags(trim($_POST['db_host'] ?? '127.0.0.1')),
-	'db_port'       => (int)($_POST['db_port'] ?? 3306),
-	'db_name'       => strip_tags(trim($_POST['db_name'] ?? '')),
-	'app_user'      => strip_tags(trim($_POST['app_user'] ?? '')),
-	'app_pass'      => $_POST['app_pass'] ?? '',
-	'app_user_host' => strip_tags(trim($_POST['app_user_host'] ?? '')),
+	'db_host'       => $db['host'],
+	'db_port'       => (int)$db['port'],
+	'db_name'       => $db['name'],
+	'app_user'      => $db['user'],
+	'app_pass'      => $db['pass'],
+	'app_user_host' => $db['host'],
 	'reinstall'     => !empty($_POST['reinstall']),
 ];
 
@@ -61,7 +76,6 @@ if ($result['success']) {
 
 	<hr class="my-4">
 
-
 	<div class="alert alert-warning mb-4" style='display:block'>
 	  <strong>Action required:</strong><hr>Open <code>config.php</code> and set <code>$installed = true;</code> to complete the installation.
 	</div>
@@ -82,8 +96,8 @@ if ($result['success']) {
 	<h2 class="mb-3 text-center text-danger">Installation failed</h2>
 
 	<?php foreach ($result['errors'] as $err) { ?>
-	<div class="alert alert-danger mb-3" style='displ1ay:block'>
-	  <strong>Error:</strong><?php print htmlspecialchars($err, ENT_QUOTES); ?>
+	<div class="alert alert-danger mb-3" style='display:block'>
+	  <strong>Error:</strong> <?php print htmlspecialchars($err, ENT_QUOTES); ?>
 	</div>
 	<?php } ?>
 

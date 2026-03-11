@@ -1,4 +1,20 @@
 
+<?php
+// Block access if already installed
+if ($installed === true) {
+  print '<div class="alert alert-danger text-center" style="display:block">Installation is already complete ( <code>$installed = true</code> ).</div>';
+  print '<div class="my-4">';
+  print '  <a href="/login/" class="btn btn-primary w-100" > Back to login</a>';
+  print '</div>';
+  $step_class_0 = "steps-red";
+  $step_class_1 = "steps-red";
+  $step_class_2 = "steps-red";
+  $step_class_3 = "steps-red";
+  return;
+}
+
+?>
+
 <h2 class="mb-3 text-center">Thanks for choosing php-ssl <br>for your certificate database.</h2>
 <p class="text-secondary mb-4">You installation is almost complete. Now we need to import necessary database structure, please select how you want to proceed:</p>
 
@@ -14,7 +30,7 @@
   </li>
 </ul>
 <div class="my-4">
-  <a href="/install/automatic/" class="btn btn-primary w-100" data-target='automatic-import-show'> Automatic installation</a>
+  <a href="/install/automatic/" class="btn btn-primary w-100"> Automatic installation</a>
 </div>
 
 <ul class="list-unstyled space-y">
@@ -29,5 +45,5 @@
   </li>
 </ul>
 <div class="my-4">
-  <a href="/install/manual/" class="btn btn-primary w-100" data-target='manual-import-show'> Manual installation</a>
+  <a href="/install/manual/" class="btn btn-primary w-100"> Manual installation</a>
 </div>

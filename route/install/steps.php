@@ -2,7 +2,8 @@
 
 // set step
 switch ($_params['route']) {
-    case "manual"            : $step = 3; break;
+    case "manual"            : $step = 2; break;
+    case "manual-verify"     : $step = 3; break;
     case "automatic"         : $step = 1; break;
     case "automatic-execute" : $step = 3; break;
 
