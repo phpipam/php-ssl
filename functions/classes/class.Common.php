@@ -183,6 +183,21 @@ class Common extends Validate
 
 			$log[] = "Imported {$count} SQL statements from SCHEMA.sql.";
 
+			// Mark all existing migration files as applied — SCHEMA.sql already incorporates them.
+			// This prevents the migration runner from trying to re-apply them on a fresh install.
+			$migrations_dir = dirname(__FILE__) . '/../../db/migrations/';
+			$migration_files = glob($migrations_dir . '*.sql');
+			if ($migration_files) {
+				sort($migration_files);
+				$marked = 0;
+				foreach ($migration_files as $mf) {
+					$filename = basename($mf);
+					$pdo->exec("INSERT IGNORE INTO `migrations` (`filename`) VALUES ('" . str_replace("'", "''", $filename) . "')");
+					$marked++;
+				}
+				$log[] = "Marked {$marked} migration file(s) as applied.";
+			}
+
 			return [
 				'success' => true,
 				'message' => 'Database installed successfully.',
