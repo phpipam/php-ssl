@@ -130,7 +130,9 @@ a,a:hover {
     font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
 
 }
-
+.bg-info-lt:hover {
+    background-color: color-mix(in srgb,var(--tblr-info-lt) calc(var(--tblr-bg-opacity,0.5) * 100%),transparent)!important
+}
 
 
 

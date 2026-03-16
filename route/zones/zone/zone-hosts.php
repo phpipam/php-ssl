@@ -20,12 +20,12 @@ else {
 	# top buttons
 	if(!isset($from_search)) {
 		print "<div class='text-left' style='margin-bottom:10px'>";
-		print '<a href="/route/modals/zones/import.php?tenant='.$_params['tenant'].'&zone_name='.$zone->name.'" data-bs-toggle="modal" data-bs-target="#modal1" class="btn btn-outline-success btn-sm btn-5 d-none d-sm-inline-block"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-upload"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 9l5 -5l5 5" /><path d="M12 4l0 12" /></svg> '._("Import").'</a>';
+		print '<a href="/route/modals/zones/import.php?tenant='.$_params['tenant'].'&zone_name='.$zone->name.'" data-bs-toggle="modal" data-bs-target="#modal1" class="btn btn-sm btn-5 d-none d-sm-inline-block bg-info-lt text-success"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-upload"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 9l5 -5l5 5" /><path d="M12 4l0 12" /></svg> '._("Import").'</a>';
 
 		// actions right
 		print '<div class="btn-group float-end">';
-		print '<a href="/route/modals/zones/truncate.php?tenant='.$_params['tenant'].'&zone_id='.$zone->id.'" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal1"><i class="fa fa-trash" data-bs-toggle="tooltip" data-bs-placement="top" title="'._("Remove all hosts from zone").'"></i> '._("Remove all").'</a>';
-		print '<a href="/route/modals/zones/zone-cert-refresh-all.php?tenant='.$_params['tenant'].'&zone_id='.$zone->id.'" class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#modal1"><i class="fa fa-sync" data-bs-toggle="tooltip" data-bs-placement="top" title="'._("Rescan all hosts for new certificates").'"></i> '._("Rescan all").'</a>';
+		print '<a href="/route/modals/zones/truncate.php?tenant='.$_params['tenant'].'&zone_id='.$zone->id.'" class="btn btn-sm bg-info-lt text-danger" data-bs-toggle="modal" data-bs-target="#modal1"><i class="fa fa-trash" data-bs-toggle="tooltip" data-bs-placement="top" title="'._("Remove all hosts from zone").'"></i> '._("Remove all").'</a>';
+		print '<a href="/route/modals/zones/zone-cert-refresh-all.php?tenant='.$_params['tenant'].'&zone_id='.$zone->id.'" class="btn btn-sm bg-info-lt text-success" data-bs-toggle="modal" data-bs-target="#modal1"><i class="fa fa-sync" data-bs-toggle="tooltip" data-bs-placement="top" title="'._("Rescan all hosts for new certificates").'"></i> '._("Rescan all").'</a>';
 		print "</div>";
 
 		print "</div>";

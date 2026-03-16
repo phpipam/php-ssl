@@ -21,7 +21,7 @@ print " <div class='card-header'>".$zone->name."</div>";
 
 // table
 print "<div>";
-print "<table class='table table-borderless table-md table-hover table-zones-details'>";
+print "<table class='table table-borderless table-md table-hov1er table-zones-details'>";
 
 print "<tr>";
 print "	<th style='min-width:180px;width:220px;'>"._("Zone name")."</th>";
@@ -71,10 +71,10 @@ print "</tr>";
 print "<tr class='line'>";
 print "<th>"._("Manage zone")."</th>";
 print "<td>";
-print '<a href="/route/modals/zones/edit.php?action=edit&tenant='.$_params['tenant'].'&zone_name='.$zone->name.'" data-bs-toggle="modal" data-bs-target="#modal1" class="btn btn-sm btn-outline-info"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-edit"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" /><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415" /><path d="M16 5l3 3" /></svg> '._("Edit zone").'</a>';
+print '<a href="/route/modals/zones/edit.php?action=edit&tenant='.$_params['tenant'].'&zone_name='.$zone->name.'" data-bs-toggle="modal" data-bs-target="#modal1" class="btn btn-sm bg-info-lt"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-edit"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" /><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415" /><path d="M16 5l3 3" /></svg> '._("Edit zone").'</a>';
 # validate permissions
 if($User->get_user_permissions (3))
-print '<a style="margin-left:5px" href="/route/modals/zones/edit.php?action=delete&tenant='.$_params['tenant'].'&zone_name='.$zone->name.'" data-bs-toggle="modal" data-bs-target="#modal1" class="btn btn-sm btn-outline-danger"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-trash"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg> '._("Delete zone").'</a>';
+print '<a style="margin-left:5px" href="/route/modals/zones/edit.php?action=delete&tenant='.$_params['tenant'].'&zone_name='.$zone->name.'" data-bs-toggle="modal" data-bs-target="#modal1" class="btn btn-sm bg-info-lt text-danger"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-trash"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg> '._("Delete zone").'</a>';
 print "</td>";
 print "</tr>";
 
@@ -85,7 +85,7 @@ if ($zone->type!="axfr") {
 
 	print "<tr class='line'>";
 	print "	<th>"._("Add host")."</th>";
-	print "	<td><a href='/route/modals/zones/add-hostnames.php?action=add&tenant=".$_params['tenant']."&zone_name=".$zone->name."' class='btn btn-sm btn-outline-success' data-bs-toggle='modal' data-bs-target='#modal1'>".'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-plus"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>'." "._("Add host")."</a></td>";
+	print "	<td><a href='/route/modals/zones/add-hostnames.php?action=add&tenant=".$_params['tenant']."&zone_name=".$zone->name."' class='btn btn-sm bg-info-lt text-success' data-bs-toggle='modal' data-bs-target='#modal1'>".'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-plus"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>'." "._("Add host")."</a></td>";
 	print "</tr>";
 }
 

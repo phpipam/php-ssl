@@ -108,11 +108,11 @@ class Modal {
         $html[] = "<div class='modal-footer'>";
         $html[] = " <div class='btn-group'>";
         if($this->modal_id=="#modal2")
-        $html[] = "     <button type='button' class='btn btn-sm btn-default btn-outline-secondary $reload_class' onclick='$(\"$this->modal_id\").modal(\"hide\");$(\"#modal1\").modal(\"show\");' >"._("Close window")."</button>";
+        $html[] = "     <button type='button' class='btn btn-sm btn-default bg-info-lt $reload_class' onclick='$(\"$this->modal_id\").modal(\"hide\");$(\"#modal1\").modal(\"show\");' >"._("Close window")."</button>";
         else
-        $html[] = "     <button type='button' class='btn btn-sm btn-default btn-outline-secondary $reload_class' onclick='$(\"$this->modal_id\").modal(\"hide\");' >"._("Close window")."</button>";
+        $html[] = "     <button type='button' class='btn btn-sm btn-default bg-info-lt $reload_class' onclick='$(\"$this->modal_id\").modal(\"hide\");' >"._("Close window")."</button>";
         if (strlen($footer_text)>0)
-        $html[] = "     <button type='button' class='btn btn-sm btn-outline-$btn_class modal-execute'>$footer_text</button>";
+        $html[] = "     <button type='button' class='btn btn-sm bg-info-lt text-$btn_class modal-execute'>$footer_text</button>";
         $html[] = " </div>";
         $html[] = "<br>";
         $html[] = " <div class='modal-result text-left' style='margin-top:10px;width:100%'></div>";
