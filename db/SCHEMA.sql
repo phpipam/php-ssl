@@ -38,6 +38,7 @@ CREATE TABLE `agents` (
   `last_success` datetime DEFAULT NULL,
   `last_error` text DEFAULT NULL,
   `protected` tinyint(4) NOT NULL DEFAULT 0,
+  `version` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `atenants` (`t_id`),
   CONSTRAINT `atenants` FOREIGN KEY (`t_id`) REFERENCES `tenants` (`id`) ON DELETE CASCADE ON UPDATE CASCADE

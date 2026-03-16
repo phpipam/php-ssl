@@ -80,6 +80,7 @@ else {
 	print "	<th data-field='hosts' class='text-center' style='width:20px;' data-width='20' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Hosts")."'>".'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-server"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v2a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3" /><path d="M3 15a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v2a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3l0 -2" /><path d="M7 8l0 .01" /><path d="M7 16l0 .01" /></svg>'."</th>";
 	print "	<th data-field='check' class='d-none d-lg-table-cell' style='width:150px;'>"._("Last check")."</th>";
 	print "	<th data-field='checks' class='d-none d-lg-table-cell' style='width:150px;'>"._("Last success")."</th>";
+	print "	<th data-field='version' class='text-center d-none d-lg-table-cell' style='width:80px;'>"._("Version")."</th>";
 	print "	<th data-field='edit' class='text-center' style='width:20px'><i class='fa fa-pencil' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Edit agent")."'></i></th>";
 	print "	<th data-field='refresh' class='text-center' style='width:20px'><i class='fa fa-refresh' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Retest agent")."'></i></th>";
 	print "	<th data-field='delete' class='text-center' style='width:20px;'><i class='fa fa-remove' data-bs-toggle='tooltip' data-bs-placement='top' title='"._("Delete agent")."'></i></th>";
@@ -100,7 +101,7 @@ else {
 
 		if($user->admin=="1") {
 			print "<tr class='header'>";
-			print "	<td colspan=10 style='padding-top:25px;'>".$url_items["tenants"]['icon']." "._("Tenant")." <span style='color:var(--tblr-info);'>".$tenants[$tenant_id]->name."</span>";
+			print "	<td colspan=11 style='padding-top:25px;'>".$url_items["tenants"]['icon']." "._("Tenant")." <span style='color:var(--tblr-info);'>".$tenants[$tenant_id]->name."</span>";
 			print '<a href="/route/modals/agents/edit.php?action=add&tenant='.$tenants[$tenant_id]->href.'" data-bs-toggle="modal" class="btn btn-sm text-green bg-info-lt  text-green float-end"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-2"><path d="M12 5l0 14"></path><path d="M5 12l14 0"></path></svg> '._("New agent").'</a>';
 			print "</td>";
 			print "</tr>";
@@ -108,7 +109,7 @@ else {
 
 		if(sizeof($group)==0) {
 			print "<tr>";
-			print "	<td colspan='10'>".'<div class="alert alert-info"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-info-circle"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" /><path d="M12 9h.01" /><path d="M11 12h1v4h1" /></svg>'." "._("No agents available").".</div></td>";
+			print "	<td colspan='11'>".'<div class="alert alert-info"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-info-circle"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" /><path d="M12 9h.01" /><path d="M11 12h1v4h1" /></svg>'." "._("No agents available").".</div></td>";
 			print "</tr>";
 		}
 		else {
@@ -134,7 +135,18 @@ else {
 				print "	<td class='text-center' style='width:20px;'> <span class='badge badge-outline text-default' style='width:100%'>".$count_zones->cnt."</span></td>";
 				print "	<td class='text-center' style='width:20px;'><span class='badge badge-outline text-default' style='width:100%'>".$count_hosts->cnt."</span></td>";
 				print "	<td class='text-muted d-none d-lg-table-cell' style='font-size:11px;width:140px'>".$a->last_check."</td>";
-				print "	<td class='text-muted d-none d-lg-table-cell' style='font-size:11px;width:140px'>".$a->last_success."</td>";
+				print "\t<td class='text-muted d-none d-lg-table-cell' style='font-size:11px;width:140px'>".$a->last_success."</td>";
+				// version
+				if(is_null($a->version) || $a->version === '') {
+					$version_badge = "<span class='badge bg-secondary-lt text-muted'>"._("Unknown")."</span>";
+				} elseif ($a->version === '0') {
+					$version_badge = "<span class='badge bg-secondary-lt text-muted'>"._("Unknown")."</span>";
+				} elseif ($a->version === $agent_last_version) {
+					$version_badge = "<span class='badge bg-green-lt text-green'>".$a->version."</span>";
+				} else {
+					$version_badge = "<span class='badge bg-orange-lt text-orange' title='"._("Latest").": ".$agent_last_version."'>".$a->version."</span>";
+				}
+				print "\t<td class='text-center d-none d-lg-table-cell' style='width:80px;'>$version_badge</td>";
 				// actions
 				print "	<td class='text-center' style='padding:0.5rem 0.2rem;width:20px;border-left:1px solid var(--tblr-table-border-color);'>";
 				print "		<a href='/route/modals/agents/edit.php?id=".$a->id."&action=edit&tenant=".$a->t_id."' data-bs-toggle='modal' data-bs-target='#modal1'>";

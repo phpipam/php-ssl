@@ -227,6 +227,7 @@ class Agent
 						if ($resp_arr['code'] == "200") {
 							$update['last_error'] = NULL;
 							$update['last_success'] = $datetime;
+							$update['version'] = !empty($resp_arr['version']) ? $resp_arr['version'] : "0";
 						}
 						// error
 						else {

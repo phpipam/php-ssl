@@ -73,6 +73,7 @@ else {
 	else {
 		$content[] = "<tr><th>"._("HTTP code")."</th><td>http ".$resp['info']['http_code']." :: ".$Agent->name_http_code($resp['info']['http_code'])."</td>";
 		$content[] = "<tr><th>"._("HTTP version")."</th><td>http/".$resp['info']['http_version']."</td>";
+		$content[] = "<tr><th>"._("Agent version")."</th><td>".$resp['data']['version']."</td>";
 	}
 
 	// success ?

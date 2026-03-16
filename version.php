@@ -17,3 +17,9 @@ $version_minor = 7;
  * @var string
  */
 $version = "{$version_major}.{$version_minor}";
+
+/**
+ * Last agent version
+ * @var string
+ */
+$agent_last_version = "0.7";
