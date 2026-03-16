@@ -208,6 +208,7 @@ DROP TABLE IF EXISTS `domains`;
 
 CREATE TABLE `domains` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `t_id` int(11) unsigned NOT NULL DEFAULT 1,
   `name` varchar(32) DEFAULT NULL,
   `type` enum('AD','local') DEFAULT 'local',
   `account_suffix` varchar(256) DEFAULT '@domain.local',
@@ -220,15 +221,17 @@ CREATE TABLE `domains` (
   `adminPassword` varchar(256) DEFAULT NULL,
   `autocreateGroup` varchar(255) DEFAULT NULL,
   `active` set('Yes','No') DEFAULT 'No',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `t_id` (`t_id`),
+  CONSTRAINT `fk_domains_t_id` FOREIGN KEY (`t_id`) REFERENCES `tenants` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 
 # Default local domain
 # ------------------------------------------------------------
-INSERT INTO `domains` (`id`, `name`, `type`, `account_suffix`, `base_dn`, `domain_controllers`, `use_ssl`, `use_tls`, `port`, `adminUsername`, `adminPassword`, `autocreateGroup`, `active`)
+INSERT INTO `domains` (`id`, `t_id`, `name`, `type`, `account_suffix`, `base_dn`, `domain_controllers`, `use_ssl`, `use_tls`, `port`, `adminUsername`, `adminPassword`, `autocreateGroup`, `active`)
 VALUES
-  (1, 'local', 'local', '@local', '', '', 0, 0, 0, NULL, NULL, NULL, 'Yes');
+  (1, 1, 'local', 'local', '@local', '', '', 0, 0, 0, NULL, NULL, NULL, 'Yes');
 
 
 

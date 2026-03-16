@@ -36,6 +36,7 @@ class Log extends Common
 		"scanning",
 		"portgroups",
 		"cron",
+		"domains",
 		"logs"
 	];
 
