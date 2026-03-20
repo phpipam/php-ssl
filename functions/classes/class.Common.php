@@ -335,6 +335,220 @@ class Common extends Validate
 	}
 
 	/**
+	 * Validates the live database structure against db/SCHEMA.sql.
+	 * Checks for missing tables, missing/wrong columns, missing indexes and missing FK constraints.
+	 * Returns a list of issues; each issue carries the SQL fix statement needed to repair it.
+	 *
+	 * @method validate_database
+	 * @param  Database_PDO $Database
+	 * @return array  ['ok'=>bool, 'error'=>string|null, 'issues'=>[['table','type','description','fix_sql']]]
+	 */
+	public function validate_database(Database_PDO $Database): array
+	{
+		$schema_path = dirname(__FILE__) . '/../../db/SCHEMA.sql';
+		if (!file_exists($schema_path)) {
+			return ['ok' => false, 'error' => 'db/SCHEMA.sql not found', 'issues' => []];
+		}
+
+		$db_name  = $Database->dbname;
+		$expected = $this->vdb_parse_schema(file_get_contents($schema_path));
+
+		// Fetch actual DB state from INFORMATION_SCHEMA
+		$act_tables  = array_column(array_map('get_object_vars',
+			$Database->getObjectsQuery(
+				"SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
+				 WHERE TABLE_SCHEMA = ? AND TABLE_TYPE = 'BASE TABLE'",
+				[$db_name]
+			)
+		), 'TABLE_NAME');
+		$act_columns = $this->vdb_get_columns($Database, $db_name);
+		$act_indexes = $this->vdb_get_indexes($Database, $db_name);
+		$act_fks     = $this->vdb_get_fks($Database, $db_name);
+
+		$issues = [];
+
+		foreach ($expected as $table => $def) {
+
+			// --- Missing table ---
+			if (!in_array($table, $act_tables)) {
+				$issues[] = [
+					'table'       => $table,
+					'type'        => 'missing_table',
+					'description' => "Table `{$table}` does not exist",
+					'fix_sql'     => $def['create_sql'],
+				];
+				continue; // columns/indexes cannot be checked on a missing table
+			}
+
+			// --- Missing / wrong columns ---
+			$a_cols = $act_columns[$table] ?? [];
+			foreach ($def['columns'] as $col => $ci) {
+				if (!isset($a_cols[$col])) {
+					$issues[] = [
+						'table'       => $table,
+						'type'        => 'missing_column',
+						'description' => "Column `{$table}`.`{$col}` is missing",
+						'fix_sql'     => "ALTER TABLE `{$table}` ADD COLUMN {$ci['original']};",
+					];
+				} else {
+					$exp_type  = $this->vdb_normalize_type($ci['type']);
+					$act_type  = $this->vdb_normalize_type($a_cols[$col]['type']);
+					$exp_null  = $ci['nullable'];
+					$act_null  = $a_cols[$col]['nullable'];
+					if ($exp_type !== $act_type || $exp_null !== $act_null) {
+						$exp_desc = $exp_type . ($exp_null ? '' : ' NOT NULL');
+						$act_desc = $act_type . ($act_null ? '' : ' NOT NULL');
+						$issues[] = [
+							'table'       => $table,
+							'type'        => 'wrong_column',
+							'description' => "Column `{$table}`.`{$col}`: expected `{$exp_desc}`, got `{$act_desc}`",
+							'fix_sql'     => "ALTER TABLE `{$table}` MODIFY COLUMN {$ci['original']};",
+						];
+					}
+				}
+			}
+
+			// --- Missing indexes ---
+			$a_idx = $act_indexes[$table] ?? [];
+			foreach ($def['indexes'] as $idx_name => $ii) {
+				if (isset($a_idx[$idx_name])) continue;
+				if ($ii['type'] === 'PRIMARY') {
+					$fix = "ALTER TABLE `{$table}` ADD PRIMARY KEY ({$ii['columns']});";
+					$desc = "Primary key on `{$table}` is missing";
+				} elseif ($ii['type'] === 'UNIQUE') {
+					$fix = "ALTER TABLE `{$table}` ADD UNIQUE KEY `{$idx_name}` ({$ii['columns']});";
+					$desc = "Unique index `{$idx_name}` on `{$table}` is missing";
+				} else {
+					$fix = "ALTER TABLE `{$table}` ADD KEY `{$idx_name}` ({$ii['columns']});";
+					$desc = "Index `{$idx_name}` on `{$table}` is missing";
+				}
+				$issues[] = ['table' => $table, 'type' => 'missing_index', 'description' => $desc, 'fix_sql' => $fix];
+			}
+
+			// --- Missing FK constraints ---
+			$a_fks = $act_fks[$table] ?? [];
+			foreach ($def['fks'] as $fk_name => $fki) {
+				if (isset($a_fks[$fk_name])) continue;
+				$issues[] = [
+					'table'       => $table,
+					'type'        => 'missing_fk',
+					'description' => "Foreign key `{$fk_name}` on `{$table}` is missing",
+					'fix_sql'     => "ALTER TABLE `{$table}` ADD CONSTRAINT `{$fk_name}` FOREIGN KEY ({$fki['columns']}) REFERENCES `{$fki['ref_table']}` ({$fki['ref_cols']}) {$fki['actions']};",
+				];
+			}
+		}
+
+		return ['ok' => empty($issues), 'error' => null, 'issues' => $issues];
+	}
+
+	/**
+	 * Parse all CREATE TABLE statements from a SQL schema dump.
+	 * Returns [tableName => ['columns', 'indexes', 'fks', 'create_sql']]
+	 */
+	private function vdb_parse_schema(string $sql): array
+	{
+		$tables = [];
+		if (!preg_match_all('/CREATE\s+TABLE\s+`(\w+)`\s*\((.*?)\)\s*ENGINE[^;]*;/si', $sql, $matches, PREG_SET_ORDER)) {
+			return $tables;
+		}
+		foreach ($matches as $m) {
+			$table   = $m[1];
+			$body    = $m[2];
+			$columns = [];
+			$indexes = [];
+			$fks     = [];
+
+			foreach (explode("\n", $body) as $line) {
+				$line = rtrim(trim($line), ',');
+				if ($line === '') continue;
+
+				if (preg_match('/^`(\w+)`\s+(.+)$/i', $line, $c)) {
+					// Column definition
+					$cname = $c[1];
+					$cdef  = $c[2];
+					preg_match('/^((?:enum|set)\s*\([^)]+\)|\S+)(\s+unsigned)?/i', $cdef, $tm);
+					$columns[$cname] = [
+						'type'     => trim(($tm[1] ?? '') . ($tm[2] ?? '')),
+						'nullable' => stripos($cdef, 'NOT NULL') === false,
+						'original' => "`{$cname}` {$cdef}",
+					];
+				} elseif (preg_match('/^PRIMARY\s+KEY\s*\((.+)\)/i', $line, $k)) {
+					$indexes['PRIMARY'] = ['type' => 'PRIMARY', 'columns' => $k[1]];
+				} elseif (preg_match('/^(UNIQUE\s+KEY|KEY)\s+`(\w+)`\s*\((.+)\)/i', $line, $k)) {
+					$indexes[$k[2]] = [
+						'type'    => stripos($k[1], 'UNIQUE') !== false ? 'UNIQUE' : 'KEY',
+						'columns' => $k[3],
+					];
+				} elseif (preg_match('/^CONSTRAINT\s+`(\w+)`\s+FOREIGN\s+KEY\s*\((.+?)\)\s+REFERENCES\s+`(\w+)`\s*\((.+?)\)(.*)/i', $line, $f)) {
+					$fks[$f[1]] = [
+						'columns'   => $f[2],
+						'ref_table' => $f[3],
+						'ref_cols'  => $f[4],
+						'actions'   => trim($f[5]),
+					];
+				}
+			}
+			$tables[$table] = ['columns' => $columns, 'indexes' => $indexes, 'fks' => $fks, 'create_sql' => $m[0]];
+		}
+		return $tables;
+	}
+
+	/** Normalize column type for comparison — strips integer display widths (cosmetic in MySQL 8+). */
+	private function vdb_normalize_type(string $type): string
+	{
+		$type = preg_replace('/\b(tinyint|smallint|mediumint|int|bigint)\s*\(\d+\)/i', '$1', $type);
+		return strtolower(preg_replace('/\s+/', ' ', trim($type)));
+	}
+
+	private function vdb_get_columns(Database_PDO $Database, string $db_name): array
+	{
+		$result = [];
+		foreach ($Database->getObjectsQuery(
+			"SELECT TABLE_NAME, COLUMN_NAME, COLUMN_TYPE, IS_NULLABLE
+			 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = ?
+			 ORDER BY TABLE_NAME, ORDINAL_POSITION",
+			[$db_name]
+		) as $row) {
+			$result[$row->TABLE_NAME][$row->COLUMN_NAME] = [
+				'type'     => $row->COLUMN_TYPE,
+				'nullable' => $row->IS_NULLABLE === 'YES',
+			];
+		}
+		return $result;
+	}
+
+	private function vdb_get_indexes(Database_PDO $Database, string $db_name): array
+	{
+		$result = [];
+		foreach ($Database->getObjectsQuery(
+			"SELECT TABLE_NAME, INDEX_NAME FROM INFORMATION_SCHEMA.STATISTICS
+			 WHERE TABLE_SCHEMA = ? GROUP BY TABLE_NAME, INDEX_NAME",
+			[$db_name]
+		) as $row) {
+			$result[$row->TABLE_NAME][$row->INDEX_NAME] = true;
+		}
+		return $result;
+	}
+
+	private function vdb_get_fks(Database_PDO $Database, string $db_name): array
+	{
+		$result = [];
+		foreach ($Database->getObjectsQuery(
+			"SELECT rc.CONSTRAINT_NAME, kcu.TABLE_NAME
+			 FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc
+			 JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu
+			      ON kcu.CONSTRAINT_NAME = rc.CONSTRAINT_NAME
+			      AND kcu.CONSTRAINT_SCHEMA = rc.CONSTRAINT_SCHEMA
+			 WHERE rc.CONSTRAINT_SCHEMA = ?
+			 GROUP BY rc.CONSTRAINT_NAME, kcu.TABLE_NAME",
+			[$db_name]
+		) as $row) {
+			$result[$row->TABLE_NAME][$row->CONSTRAINT_NAME] = true;
+		}
+		return $result;
+	}
+
+	/**
 	 * Prints a Tabler breadcrumb nav based on the current $_params.
 	 * Last (active) item is not clickable; all preceding items are linked.
 	 *

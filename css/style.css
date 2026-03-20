@@ -359,4 +359,10 @@ padding: .25rem .5rem;
     a {
         color: var(--tblr-alert-color);
     }
+
+    code.dbfix {
+        background: ;
+        color: var(--tbl-color-primary);
+        background: var(--tblr-body-bg);
+    }
 }
