@@ -7,6 +7,28 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
+# Dump of table translations
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `translations`;
+
+CREATE TABLE `translations` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL COMMENT 'English name, e.g. Slovenian',
+  `native_name` varchar(100) NOT NULL COMMENT 'Native name, e.g. Slovenščina',
+  `locale_code` varchar(30) NOT NULL COMMENT 'gettext locale, e.g. sl_SI.UTF-8',
+  `lang_code` varchar(5) NOT NULL COMMENT 'ISO 639-1, e.g. sl',
+  `flag` varchar(10) DEFAULT NULL COMMENT 'Emoji flag',
+  `enabled` tinyint(1) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `locale_code` (`locale_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Available UI translation languages';
+
+INSERT INTO `translations` (`id`, `name`, `native_name`, `locale_code`, `lang_code`, `flag`) VALUES
+  (1, 'English',   'English',     'en_US.UTF-8', 'en', '🇬🇧'),
+  (2, 'Slovenian', 'Slovenščina', 'sl_SI.UTF-8', 'sl', '🇸🇮');
+
+
 # Dump of table migrations
 # ------------------------------------------------------------
 
@@ -190,7 +212,10 @@ CREATE TABLE `tenants` (
   `remove_orphaned` tinyint(1) NOT NULL DEFAULT 1,
   `order` int(2) DEFAULT 99,
   `log_retention` int(4) NOT NULL DEFAULT 30,
-  PRIMARY KEY (`id`)
+  `lang_id` int(11) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `tenants_lang_id` (`lang_id`),
+  CONSTRAINT `tenants_lang_id` FOREIGN KEY (`lang_id`) REFERENCES `translations` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -253,9 +278,12 @@ CREATE TABLE `users` (
   `notif_id` int(11) unsigned DEFAULT 0,
   `changePass` tinyint(1) NOT NULL DEFAULT 0,
   `disabled` tinyint(1) NOT NULL DEFAULT 0,
+  `lang_id` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `u_tenants` (`t_id`),
-  CONSTRAINT `u_tenants` FOREIGN KEY (`t_id`) REFERENCES `tenants` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  KEY `users_lang_id` (`lang_id`),
+  CONSTRAINT `u_tenants` FOREIGN KEY (`t_id`) REFERENCES `tenants` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `users_lang_id` FOREIGN KEY (`lang_id`) REFERENCES `translations` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

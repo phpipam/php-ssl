@@ -594,7 +594,7 @@ class Common extends Validate
 		if ($route === 'dashboard') {
 			$items[] = [null];
 		} else {
-			$items[] = [_(''), "/{$tenant}/dashboard/"];
+			$items[] = [_('Dashboard'), "/{$tenant}/dashboard/"];
 
 			$route_label = $route_labels[$route] ?? ucfirst($route);
 

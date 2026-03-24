@@ -24,7 +24,7 @@ $edit_user = $Database->getObject ("users", $_GET['id']);
 #
 # title
 #
-$title = _(ucwords($_GET['action']))." "._("user");
+$title = _u($_GET['action'])." "._("user");
 
 # validate action
 if(!$User->validate_action($_GET['action'])) {
@@ -170,6 +170,28 @@ else {
 		$content[] = "		</label>";
 		$content[] = "	</td>";
 		$content[] = "</tr>";
+
+		// language — only on edit; query translations from DB
+		$all_langs = [];
+		try {
+			$all_langs = $Database->getObjectsQuery("SELECT id, name, native_name, flag FROM translations WHERE enabled = 1 ORDER BY name ASC", []);
+		} catch (Exception $e) {}
+		if (!empty($all_langs)) {
+			$content[] = "<tr>";
+			$content[] = "	<th>"._("Language")."</th>";
+			$content[] = "	<td>";
+			$content[] = "		<select name='lang_id' class='form-select form-select-sm' style='width:auto'>";
+			$content[] = "			<option value=''>"._("— Tenant default —")."</option>";
+			foreach ($all_langs as $lang) {
+				$sel = (!empty($edit_user->lang_id) && $edit_user->lang_id == $lang->id) ? "selected" : "";
+				$label = htmlspecialchars(($lang->flag ? $lang->flag . ' ' : '') . $lang->native_name . ' (' . $lang->name . ')');
+				$content[] = "			<option value='" . (int)$lang->id . "' {$sel}>{$label}</option>";
+			}
+			$content[] = "		</select>";
+			$content[] = "		<span class='text-muted' style='font-size:11px'>"._("User interface language preference")."</span>";
+			$content[] = "	</td>";
+			$content[] = "</tr>";
+		}
 	}
 
 	$content[] = "</tbody>";
@@ -179,7 +201,7 @@ else {
 	#
 	# button text
 	#
-	$btn_text = _(ucwords($_GET['action']))." "._("user");
+	$btn_text = _u($_GET['action'])." "._("user");
 }
 
 

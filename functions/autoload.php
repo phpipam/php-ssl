@@ -6,6 +6,96 @@
  *
  */
 
+/**
+ * Safe ucwords translation helper.
+ * Wraps _(ucwords($s)) but returns '' for empty strings to avoid
+ * gettext returning the PO file header when passed an empty msgid.
+ */
+function _u (string $s): string {
+	return $s !== '' ? _(ucwords($s)) : '';
+}
+
+/**
+ * Initialise PHP gettext locale for this request.
+ *
+ * Resolution order (highest priority first):
+ *  1. $_SESSION['lang_id']   – in-session override (user clicked language switch)
+ *  2. users.lang_id          – per-user preference
+ *  3. tenants.lang_id        – tenant default
+ *  4. English (no gettext)   – built-in fallback, _() returns msgid as-is
+ *
+ * @param object|null $user     Current user object from $User->get_current_user()
+ * @param object      $Database Database_PDO instance
+ */
+function init_locale ($user, $Database)
+{
+	$lang_id = null;
+
+	// 1. In-session override
+	if (isset($_SESSION['lang_id']) && is_numeric($_SESSION['lang_id'])) {
+		$lang_id = (int) $_SESSION['lang_id'];
+	}
+	// 2. User preference (query directly to avoid JOIN column ambiguity)
+	elseif ($user !== null && !empty($user->id)) {
+		try {
+			$row = $Database->getObjectQuery ("SELECT lang_id FROM users WHERE id = ?", [$user->id]);
+			if ($row && !empty($row->lang_id)) {
+				$lang_id = (int) $row->lang_id;
+			}
+		} catch (Exception $e) { /* non-fatal */ }
+	}
+	// 3. Tenant default
+	if ($lang_id === null && $user !== null && !empty($user->t_id)) {
+		try {
+			$row = $Database->getObjectQuery ("SELECT lang_id FROM tenants WHERE id = ?", [$user->t_id]);
+			if ($row && !empty($row->lang_id)) {
+				$lang_id = (int) $row->lang_id;
+			}
+		} catch (Exception $e) { /* non-fatal */ }
+	}
+
+	// 4. No preference, or English (id=1) → nothing to do
+	if ($lang_id === null || $lang_id === 1) {
+		return;
+	}
+
+	// Fetch locale_code from DB
+	try {
+		$tr = $Database->getObjectQuery ("SELECT locale_code FROM translations WHERE id = ? AND enabled = 1", [$lang_id]);
+	} catch (Exception $e) { return; }
+	if (!$tr || empty($tr->locale_code)) { return; }
+
+	$locale = $tr->locale_code;
+	// Skip English locale — no .mo file needed
+	if (strpos($locale, 'en_') === 0) { return; }
+
+	// Initialise gettext
+	putenv ("LANG={$locale}");
+	putenv ("LANGUAGE={$locale}");
+	// Try multiple locale variants for cross-platform compatibility
+	setlocale (LC_ALL, [$locale, str_replace('.UTF-8', '.utf8', $locale), str_replace('.UTF-8', '', $locale)]);
+	bindtextdomain ("messages", dirname(__FILE__) . "/../functions/locale");
+	bind_textdomain_codeset ("messages", "UTF-8");
+	textdomain ("messages");
+}
+
+/**
+ * Returns all enabled translations, ordered by name.
+ * Returns an empty array if the translations table does not exist yet.
+ *
+ * @param  object $Database
+ * @return array
+ */
+function load_translations ($Database)
+{
+	try {
+		$rows = $Database->getObjectsQuery ("SELECT * FROM translations WHERE enabled = 1 ORDER BY name ASC", []);
+		return $rows ?: [];
+	} catch (Exception $e) {
+		return [];
+	}
+}
+
 # config
 include (dirname(__FILE__)."/../config.php");
 
@@ -86,6 +176,12 @@ else
 
 		# save user to local var
 		$user = $User->get_current_user();
+
+		# initialise gettext locale for this request
+		init_locale ($user, $Database);
+
+		# load available translations for language switcher
+		$all_translations = load_translations ($Database);
 
 		# validate requested path
 		$URL->validate_path ($user);

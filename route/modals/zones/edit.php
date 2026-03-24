@@ -31,7 +31,7 @@ $axfr_visible = @$zone->type=="axfr" ? "" : "d-none";
 #
 # title
 #
-$title = _(ucwords($_GET['action']))." "._("zone");
+$title = _u($_GET['action'])." "._("zone");
 
 # validate action
 if(!$User->validate_action($_GET['action'])) {
@@ -265,7 +265,7 @@ else {
 	#
 	# button text
 	#
-	$btn_text = _(ucwords($_GET['action']))." "._("zone");
+	$btn_text = _u($_GET['action'])." "._("zone");
 }
 
 

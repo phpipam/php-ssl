@@ -238,6 +238,12 @@ class User extends Common
 			session_regenerate_id(true);
 			// save user
 			$_SESSION['username'] = $user->email;
+			// save user's language preference so init_locale() picks it up immediately
+			if (!empty($user->lang_id)) {
+				$_SESSION['lang_id'] = (int) $user->lang_id;
+			} else {
+				unset($_SESSION['lang_id']);
+			}
 			// redirect ?
 			if (isset($_SESSION['redirect_url'])) {
 				$redirect = $_SESSION['redirect_url'];
@@ -306,10 +312,15 @@ class User extends Common
 			// update photo
 			// --$this->update_user_photo($user->id, $AD);
 			}
-			# save locale
-			//$this->save_user_locale ($user);
 			# save to session
 			$this->username = $username;
+			$_SESSION['username'] = $username;
+			// save user's language preference
+			if (!empty($user->lang_id)) {
+				$_SESSION['lang_id'] = (int) $user->lang_id;
+			} else {
+				unset($_SESSION['lang_id']);
+			}
 			// write log
 			// -- $this->write_auth_log($username, "success", "Login successfull");
 			# success print

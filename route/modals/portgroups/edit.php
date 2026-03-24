@@ -24,7 +24,7 @@ $port_group = $Database->getObject ("ssl_port_groups",$_GET['id']);
 #
 # title
 #
-$title = _(ucwords($_GET['action']))." "._("port group");
+$title = _u($_GET['action'])." "._("port group");
 
 # validate action
 if(!$User->validate_action($_GET['action'])) {
@@ -105,7 +105,7 @@ else {
 	#
 	# button text
 	#
-	$btn_text = _(ucwords($_GET['action']))." "._("port group");
+	$btn_text = _u($_GET['action'])." "._("port group");
 }
 
 

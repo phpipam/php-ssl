@@ -24,7 +24,7 @@ $agent = $Database->getObject ("agents",$_GET['id']);
 #
 # title
 #
-$title = _(ucwords($_GET['action']))." "._("agent");
+$title = _u($_GET['action'])." "._("agent");
 
 # validate action
 if(!$User->validate_action($_GET['action'])) {
@@ -112,7 +112,7 @@ else {
 	#
 	# button text
 	#
-	$btn_text = _(ucwords($_GET['action']))." "._("agent");
+	$btn_text = _u($_GET['action'])." "._("agent");
 }
 
 

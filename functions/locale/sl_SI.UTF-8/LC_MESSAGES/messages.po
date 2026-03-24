@@ -1,0 +1,1929 @@
+# Slovenian translation for php-ssl
+# Copyright (C) php-ssl contributors
+# Language: sl (Slovenian / Slovenščina)
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: php-ssl\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-24\n"
+"PO-Revision-Date: 2026-03-24\n"
+"Last-Translator: \n"
+"Language-Team: Slovenian\n"
+"Language: sl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n"
+"%100==4 ? 2 : 3);\n"
+
+# ── Menu / Navigation ────────────────────────────────────────────────────────
+msgid "Dashboard"
+msgstr "Nadzorna plošča"
+
+msgid "Zones"
+msgstr "Cone"
+
+msgid "Certificates"
+msgstr "Certifikati"
+
+msgid "Scanning"
+msgstr "Skeniranje"
+
+# #-#-#-#-#  messages.po (php-ssl)  #-#-#-#-#
+# ── Logs ───────────────────────────────────────────────────────────────────────
+msgid "Logs"
+msgstr "Dnevniki"
+
+msgid "Users"
+msgstr "Uporabniki"
+
+msgid "Tenants"
+msgstr "Najemniki"
+
+msgid "Settings"
+msgstr "Nastavitve"
+
+msgid "Agents"
+msgstr "Agenti"
+
+msgid "Port groups"
+msgstr "Skupine vrat"
+
+msgid "Cron"
+msgstr "Urnik"
+
+msgid "Ignored"
+msgstr "Prezrti"
+
+# ── Certificate sub-menu ──────────────────────────────────────────────────────
+msgid "All certificates"
+msgstr "Vsi certifikati"
+
+msgid "Expired"
+msgstr "Potekli"
+
+msgid "Expire soon"
+msgstr "Kmalu poteče"
+
+msgid "Orphaned"
+msgstr "Sirotski"
+
+msgid "Imported"
+msgstr "Uvoženi"
+
+# ── Common actions ─────────────────────────────────────────────────────────────
+msgid "Add"
+msgstr "Dodaj"
+
+msgid "Edit"
+msgstr "Uredi"
+
+msgid "Delete"
+msgstr "Izbriši"
+
+msgid "Save"
+msgstr "Shrani"
+
+msgid "Cancel"
+msgstr "Prekliči"
+
+msgid "Back"
+msgstr "Nazaj"
+
+msgid "Close"
+msgstr "Zapri"
+
+msgid "Close window"
+msgstr "Zapri okno"
+
+msgid "Search"
+msgstr "Iskanje"
+
+msgid "Search "
+msgstr "Iskanje "
+
+msgid "Refresh"
+msgstr "Osveži"
+
+msgid "Import"
+msgstr "Uvozi"
+
+msgid "Export"
+msgstr "Izvozi"
+
+msgid "Download"
+msgstr "Prenesi"
+
+msgid "Remove"
+msgstr "Odstrani"
+
+msgid "Remove all"
+msgstr "Odstrani vse"
+
+msgid "Change"
+msgstr "Sprememba"
+
+msgid "Create"
+msgstr "Ustvari"
+
+msgid "Manage"
+msgstr "Upravljaj"
+
+msgid "Fetch"
+msgstr "Pridobi"
+
+msgid "Sync now"
+msgstr "Sinhroniziraj zdaj"
+
+msgid "Transform"
+msgstr "Pretvori"
+
+msgid "Truncate"
+msgstr "Prazni"
+
+msgid "Rollback"
+msgstr "Povrni"
+
+msgid "Revert change"
+msgstr "Povrni spremembo"
+
+msgid "Yes"
+msgstr "Da"
+
+msgid "No"
+msgstr "Ne"
+
+msgid "OK"
+msgstr "V redu"
+
+# ── Status / feedback ──────────────────────────────────────────────────────────
+msgid "Error"
+msgstr "Napaka"
+
+msgid "Error: "
+msgstr "Napaka: "
+
+msgid "Warning"
+msgstr "Opozorilo"
+
+msgid "Success"
+msgstr "Uspešno"
+
+msgid "Updated"
+msgstr "Posodobljeno"
+
+msgid "No change"
+msgstr "Ni spremembe"
+
+msgid "Loading"
+msgstr "Nalaganje"
+
+msgid "Valid"
+msgstr "Veljavno"
+
+msgid "Unknown"
+msgstr "Neznano"
+
+msgid "Not found"
+msgstr "Ni najdeno"
+
+msgid "Not checked"
+msgstr "Ni preverjen"
+
+msgid "Enabled"
+msgstr "Omogočeno"
+
+msgid "Disabled"
+msgstr "Onemogočeno"
+
+msgid "Active"
+msgstr "Aktivno"
+
+msgid "Inactive"
+msgstr "Neaktivno"
+
+msgid "Private"
+msgstr "Zasebno"
+
+msgid "None configured"
+msgstr "Ni konfigurirano"
+
+msgid "Never"
+msgstr "Nikoli"
+
+msgid "Local"
+msgstr "Lokalno"
+
+# ── User / auth ────────────────────────────────────────────────────────────────
+msgid "Login"
+msgstr "Prijava"
+
+msgid "Logout"
+msgstr "Odjava"
+
+msgid "Log out"
+msgstr "Odjava"
+
+msgid "Sign in"
+msgstr "Prijava"
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "My profile"
+msgstr "Moj profil"
+
+msgid "Acting as"
+msgstr "Nastopam kot"
+
+msgid "Switch back to admin"
+msgstr "Vrni se na skrbnika"
+
+msgid "Impersonate"
+msgstr "Prevzemi identiteto"
+
+msgid "Login successful"
+msgstr "Prijava uspešna"
+
+msgid "Login successfull"
+msgstr "Prijava uspešna"
+
+msgid "You have logged out"
+msgstr "Odjavili ste se"
+
+msgid "Please enter your email and password to login to system"
+msgstr "Vnesite e-poštni naslov in geslo za prijavo v sistem"
+
+msgid "Please enter your username and password"
+msgstr "Vnesite uporabniško ime in geslo"
+
+msgid "Please log in."
+msgstr "Prosimo, prijavite se."
+
+msgid "Session expired. Redirecting to login..."
+msgstr "Seja je potekla. Preusmerjam na prijavo..."
+
+msgid "Password change required"
+msgstr "Zahtevana je sprememba gesla"
+
+msgid "You must set a new password before continuing."
+msgstr "Pred nadaljevanjem morate nastaviti novo geslo."
+
+msgid "Your account is not activated or disabled!"
+msgstr "Vaš račun ni aktiviran ali je onemogočen!"
+
+msgid "Please wait for system administrator to enable your account."
+msgstr "Prosimo, počakajte, da skrbnik sistema omogoči vaš račun."
+
+# ── User management ────────────────────────────────────────────────────────────
+msgid "User"
+msgstr "Uporabnik"
+
+msgid "user"
+msgstr "uporabnik"
+
+msgid "New user"
+msgstr "Nov uporabnik"
+
+msgid "Add user"
+msgstr "Dodaj uporabnika"
+
+msgid "Edit user"
+msgstr "Uredi uporabnika"
+
+msgid "Edit profile"
+msgstr "Uredi profil"
+
+msgid "Delete user"
+msgstr "Izbriši uporabnika"
+
+msgid "Delete account"
+msgstr "Izbriši račun"
+
+msgid "User created"
+msgstr "Uporabnik ustvarjen"
+
+msgid "User updated"
+msgstr "Uporabnik posodobljen"
+
+msgid "User deleted"
+msgstr "Uporabnik izbrisan"
+
+msgid "User details"
+msgstr "Podrobnosti uporabnika"
+
+msgid "User logs"
+msgstr "Dnevniki uporabnika"
+
+msgid "User does not exist."
+msgstr "Uporabnik ne obstaja."
+
+msgid "List of all available users"
+msgstr "Seznam vseh razpoložljivih uporabnikov"
+
+msgid "No users available"
+msgstr "Ni razpoložljivih uporabnikov"
+
+msgid "new user account"
+msgstr "nov uporabniški račun"
+
+msgid "Your php-ssl account has been created"
+msgstr "Vaš php-ssl račun je bil ustvarjen"
+
+msgid "You will be asked to change your password on first login."
+msgstr "Ob prvi prijavi boste morali spremeniti geslo."
+
+msgid "Name"
+msgstr "Ime"
+
+msgid "Email"
+msgstr "E-pošta"
+
+msgid "Your E-Mail"
+msgstr "Vaša e-pošta"
+
+msgid "E-Mail address"
+msgstr "E-poštni naslov"
+
+msgid "Password"
+msgstr "Geslo"
+
+msgid "Your password"
+msgstr "Vaše geslo"
+
+msgid "Current password"
+msgstr "Trenutno geslo"
+
+msgid "New password"
+msgstr "Novo geslo"
+
+msgid "Confirm new password"
+msgstr "Potrdi novo geslo"
+
+msgid "Change password"
+msgstr "Sprememba gesla"
+
+msgid "Permission"
+msgstr "Dovoljenje"
+
+msgid "Force password change"
+msgstr "Prisili spremembo gesla"
+
+msgid "User must change password on next login"
+msgstr "Uporabnik mora spremeniti geslo ob naslednji prijavi"
+
+msgid "Account is disabled — user cannot log in"
+msgstr "Račun je onemogočen — uporabnik se ne more prijaviti"
+
+msgid "Days warning"
+msgstr "Opozorilo (dnevi)"
+
+msgid "Days expired"
+msgstr "Dnevi po preteku"
+
+msgid "Days before expiry to warn"
+msgstr "Dnevi pred pretekom za opozorilo"
+
+msgid "Days before expiry to show warning"
+msgstr "Dnevi pred pretekom za prikaz opozorila"
+
+msgid "Days after expiry to still warn"
+msgstr "Dnevi po preteku za opozorilo"
+
+msgid "Days after expiry to show warning"
+msgstr "Dnevi po preteku za prikaz opozorila"
+
+msgid "Leave blank to keep current"
+msgstr "Pustite prazno za ohranitev trenutnega"
+
+msgid "Min 10 characters, must include uppercase, lowercase and a number"
+msgstr "Min 10 znakov, mora vsebovati veliko in malo črko ter številko"
+
+msgid "Min 10 characters, must include uppercase, lowercase and a number."
+msgstr "Min 10 znakov, mora vsebovati veliko in malo črko ter številko."
+
+msgid "You cannot delete your own account"
+msgstr "Ne morete izbrisati lastnega računa"
+
+msgid "Failed to update password: "
+msgstr "Posodobitev gesla ni uspela: "
+
+msgid "Current password is incorrect."
+msgstr "Trenutno geslo je napačno."
+
+msgid "New password must be different from the current password."
+msgstr "Novo geslo se mora razlikovati od trenutnega."
+
+msgid "New passwords do not match."
+msgstr "Novi gesli se ne ujemata."
+
+msgid "Password changed successfully."
+msgstr "Geslo je bilo uspešno spremenjeno."
+
+msgid "Password is required"
+msgstr "Geslo je obvezno"
+
+msgid ""
+"Password must be at least 10 characters and contain an uppercase letter, a "
+"lowercase letter, and a number"
+msgstr ""
+"Geslo mora imeti vsaj 10 znakov in vsebovati veliko črko, malo črko in "
+"številko"
+
+msgid ""
+"Password must be at least 10 characters and contain an uppercase letter, a "
+"lowercase letter, and a number."
+msgstr ""
+"Geslo mora imeti vsaj 10 znakov in vsebovati veliko črko, malo črko in "
+"številko."
+
+msgid "Language"
+msgstr "Jezik"
+
+msgid "— Tenant default —"
+msgstr "— Privzeto za najemnika —"
+
+# ── Tenant management ──────────────────────────────────────────────────────────
+msgid "Tenant"
+msgstr "Najemnik"
+
+msgid "tenant"
+msgstr "najemnik"
+
+msgid "New tenant"
+msgstr "Nov najemnik"
+
+msgid "Create new tenant"
+msgstr "Ustvari novega najemnika"
+
+msgid "Add tenant"
+msgstr "Dodaj najemnika"
+
+msgid "Edit tenant"
+msgstr "Uredi najemnika"
+
+msgid "Delete tenant"
+msgstr "Izbriši najemnika"
+
+msgid "Tenant created"
+msgstr "Najemnik ustvarjen"
+
+msgid "Tenant updated"
+msgstr "Najemnik posodobljen"
+
+msgid "Tenant deleted"
+msgstr "Najemnik izbrisan"
+
+msgid "Tenant name"
+msgstr "Ime najemnika"
+
+msgid "Tenant notifications"
+msgstr "Obvestila najemnika"
+
+msgid "Tenant recipients"
+msgstr "Prejemniki najemnika"
+
+msgid "Deleted tenant id"
+msgstr "ID izbrisa najemnika"
+
+msgid "List of all available tenants in the system"
+msgstr "Seznam vseh razpoložljivih najemnikov v sistemu"
+
+msgid "View and manage system tenants"
+msgstr "Ogled in upravljanje najemnikov sistema"
+
+msgid "No tenants available"
+msgstr "Ni razpoložljivih najemnikov"
+
+msgid "Href"
+msgstr "Naslov"
+
+msgid "Remove orphaned"
+msgstr "Odstrani sirotske"
+
+msgid "Mail style"
+msgstr "Slog pošte"
+
+msgid "Recipients"
+msgstr "Prejemniki"
+
+msgid "Log retention"
+msgstr "Hramba dnevnikov"
+
+msgid "days (logs older than this are deleted automatically)"
+msgstr "dni (starejši dnevniki se samodejno izbrišejo)"
+
+msgid "Receive notifications for all hosts in this tenant"
+msgstr "Prejemaj obvestila za vse gostitelje v tem najemniku"
+
+msgid "Not in any tenant recipients"
+msgstr "Ni v prejemnikih najemnika"
+
+# ── Certificate management ─────────────────────────────────────────────────────
+msgid "Certificate"
+msgstr "Certifikat"
+
+msgid "certificate"
+msgstr "certifikat"
+
+msgid "Serial number"
+msgstr "Serijska številka"
+
+msgid "Serial"
+msgstr "Serijska"
+
+msgid "Common name"
+msgstr "Skupno ime"
+
+msgid "Issued by"
+msgstr "Izdal"
+
+msgid "Issued to"
+msgstr "Izdan za"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Days"
+msgstr "Dnevi"
+
+msgid "days"
+msgstr "dni"
+
+msgid "days remaining"
+msgstr "dni preostane"
+
+msgid "Expires"
+msgstr "Poteče"
+
+msgid "Expires on"
+msgstr "Poteče dne"
+
+msgid "Expires soon"
+msgstr "Kmalu poteče"
+
+msgid "Certificate expired"
+msgstr "Certifikat je potekel"
+
+msgid "Valid from"
+msgstr "Veljavno od"
+
+msgid "Valid to"
+msgstr "Veljavno do"
+
+msgid "Valid from/to"
+msgstr "Veljavno od/do"
+
+msgid "Valid for domains"
+msgstr "Veljavno za domene"
+
+msgid "Valid Until"
+msgstr "Veljavno do"
+
+msgid "Valid untill"
+msgstr "Veljavno do"
+
+msgid "Lifetime"
+msgstr "Življenjska doba"
+
+msgid "Certificate details"
+msgstr "Podrobnosti certifikata"
+
+msgid "Certificate history"
+msgstr "Zgodovina certifikata"
+
+msgid "Certificate chain"
+msgstr "Veriga certifikatov"
+
+msgid "Certificate Chain"
+msgstr "Veriga certifikatov"
+
+msgid "Certificate chain is Valid"
+msgstr "Veriga certifikatov je veljavna"
+
+msgid "Certificate chain is Invalid"
+msgstr "Veriga certifikatov je neveljavna"
+
+msgid "Certificate chain missing"
+msgstr "Veriga certifikatov manjka"
+
+msgid "Certificate fetched"
+msgstr "Certifikat pridobljen"
+
+msgid "Certificate removed"
+msgstr "Certifikat odstranjen"
+
+msgid "Certificate assigned."
+msgstr "Certifikat dodeljen."
+
+msgid "Certificate imported successfully."
+msgstr "Certifikat uspešno uvožen."
+
+msgid "Certificate is required"
+msgstr "Certifikat je obvezen"
+
+msgid "Certificate not found"
+msgstr "Certifikat ni najden"
+
+msgid "Cannot parse certificate"
+msgstr "Certifikata ni mogoče razčleniti"
+
+msgid ""
+"Cannot parse certificate. Please provide a valid PEM-encoded certificate."
+msgstr ""
+"Certifikata ni mogoče razčleniti. Prosimo, navedite veljaven PEM-kodiran "
+"certifikat."
+
+msgid "This certificate was manually imported"
+msgstr "Ta certifikat je bil ročno uvožen"
+
+msgid ""
+"This certificate was manually uploaded and will not be removed by orphaned-"
+"certificate cleanup."
+msgstr ""
+"Ta certifikat je bil ročno naložen in ga čiščenje sirotskih certifikatov ne "
+"bo odstranilo."
+
+msgid "Previous certificate"
+msgstr "Prejšnji certifikat"
+
+msgid "Previous certificate already removed from database."
+msgstr "Prejšnji certifikat je bil že odstranjen iz baze."
+
+msgid "Current certificate"
+msgstr "Trenutni certifikat"
+
+msgid "Not assigned to any host"
+msgstr "Ni dodeljeno nobenemu gostitelju"
+
+msgid "All certificates fetched"
+msgstr "Vsi certifikati so bili pridobljeni"
+
+msgid "View and manage found certificates"
+msgstr "Ogled in upravljanje najdenih certifikatov"
+
+msgid "List of all available certificates in system"
+msgstr "Seznam vseh razpoložljivih certifikatov v sistemu"
+
+msgid "No certificates available for this tenant."
+msgstr "Ni razpoložljivih certifikatov za tega najemnika."
+
+msgid "No certificate found."
+msgstr "Certifikat ni bil najden."
+
+msgid "Show certificate details"
+msgstr "Prikaži podrobnosti certifikata"
+
+msgid "Delete certificate"
+msgstr "Izbriši certifikat"
+
+msgid "Remove certificate"
+msgstr "Odstrani certifikat"
+
+msgid "Refresh certificate"
+msgstr "Osveži certifikat"
+
+msgid "Certificate search results"
+msgstr "Rezultati iskanja certifikatov"
+
+msgid "Search certificates"
+msgstr "Iskanje certifikatov"
+
+msgid "Failed to obtain certificate"
+msgstr "Pridobivanje certifikata ni uspelo"
+
+# ── Certificate import ─────────────────────────────────────────────────────────
+msgid "Import certificate"
+msgstr "Uvozi certifikat"
+
+msgid "Upload file"
+msgstr "Naloži datoteko"
+
+msgid "No file chosen"
+msgstr "Ni izbrane datoteke"
+
+msgid "Choose file"
+msgstr "Izberi datoteko"
+
+msgid "Select a .pem / .crt / .cer / .pfx file, or paste below"
+msgstr "Izberite datoteko .pem / .crt / .cer / .pfx ali prilepite spodaj"
+
+msgid "PEM-encoded certificate (-----BEGIN CERTIFICATE----- block)"
+msgstr "PEM-kodiran certifikat (blok -----BEGIN CERTIFICATE-----)"
+
+msgid "PFX passphrase"
+msgstr "PFX geslo"
+
+msgid "Leave empty if not protected"
+msgstr "Pustite prazno, če ni zaščiteno"
+
+msgid "Convert to PEM"
+msgstr "Pretvori v PEM"
+
+msgid "Converting..."
+msgstr "Pretvarjam..."
+
+msgid "Conversion failed."
+msgstr "Pretvorba ni uspela."
+
+msgid "Request failed."
+msgstr "Zahteva ni uspela."
+
+msgid ""
+"Failed to read PFX file. Check the passphrase and make sure the file is a "
+"valid PKCS#12 archive."
+msgstr ""
+"Branje PFX datoteke ni uspelo. Preverite geslo in se prepričajte, da je "
+"datoteka veljavni PKCS#12 arhiv."
+
+msgid "No file uploaded or upload error."
+msgstr "Datoteka ni bila naložena ali je prišlo do napake."
+
+msgid "Manual"
+msgstr "Ročno"
+
+msgid "Manually imported"
+msgstr "Ročno uvoženo"
+
+msgid "Manually imported certificate"
+msgstr "Ročno uvožen certifikat"
+
+# ── Certificate details fields ─────────────────────────────────────────────────
+msgid "Subject"
+msgstr "Zadeva"
+
+msgid "Issuer"
+msgstr "Izdajatelj"
+
+msgid "issuer"
+msgstr "izdajatelj"
+
+msgid "ignored issuer"
+msgstr "prezrt izdajatelj"
+
+msgid "Ignored issuer"
+msgstr "Prezrt izdajatelj"
+
+msgid "Altnames"
+msgstr "Alternativna imena"
+
+msgid "SANs"
+msgstr "SAN-ji"
+
+msgid "Extensions"
+msgstr "Razširitve"
+
+msgid "Fingerprints"
+msgstr "Prstni odtisi"
+
+msgid "SHA-1"
+msgstr "SHA-1"
+
+msgid "SHA-256"
+msgstr "SHA-256"
+
+msgid "SHA-512"
+msgstr "SHA-512"
+
+msgid "SHA-256 Fingerprint"
+msgstr "Prstni odtis SHA-256"
+
+msgid "Key size"
+msgstr "Velikost ključa"
+
+msgid "Signature algoritdm"
+msgstr "Algoritem podpisa"
+
+msgid "TLS version"
+msgstr "Različica TLS"
+
+msgid "basicConstraints"
+msgstr "basicConstraints"
+
+msgid "keyUsage"
+msgstr "keyUsage"
+
+msgid "Purposes"
+msgstr "Nameni"
+
+msgid "Key identifier"
+msgstr "Identifikator ključa"
+
+msgid "Subject Key ID"
+msgstr "ID subjektnega ključa"
+
+msgid "Subject Key Identifier"
+msgstr "Identifikator subjektnega ključa"
+
+msgid "Authority Key Identifier"
+msgstr "Identifikator ključa avtoritete"
+
+msgid "Country"
+msgstr "Država"
+
+msgid "County"
+msgstr "Pokrajina"
+
+msgid "Locality"
+msgstr "Kraj"
+
+msgid "Organisation name"
+msgstr "Ime organizacije"
+
+msgid "Links"
+msgstr "Povezave"
+
+msgid "HTTP code"
+msgstr "HTTP koda"
+
+msgid "HTTP version"
+msgstr "HTTP različica"
+
+msgid "Queried URL"
+msgstr "Poizvedovani URL"
+
+msgid "Fetch website certificate"
+msgstr "Pridobi certifikat spletne strani"
+
+# ── Zone management ────────────────────────────────────────────────────────────
+msgid "Zone"
+msgstr "Cona"
+
+msgid "zone"
+msgstr "cona"
+
+msgid "New zone"
+msgstr "Nova cona"
+
+msgid "Create new zone"
+msgstr "Ustvari novo cono"
+
+msgid "Add zone"
+msgstr "Dodaj cono"
+
+msgid "Edit zone"
+msgstr "Uredi cono"
+
+msgid "Delete zone"
+msgstr "Izbriši cono"
+
+msgid "Manage zone"
+msgstr "Upravljaj cono"
+
+msgid "Sync zone"
+msgstr "Sinhroniziraj cono"
+
+msgid "Zone created"
+msgstr "Cona ustvarjena"
+
+msgid "Zone updated"
+msgstr "Cona posodobljena"
+
+msgid "Zone deleted"
+msgstr "Cona izbrisana"
+
+msgid "Zone name"
+msgstr "Ime cone"
+
+msgid "Zone details"
+msgstr "Podrobnosti cone"
+
+msgid "Zone statistics"
+msgstr "Statistika cone"
+
+msgid "Zone AXFR sync results"
+msgstr "Rezultati AXFR sinhronizacije cone"
+
+msgid "Zone hosts"
+msgstr "Gostitelji cone"
+
+msgid "Zone does not exist."
+msgstr "Cona ne obstaja."
+
+msgid "Zone not found"
+msgstr "Cona ni najdena"
+
+msgid "Zone has no hosts"
+msgstr "Cona nima gostiteljev"
+
+msgid "Zone sync"
+msgstr "Sinhronizacija cone"
+
+msgid "Zone hosts removal"
+msgstr "Odstranjevanje gostiteljev cone"
+
+msgid "List of all available DNS zones in the system"
+msgstr "Seznam vseh razpoložljivih DNS con v sistemu"
+
+msgid "View and manage zones"
+msgstr "Ogled in upravljanje con"
+
+msgid "No zones available"
+msgstr "Ni razpoložljivih con"
+
+msgid "No zones available."
+msgstr "Ni razpoložljivih con."
+
+msgid "Private zone"
+msgstr "Zasebna cona"
+
+msgid "Only visible to you"
+msgstr "Vidno samo vam"
+
+msgid "Only visible to you — not even admins can see it"
+msgstr "Vidno samo vam — tega ne vidijo niti skrbniki"
+
+msgid "Remove all hosts from zone"
+msgstr "Odstrani vse gostitelje iz cone"
+
+msgid "All hosts in zone removed"
+msgstr "Vsi gostitelji v coni so bili odstranjeni"
+
+msgid "Visibility"
+msgstr "Vidnost"
+
+msgid "Authoritative DNS"
+msgstr "Avtoritativni DNS"
+
+msgid "DNS server"
+msgstr "DNS strežnik"
+
+msgid "AXFR parameters"
+msgstr "AXFR parametri"
+
+msgid "AXFR details"
+msgstr "AXFR podrobnosti"
+
+msgid "AXFR test"
+msgstr "AXFR preizkus"
+
+msgid "AXFR zone sync"
+msgstr "AXFR sinhronizacija cone"
+
+msgid "TSIG"
+msgstr "TSIG"
+
+msgid "TSIG name"
+msgstr "Ime TSIG"
+
+msgid "TTL"
+msgstr "TTL"
+
+msgid "CNAME"
+msgstr "CNAME"
+
+msgid "Record types"
+msgstr "Vrste zapisov"
+
+msgid "Record types:"
+msgstr "Vrste zapisov:"
+
+msgid "Valid records"
+msgstr "Veljavni zapisi"
+
+msgid "Include patterns"
+msgstr "Vključi vzorce"
+
+msgid "Include regex:"
+msgstr "Vključi regex:"
+
+msgid "Included patterns"
+msgstr "Vključeni vzorci"
+
+msgid "Exclude patterns"
+msgstr "Izključi vzorce"
+
+msgid "Exclude regex:"
+msgstr "Izključi regex:"
+
+msgid "Excluded patterns"
+msgstr "Izključeni vzorci"
+
+msgid "Used filters:"
+msgstr "Uporabljeni filtri:"
+
+# ── Host management ────────────────────────────────────────────────────────────
+msgid "Host"
+msgstr "Gostitelj"
+
+msgid "host"
+msgstr "gostitelj"
+
+msgid "Hosts"
+msgstr "Gostitelji"
+
+msgid "hosts"
+msgstr "gostiteljev"
+
+msgid "Hostname"
+msgstr "Ime gostitelja"
+
+msgid "IP"
+msgstr "IP"
+
+msgid "IP address"
+msgstr "IP naslov"
+
+msgid "Port"
+msgstr "Vrata"
+
+msgid "Ports"
+msgstr "Vrata"
+
+msgid "Add host"
+msgstr "Dodaj gostitelja"
+
+msgid "Delete host"
+msgstr "Izbriši gostitelja"
+
+msgid "Import hosts"
+msgstr "Uvozi gostitelje"
+
+msgid "Host details"
+msgstr "Podrobnosti gostitelja"
+
+msgid "Host logs"
+msgstr "Dnevniki gostitelja"
+
+msgid "Host removed"
+msgstr "Gostitelj odstranjen"
+
+msgid "Hosts created"
+msgstr "Gostitelji ustvarjeni"
+
+msgid "Host does not exist in this zone."
+msgstr "Gostitelj v tej coni ne obstaja."
+
+msgid "Host search results"
+msgstr "Rezultati iskanja gostiteljev"
+
+msgid "Search hosts"
+msgstr "Iskanje gostiteljev"
+
+msgid "Add IP addresses"
+msgstr "Dodaj IP naslove"
+
+msgid "Enter one hostname per line to import into zone"
+msgstr "Vnesite eno ime gostitelja na vrstico za uvoz v cono"
+
+msgid "Please enter at least one hostname."
+msgstr "Prosimo, vnesite vsaj eno ime gostitelja."
+
+msgid "Assigned hosts"
+msgstr "Dodeljeni gostitelji"
+
+msgid "Assign certificate"
+msgstr "Dodeli certifikat"
+
+msgid "Reassign certificate"
+msgstr "Znova dodeli certifikat"
+
+msgid "Update host SSL certificate"
+msgstr "Posodobi SSL certifikat gostitelja"
+
+msgid "Refresh all host certificates"
+msgstr "Osveži vse certifikate gostiteljev"
+
+msgid "Rescan all hosts for new certificates"
+msgstr "Znova skenira vse gostitelje za nove certifikate"
+
+msgid "Rescan all"
+msgstr "Znova skenira vse"
+
+msgid "Select port group"
+msgstr "Izberi skupino vrat"
+
+msgid "Assign portgroup"
+msgstr "Dodeli skupino vrat"
+
+msgid "Exclude from scan"
+msgstr "Izključi iz skeniranja"
+
+msgid "Ignore scanning"
+msgstr "Prezri skeniranje"
+
+msgid "Ignore host check"
+msgstr "Prezri preverjanje gostitelja"
+
+msgid "Mute host"
+msgstr "Utišaj gostitelja"
+
+msgid "Mute notifications"
+msgstr "Utišaj obvestila"
+
+msgid "Unmute notifications"
+msgstr "Vklopi obvestila"
+
+msgid "Muted"
+msgstr "Utišano"
+
+msgid "Enable scanning"
+msgstr "Omogoči skeniranje"
+
+msgid "Enable SSL check"
+msgstr "Omogoči SSL preverjanje"
+
+msgid "Disable SSL check"
+msgstr "Onemogoči SSL preverjanje"
+
+msgid "host to zone"
+msgstr "gostitelja v cono"
+
+msgid "Hostname not in zone"
+msgstr "Ime gostitelja ni v coni"
+
+msgid "Add more"
+msgstr "Dodaj več"
+
+# ── Agents ─────────────────────────────────────────────────────────────────────
+msgid "Agent"
+msgstr "Agent"
+
+msgid "agent"
+msgstr "agent"
+
+msgid "New agent"
+msgstr "Nov agent"
+
+msgid "Edit agent"
+msgstr "Uredi agenta"
+
+msgid "Delete agent"
+msgstr "Izbriši agenta"
+
+msgid "Retest agent"
+msgstr "Znova preizkusi agenta"
+
+msgid "Agent created"
+msgstr "Agent ustvarjen"
+
+msgid "Agent updated"
+msgstr "Agent posodobljen"
+
+msgid "Agent deleted"
+msgstr "Agent izbrisan"
+
+msgid "Agent name"
+msgstr "Ime agenta"
+
+msgid "Agent version"
+msgstr "Različica agenta"
+
+msgid "Agent Error"
+msgstr "Napaka agenta"
+
+msgid "Agent errors"
+msgstr "Napake agenta"
+
+msgid "Scan agent"
+msgstr "Skenirni agent"
+
+msgid "Scan agents"
+msgstr "Skenirni agenti"
+
+msgid "List of all agents"
+msgstr "Seznam vseh agentov"
+
+msgid "No agents available"
+msgstr "Ni razpoložljivih agentov"
+
+msgid "Invalid agent"
+msgstr "Neveljaven agent"
+
+msgid "Invalid Agent"
+msgstr "Neveljaven agent"
+
+msgid "didnt respond for"
+msgstr "se ni odzval za"
+
+# ── Port groups ────────────────────────────────────────────────────────────────
+msgid "Port group"
+msgstr "Skupina vrat"
+
+msgid "port group"
+msgstr "skupina vrat"
+
+msgid "New port group"
+msgstr "Nova skupina vrat"
+
+msgid "Edit port group"
+msgstr "Uredi skupino vrat"
+
+msgid "Delete port group"
+msgstr "Izbriši skupino vrat"
+
+msgid "Port group created"
+msgstr "Skupina vrat ustvarjena"
+
+msgid "Port group updated"
+msgstr "Skupina vrat posodobljena"
+
+msgid "Port group deleted"
+msgstr "Skupina vrat izbrisana"
+
+msgid "Portgroup updated"
+msgstr "Skupina vrat posodobljena"
+
+msgid "List of all port groups"
+msgstr "Seznam vseh skupin vrat"
+
+msgid "View and manage scanning port groups"
+msgstr "Ogled in upravljanje skupin vrat za skeniranje"
+
+msgid "No port groups available"
+msgstr "Ni razpoložljivih skupin vrat"
+
+msgid "No port groups configured"
+msgstr "Ni konfiguriranih skupin vrat"
+
+msgid "Invalid port group"
+msgstr "Neveljavna skupina vrat"
+
+msgid "Invalid portgroup"
+msgstr "Neveljavna skupina vrat"
+
+msgid "Ports must be comma separated numbers between 1 and 65535"
+msgstr "Vrata morajo biti s vejico ločene številke med 1 in 65535"
+
+msgid "Autocreate group"
+msgstr "Samodejno ustvari skupino"
+
+# ── Cron / Scheduling ──────────────────────────────────────────────────────────
+msgid "Cron jobs"
+msgstr "Opravila urnika"
+
+msgid "Cronjob updated"
+msgstr "Opravilo posodobljeno"
+
+msgid "Edit cronjob"
+msgstr "Uredi opravilo"
+
+msgid "Scheduled actions"
+msgstr "Načrtovana dejanja"
+
+msgid "List of scheduled cronjobs"
+msgstr "Seznam načrtovanih opravil"
+
+msgid "No cronjobs configured"
+msgstr "Ni konfiguriranih opravil"
+
+msgid "Last executed"
+msgstr "Nazadnje izvedeno"
+
+msgid "Last execution"
+msgstr "Zadnja izvedba"
+
+msgid "Next execution"
+msgstr "Naslednja izvedba"
+
+msgid "Force next execution"
+msgstr "Prisili naslednjo izvedbo"
+
+msgid "Update certificates"
+msgstr "Posodobi certifikate"
+
+msgid "Update certificates executions"
+msgstr "Izvedbe posodobitev certifikatov"
+
+msgid "Script"
+msgstr "Skript"
+
+msgid "Minute"
+msgstr "Minuta"
+
+msgid "Min"
+msgstr "Min"
+
+msgid "minutes"
+msgstr "minut"
+
+msgid "Hour"
+msgstr "Ura"
+
+msgid "Day"
+msgstr "Dan"
+
+msgid "weekday"
+msgstr "dan v tednu"
+
+msgid "WKD"
+msgstr "DT"
+
+msgid "Month"
+msgstr "Mesec"
+
+msgid "MON"
+msgstr "MES"
+
+msgid "Logs / Notifications"
+msgstr "Dnevniki / Obvestila"
+
+msgid "Log details"
+msgstr "Podrobnosti dnevnika"
+
+msgid "Log does not exist."
+msgstr "Dnevnik ne obstaja."
+
+msgid "Log ID"
+msgstr "ID dnevnika"
+
+msgid "List of logs"
+msgstr "Seznam dnevnikov"
+
+msgid "Logs truncated"
+msgstr "Dnevniki so bili izpraznjeni"
+
+msgid "No logs available"
+msgstr "Ni razpoložljivih dnevnikov"
+
+msgid "Truncate logs"
+msgstr "Izprazni dnevnike"
+
+msgid "Click Truncate to remove all logs"
+msgstr "Kliknite Izprazni za odstranitev vseh dnevnikov"
+
+msgid "Select tenants for which you want to truncate logs:"
+msgstr "Izberite najemnike, katerih dnevnike želite izprazniti:"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Action"
+msgstr "Dejanje"
+
+msgid "Actions"
+msgstr "Dejanja"
+
+msgid "Object"
+msgstr "Objekt"
+
+msgid "New object"
+msgstr "Nov objekt"
+
+msgid "Old object"
+msgstr "Star objekt"
+
+msgid "Content"
+msgstr "Vsebina"
+
+msgid "Changed host certificates"
+msgstr "Spremenjeni certifikati gostiteljev"
+
+msgid "Last notifications"
+msgstr "Zadnja obvestila"
+
+msgid "Last changed"
+msgstr "Nazadnje spremenjeno"
+
+msgid "Last check"
+msgstr "Zadnje preverjanje"
+
+msgid "Last checked"
+msgstr "Nazadnje preverjeno"
+
+msgid "Last success"
+msgstr "Zadnji uspeh"
+
+msgid "Last successful response received at"
+msgstr "Zadnji uspešni odgovor prejet ob"
+
+# ── Notifications ──────────────────────────────────────────────────────────────
+msgid "Notification"
+msgstr "Obvestilo"
+
+msgid "Notifications"
+msgstr "Obvestila"
+
+msgid "Notification recipients"
+msgstr "Prejemniki obvestil"
+
+msgid "Mail recipients"
+msgstr "Poštni prejemniki"
+
+msgid "Recipients updated"
+msgstr "Prejemniki posodobljeni"
+
+msgid "Manage recipients"
+msgstr "Upravljaj prejemnike"
+
+msgid "Manage extra recipients"
+msgstr "Upravljaj dodatne prejemnike"
+
+msgid "No host-specific recipients"
+msgstr "Ni specifičnih prejemnikov gostitelja"
+
+msgid "Per-host notifications"
+msgstr "Obvestila po gostitelju"
+
+msgid "Receive notifications only for this host"
+msgstr "Prejemaj obvestila samo za tega gostitelja"
+
+msgid "Enable notification"
+msgstr "Omogoči obvestilo"
+
+msgid "Disable notification"
+msgstr "Onemogoči obvestilo"
+
+msgid "Mark all as read"
+msgstr "Označi vse kot prebrano"
+
+msgid "Messages marked as read"
+msgstr "Sporočila označena kot prebrana"
+
+msgid "Email sent to"
+msgstr "E-pošta poslana na"
+
+msgid "Host recipients"
+msgstr "Prejemniki gostitelja"
+
+# ── Ignored issuers ─────────────────────────────────────────────────────────────
+msgid "Ignored issuers"
+msgstr "Prezrti izdajatelji"
+
+msgid "New ignored issuer"
+msgstr "Nov prezrt izdajatelj"
+
+msgid "Ignored issuer created"
+msgstr "Prezrt izdajatelj ustvarjen"
+
+msgid "Ignored issuer deleted"
+msgstr "Prezrt izdajatelj izbrisan"
+
+msgid ""
+"List of all ignored issuers - new certificates detected by this issuers will "
+"not be reported"
+msgstr ""
+"Seznam vseh prezrtih izdajateljev — novi certifikati teh izdajateljev ne "
+"bodo poročani"
+
+msgid "No ignored issuers configured"
+msgstr "Ni konfiguriranih prezrtih izdajateljev"
+
+msgid "Certificates issued by this issuers will still be available in system"
+msgstr "Certifikati teh izdajateljev bodo še vedno na voljo v sistemu"
+
+# ── Domains (AD login) ─────────────────────────────────────────────────────────
+msgid "Domain"
+msgstr "Domena"
+
+msgid "domain"
+msgstr "domena"
+
+msgid "Domains"
+msgstr "Domene"
+
+msgid "New domain"
+msgstr "Nova domena"
+
+msgid "Edit domain"
+msgstr "Uredi domeno"
+
+msgid "Delete domain"
+msgstr "Izbriši domeno"
+
+msgid "Domain created"
+msgstr "Domena ustvarjena"
+
+msgid "Domain updated"
+msgstr "Domena posodobljena"
+
+msgid "Domain deleted"
+msgstr "Domena izbrisana"
+
+msgid "List of all login domains"
+msgstr "Seznam vseh prijavnih domen"
+
+msgid "No domains available"
+msgstr "Ni razpoložljivih domen"
+
+msgid "Active Directory (AD)"
+msgstr "Active Directory (AD)"
+
+msgid "Active Directory settings"
+msgstr "Nastavitve Active Directory"
+
+msgid "Admin credentials (admin only)"
+msgstr "Skrbniški podatki (samo skrbnik)"
+
+msgid "Account suffix"
+msgstr "Pripona računa"
+
+msgid "Base DN"
+msgstr "Osnova DN"
+
+msgid "Domain controllers"
+msgstr "Kontrolniki domene"
+
+msgid "Use SSL"
+msgstr "Uporabi SSL"
+
+msgid "Use TLS"
+msgstr "Uporabi TLS"
+
+msgid "Is domain"
+msgstr "Je domena"
+
+# ── Validation errors ──────────────────────────────────────────────────────────
+msgid "Access denied"
+msgstr "Dostop zavrnjen"
+
+msgid "Access denied."
+msgstr "Dostop zavrnjen."
+
+msgid "Administrative privileges required"
+msgstr "Zahtevane so skrbniške pravice"
+
+msgid "Admin access required."
+msgstr "Zahtevana skrbniška pravica."
+
+msgid "Admin privileges required"
+msgstr "Zahtevane skrbniške pravice"
+
+msgid "Admin user required"
+msgstr "Zahteva se skrbniški uporabnik"
+
+msgid "Invalid action"
+msgstr "Neveljavno dejanje"
+
+msgid "Invalid tenant"
+msgstr "Neveljaven najemnik"
+
+msgid "Invalid zone"
+msgstr "Neveljavna cona"
+
+msgid "Invalid zone name"
+msgstr "Neveljavno ime cone"
+
+msgid "Invalid zone type"
+msgstr "Neveljaven tip cone"
+
+msgid "Invalid user"
+msgstr "Neveljaven uporabnik"
+
+msgid "Invalid user ID"
+msgstr "Neveljaven ID uporabnika"
+
+msgid "Invalid email address"
+msgstr "Neveljaven e-poštni naslov"
+
+msgid "Invalid username or password"
+msgstr "Napačno uporabniško ime ali geslo"
+
+msgid "Email address already in use"
+msgstr "E-poštni naslov je že v uporabi"
+
+msgid "Invalid name"
+msgstr "Neveljavno ime"
+
+msgid "Invalid name value"
+msgstr "Neveljavna vrednost imena"
+
+msgid "Invalid href value"
+msgstr "Neveljavna vrednost naslova"
+
+msgid "Invalid certificate"
+msgstr "Neveljaven certifikat"
+
+msgid "Invalid issuer"
+msgstr "Neveljaven izdajatelj"
+
+msgid "Invalid serial"
+msgstr "Neveljavna serijska"
+
+msgid "Invalid host"
+msgstr "Neveljaven gostitelj"
+
+msgid "Invalid hostname"
+msgstr "Neveljavno ime gostitelja"
+
+msgid "Invalid host or tenant"
+msgstr "Neveljaven gostitelj ali najemnik"
+
+msgid "Invalid domain"
+msgstr "Neveljavna domena"
+
+msgid "Invalid domain ID"
+msgstr "Neveljaven ID domene"
+
+msgid "Invalid permission level"
+msgstr "Neveljavna raven dovoljenja"
+
+msgid "Invalid days value"
+msgstr "Neveljavna vrednost dni"
+
+msgid "Invalid days expired value"
+msgstr "Neveljavna vrednost dni po preteku"
+
+msgid "Invalid log retention value. Must be between 1 and 3650 days"
+msgstr "Neveljavna vrednost hrambe dnevnikov. Mora biti med 1 in 3650 dni."
+
+msgid "Invalid port number"
+msgstr "Neveljavna številka vrat"
+
+msgid "Invalid port value"
+msgstr "Neveljavna vrednost vrat"
+
+msgid "Invalid active value"
+msgstr "Neveljavna vrednost aktivnosti"
+
+msgid "Invalid remove orphaned value"
+msgstr "Neveljavna vrednost odstranitve sirotskih"
+
+msgid "Invalid page requested"
+msgstr "Zahtevana je neveljavna stran"
+
+msgid "Invalid search parameters"
+msgstr "Neveljavni parametri iskanja"
+
+msgid "Invalid format"
+msgstr "Neveljavna oblika"
+
+msgid "Invalid type"
+msgstr "Neveljaven tip"
+
+msgid "Invalid cronjob"
+msgstr "Neveljavno opravilo"
+
+msgid "Invalid cron expression"
+msgstr "Neveljaven cron izraz"
+
+msgid "Invalid script"
+msgstr "Neveljaven skript"
+
+msgid "Invalid TSIG"
+msgstr "Neveljaven TSIG"
+
+msgid "Invalid TSIG name"
+msgstr "Neveljavno ime TSIG"
+
+msgid "Invalid DNS address"
+msgstr "Neveljaven DNS naslov"
+
+msgid "Invalid SKI value"
+msgstr "Neveljavna vrednost SKI"
+
+msgid "Invalid url value"
+msgstr "Neveljavna vrednost URL"
+
+msgid "Invalid ignore value"
+msgstr "Neveljavna vrednost prezrtja"
+
+msgid "Invalid comment value"
+msgstr "Neveljavna vrednost komentarja"
+
+msgid "Invalid check IP value"
+msgstr "Neveljavna vrednost preverjanja IP"
+
+msgid "Invalid autocreate group value"
+msgstr "Neveljavna vrednost samodejne ustvaritve skupine"
+
+msgid "Invalid delete record value"
+msgstr "Neveljavna vrednost brisanja zapisa"
+
+msgid "Invalid is_domain value"
+msgstr "Neveljavna vrednost is_domain"
+
+msgid "Invalid exclude regex"
+msgstr "Neveljaven izključitveni regex"
+
+msgid "Invalid include regex"
+msgstr "Neveljaven vključitveni regex"
+
+msgid "Invalid record types"
+msgstr "Neveljavne vrste zapisov"
+
+msgid "Invalid or missing CSRF token."
+msgstr "Neveljaven ali manjkajoč CSRF žeton."
+
+msgid "Invalid {$field}"
+msgstr "Neveljavno {$field}"
+
+msgid "Only alphanumeric characters are allowed"
+msgstr "Dovoljeni so samo alfanumerični znaki"
+
+msgid "Not implemented"
+msgstr "Ni implementirano"
+
+msgid "Required function disabled"
+msgstr "Zahtevana funkcija je onemogočena"
+
+msgid "Required function not found: "
+msgstr "Zahtevana funkcija ni najdena: "
+
+msgid "Required PHP extension not installed: "
+msgstr "Zahtevana PHP razširitev ni nameščena: "
+
+msgid ""
+"Insuffiecient permissions to access this function. Please contact "
+"administrators"
+msgstr ""
+"Nezadostna dovoljenja za dostop do te funkcije. Prosimo, kontaktirajte "
+"skrbnike."
+
+# ── Settings / DB validation ───────────────────────────────────────────────────
+msgid "Database validation"
+msgstr "Validacija baze podatkov"
+
+msgid "Database structure verified. No issues found."
+msgstr "Struktura baze podatkov je preverjena. Ni napak."
+
+msgid ""
+"Validates the live database structure against db/SCHEMA.sql. Checks for "
+"missing tables, missing or wrong columns, missing indexes and missing "
+"foreign key constraints."
+msgstr ""
+"Preverja strukturo baze podatkov glede na db/SCHEMA.sql. Preveri manjkajoče "
+"tabele, manjkajoče ali napačne stolpce, manjkajoče indekse in manjkajoče "
+"omejitve tujih ključev."
+
+msgid "All fixes applied successfully. Please reload to verify."
+msgstr ""
+"Vse popravke so bile uspešno uporabljene. Prosimo, znova naložite za "
+"preveritev."
+
+msgid "Applying fixes…"
+msgstr "Uveljavljanje popravkov…"
+
+msgid "Fix all issues"
+msgstr "Popravi vse težave"
+
+msgid "Fix SQL"
+msgstr "Popravi SQL"
+
+msgid "Statistics"
+msgstr "Statistika"
+
+msgid "Version"
+msgstr "Različica"
+
+msgid "Latest"
+msgstr "Najnovejše"
+
+msgid "Discovered"
+msgstr "Odkrito"
+
+msgid "Delete records"
+msgstr "Izbriši zapise"
+
+# ── Dashboard ──────────────────────────────────────────────────────────────────
+msgid "SSL scan"
+msgstr "SSL skeniranje"
+
+msgid "Title"
+msgstr "Naslov"
+
+msgid "Checked / Changed"
+msgstr "Preverjeno / Sprememba"
+
+msgid "Unresolved"
+msgstr "Nerešeno"
+
+msgid "Address"
+msgstr "Naslov"
+
+msgid "Connection details"
+msgstr "Podrobnosti povezave"
+
+msgid "ID"
+msgstr "ID"
+
+msgid "In case of any issues please contact"
+msgstr "V primeru kakršnih koli težav kontaktirajte"
+
+msgid "system administrator"
+msgstr "skrbnika sistema"
+
+msgid "Continue to application"
+msgstr "Nadaljujte na aplikacijo"
+
+msgid "Restart installation"
+msgstr "Znova zaženite namestitev"
+
+msgid "Installation error"
+msgstr "Napaka pri namestitvi"
+
+# ── Misc ───────────────────────────────────────────────────────────────────────
+msgid "Enter search string"
+msgstr "Vnesite iskalni niz"
+
+msgid "Nothing to search"
+msgstr "Ni ničesar za iskati"
+
+msgid "No issuers available"
+msgstr "Ni razpoložljivih izdajateljev"
+
+msgid "No jobs available"
+msgstr "Ni razpoložljivih opravil"
+
+msgid "Existing"
+msgstr "Obstoječe"
+
+msgid "Missmatched"
+msgstr "Neujemajoče"
+
+msgid "Table"
+msgstr "Tabela"
+
+msgid "Type"
+msgstr "Tip"
+
+msgid "Import type"
+msgstr "Tip uvoza"
+
+msgid "Retrieved serial"
+msgstr "Pridobljena serijska"
+
+msgid "Rollback complete"
+msgstr "Povrnitev zaključena"
+
+msgid ""
+"There %s <strong>%d private zone(s)</strong> in the system that are not "
+"visible here."
+msgstr ""
+"V sistemu je %s <strong>%d zasebna(-e/-ih) cona(-e)</strong>, ki tukaj ni(-"
+"so) vidna."
+
+msgid "Curl error"
+msgstr "Napaka Curl"
+
+msgid "https://google.com"
+msgstr "https://google.com"
+
+msgid "Oops… We cannot find this page."
+msgstr "Ups… Te strani ne najdemo."
+
+msgid "We are sorry page requested cannot be found."
+msgstr "Oprostite, zahtevana stran ne obstaja."
+
+msgid "Oops… This is an error page."
+msgstr "Ups… To je stran z napako."
+
+msgid "We are sorry but our server encountered an internal error."
+msgstr "Oprostite, strežnik je naletel na notranjo napako."
+
+msgid "Go back"
+msgstr "Pojdi nazaj"
+
+msgid "User interface language preference"
+msgstr "Jezikovna nastavitev vmesnika"
+
+msgid "— System default (English) —"
+msgstr "— Privzeto sistema (angleščina) —"
+
+msgid ""
+"Default language for users in this tenant who have no personal preference set"
+msgstr ""
+"Privzeti jezik za uporabnike tega najemnika, ki nimajo nastavljene osebne "
+"preference"
+
+msgid "Backup script: missing write permission"
+msgstr "Skript za varnostno kopiranje: manjkajo pravice pisanja"
+
+msgid "Account suffix too long"
+msgstr "Pripona računa je predolga"
+
+msgid "Base DN too long"
+msgstr "Osnova DN je predolga"
+
+msgid "Domain controllers value too long"
+msgstr "Vrednost kontrolnikov domene je predolga"
+
+msgid "Domain mismatch"
+msgstr "Neskladje domene"
+
+msgid "Domain is not active"
+msgstr "Domena ni aktivna"
+
+msgid "Intermediate"
+msgstr "Vmesni"
+
+msgid "Certificate not allowed to issue certificates"
+msgstr "Certifikat ne sme izdajati certifikatov"
+
+msgid "Certificate not signed by parent"
+msgstr "Certifikat ni podpisan s strani starša"
+
+msgid "Certificate validity is more than 398 days"
+msgstr "Veljavnost certifikata je več kot 398 dni"
+
+msgid "Child certificate is not allowed to issue certificates"
+msgstr "Otroški certifikat ne sme izdajati certifikatov"
+
+msgid "Parent certificate not allowed to issue certificates"
+msgstr "Starševski certifikat ne sme izdajati certifikatov"
+
+msgid "DB validation"
+msgstr "Preverjanje baze"
+
+msgid "Administration"
+msgstr "Administracija"
+
+msgid "Fetch certificate"
+msgstr "Pridobi certifikat"
+
+msgid "Transform certificate"
+msgstr "Pretvori certifikat"
+
+msgid "Tools"
+msgstr "Orodja"

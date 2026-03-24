@@ -255,7 +255,7 @@ class Result
 			$htext = $class === "danger" ? "error" : $class;
 
 			$out = array();
-			$out[] = '<div class="modal-header"><h2 class="modal-title">' . _(ucwords($htext)) . '</h2></div>';
+			$out[] = '<div class="modal-header"><h2 class="modal-title">' . _u($htext) . '</h2></div>';
 			$out[] = '<div class="modal-body">';
 			$out[] = '<div class="alert alert-' . $class . '">' . $text . '</div>';
 			$out[] = '</div>';

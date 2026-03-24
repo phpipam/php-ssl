@@ -24,7 +24,7 @@ $domain = $Database->getObject ("domains", $_GET['id']);
 #
 # title
 #
-$title = _(ucwords($_GET['action']))." "._("domain");
+$title = _u($_GET['action'])." "._("domain");
 
 # validate action
 if(!$User->validate_action($_GET['action'])) {
@@ -158,7 +158,7 @@ else {
 	$content[] = "</table>";
 	$content[] = "</form>";
 
-	$btn_text = _(ucwords($_GET['action']))." "._("domain");
+	$btn_text = _u($_GET['action'])." "._("domain");
 }
 
 

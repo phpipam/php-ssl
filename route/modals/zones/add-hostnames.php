@@ -26,7 +26,7 @@ $tenant = $Tenants->get_tenant_by_href ($_GET['tenant']);
 #
 # title
 #
-$title = _(ucwords($_GET['action']))." "._("host");
+$title = _u($_GET['action'])." "._("host");
 
 # validate action
 if(!$User->validate_action($_GET['action'])) {
@@ -48,7 +48,7 @@ elseif ($zone===null) {
 }
 else {
 	// reset title
-	$title = _(ucwords($_GET['action']))." "._("host to zone")." ".$zone->name;
+	$title = _u($_GET['action'])." "._("host to zone")." ".$zone->name;
 	// content
 	$content = [];
 
@@ -101,7 +101,7 @@ else {
 	#
 	# button text
 	#
-	$btn_text = _(ucwords($_GET['action']))." "._("hosts");
+	$btn_text = _u($_GET['action'])." "._("hosts");
 
 	# header
 	$header_class = "success";

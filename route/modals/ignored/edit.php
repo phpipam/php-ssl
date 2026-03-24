@@ -24,7 +24,7 @@ $issuer = $Database->getObject ("ignored_issuers",$_GET['id']);
 #
 # title
 #
-$title = _(ucwords($_GET['action']))." "._("ignored issuer");
+$title = _u($_GET['action'])." "._("ignored issuer");
 
 # validate action
 if(!$User->validate_action($_GET['action'])) {
@@ -114,7 +114,7 @@ else {
 	#
 	# button text
 	#
-	$btn_text = _(ucwords($_GET['action']))." "._("issuer");
+	$btn_text = _u($_GET['action'])." "._("issuer");
 }
 
 

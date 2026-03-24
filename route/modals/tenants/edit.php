@@ -21,7 +21,7 @@ $tenant = $Tenants->get_tenant_by_href ($_GET['id']);
 #
 # title
 #
-$title = _(ucwords($_GET['action']))." "._("tenant");
+$title = _u($_GET['action'])." "._("tenant");
 
 # validate action
 if(!$User->validate_action($_GET['action'])) {
@@ -142,6 +142,30 @@ else {
 	$content[] = "	</td>";
 	$content[] = "	<td>";
 	$content[] = "</tr>";
+	// language default — not shown on delete
+	if ($_GET['action'] !== "delete") {
+		$all_langs = [];
+		try {
+			$all_langs = $Database->getObjectsQuery("SELECT id, name, native_name, flag FROM translations WHERE enabled = 1 ORDER BY name ASC", []);
+		} catch (Exception $e) {}
+		if (!empty($all_langs)) {
+			$content[] = "<tr>";
+			$content[] = "	<th>"._("Language")."</th>";
+			$content[] = "	<td>";
+			$content[] = "		<select name='lang_id' class='form-select form-select-sm' style='width:auto' $disabled>";
+			$content[] = "			<option value=''>"._("— System default (English) —")."</option>";
+			foreach ($all_langs as $lang) {
+				$sel = (!empty($tenant->lang_id) && $tenant->lang_id == $lang->id) ? "selected" : "";
+				$label = htmlspecialchars(($lang->flag ? $lang->flag . ' ' : '') . $lang->native_name . ' (' . $lang->name . ')');
+				$content[] = "			<option value='" . (int)$lang->id . "' {$sel}>{$label}</option>";
+			}
+			$content[] = "		</select>";
+			$content[] = "		<span class='text-muted' style='font-size:11px'>"._("Default language for users in this tenant who have no personal preference set")."</span>";
+			$content[] = "	</td>";
+			$content[] = "</tr>";
+		}
+	}
+
 	$content[] = "</tbody>";
 
 	$content[] = "</table>";
@@ -150,7 +174,7 @@ else {
 	#
 	# button text
 	#
-	$btn_text = _(ucwords($_GET['action']))." "._("tenant");
+	$btn_text = _u($_GET['action'])." "._("tenant");
 
 	// header class
 	if($_GET['action']=="add") 		  { $header_class = "success"; }

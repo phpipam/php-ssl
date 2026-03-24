@@ -67,7 +67,8 @@ $update = [
 	"remove_orphaned" => $_POST['remove_orphaned'],
 	"mail_style"	  => $_POST['mail_style'],
 	"recipients"      => $_POST['recipients'],
-	"log_retention"   => (int)$_POST['log_retention']
+	"log_retention"   => (int)$_POST['log_retention'],
+	"lang_id"         => (!empty($_POST['lang_id']) && is_numeric($_POST['lang_id'])) ? (int)$_POST['lang_id'] : null
 ];
 
 // edit,delete - add key
