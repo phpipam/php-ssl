@@ -64,20 +64,15 @@ Copy and edit the config file:
 ```
 cp config.dist.php config.php
 # Edit config.php: set DB credentials, mail settings, and BASE path
-# Set $installed = true once setup is complete
 ```
 
-Create the database and import the schema:
+Open the web installer in your browser and follow the steps:
 ```
-mysql -u root -p
-mysql# create database `php-ssl`;
-mysql# create user 'phpssladmin'@'localhost' identified by 'phpssladmin';
-mysql# grant all on `php-ssl`.* to 'phpssladmin'@'localhost';
-mysql# flush privileges;
-mysql# exit
+http://<your-server>/php-ssl/install/
+```
 
-mysql -u root -p php-ssl < db/SCHEMA.sql
-```
+The installer will create the database, application user, and import the schema automatically.
+Once installation is complete, set `$installed = true` in `config.php` to disable the installer.
 
 ## Cronjob
 
