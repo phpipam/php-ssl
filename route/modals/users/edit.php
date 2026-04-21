@@ -171,6 +171,18 @@ else {
 		$content[] = "	</td>";
 		$content[] = "</tr>";
 
+		// force_passkey — only on edit
+		$fp_checked = !empty($edit_user->force_passkey) ? "checked" : "";
+		$content[] = "<tr>";
+		$content[] = "	<th>"._("Force passkey login")."</th>";
+		$content[] = "	<td>";
+		$content[] = "		<label class='form-check'>";
+		$content[] = "			<input type='checkbox' class='form-check-input' name='force_passkey' value='1' {$fp_checked}>";
+		$content[] = "			<span class='form-check-label text-muted' style='font-size:11px'>"._("Disable password login — user must authenticate with a passkey")."</span>";
+		$content[] = "		</label>";
+		$content[] = "	</td>";
+		$content[] = "</tr>";
+
 		// language — only on edit; query translations from DB
 		$all_langs = [];
 		try {

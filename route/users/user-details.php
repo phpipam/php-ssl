@@ -47,6 +47,7 @@
 				[(int) $view_user->id]
 			) ?: [];
 		} catch (Exception $e) {}
+		$_pk_icon_sm = '<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon" style="vertical-align:-2px"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M16.555 3.843l3.602 3.602a2.877 2.877 0 0 1 0 4.069l-2.643 2.643a2.877 2.877 0 0 1 -4.069 0l-.301 -.301l-6.558 6.558a2 2 0 0 1 -1.239 .578l-.175 .008h-1.172a1 1 0 0 1 -.993 -.883l-.007 -.117v-1.172a2 2 0 0 1 .467 -1.284l.119 -.13l.414 -.414h2v-2h2v-2l2.144 -2.144l-.301 -.301a2.877 2.877 0 0 1 0 -4.069l2.643 -2.643a2.877 2.877 0 0 1 4.069 0z" /><circle cx="15" cy="9" r="1" fill="currentColor" stroke="none" /></svg>';
 		?>
 		<tr>
 			<td class='text-secondary'><?php print _("Passkeys"); ?></td>
@@ -55,7 +56,7 @@
 					<span class="text-secondary" style="font-size:13px;"><?php print _("None"); ?></span>
 				<?php else: ?>
 					<?php foreach ($_view_passkeys as $_pk): ?>
-						<span class="badge bg-blue-lt" style="margin-right:3px;"><?php print $Result->get_icon('success'); ?> <?php print htmlspecialchars($_pk->name); ?></span>
+						<span class="badge bg-blue-lt" style="margin-right:3px;"><?php print $_pk_icon_sm; ?> <?php print htmlspecialchars($_pk->name); ?></span>
 					<?php endforeach; ?>
 				<?php endif; ?>
 			</td>
@@ -64,7 +65,7 @@
 			<td class='text-secondary'><?php print _("Password login"); ?></td>
 			<td>
 				<?php if (!empty($view_user->force_passkey)): ?>
-					<span class="badge bg-orange-lt"><?php print $Result->get_icon('info'); ?> <?php print _("Disabled — passkey only"); ?></span>
+					<span class="badge bg-orange-lt"><?php print $_pk_icon_sm; ?> <?php print _("Disabled — passkey only"); ?></span>
 				<?php else: ?>
 					<span class="text-secondary" style="font-size:13px;"><?php print _("Enabled"); ?></span>
 				<?php endif; ?>

@@ -23,6 +23,9 @@ $icon_user       = $url_items["users"]['icon'];
 <div class='row'>
 	<div class='col-xs-12 col-sm-12 col-md-6' style='margin-top:10px;'>
 		<?php include("profile-details.php"); ?>
+		<div style='margin-top:10px;'>
+		<?php include("passkeys.php"); ?>
+		</div>
 	</div>
 	<div class='col-xs-12 col-sm-12 col-md-6' style='margin-top:10px;'>
 		<?php include(dirname(__FILE__)."/../../users/user/user-notifications.php");  ?>

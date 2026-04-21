@@ -99,8 +99,9 @@ if($_POST['action']!=="delete") {
 	}
 	# changePass checkbox (edit only; providing a new password always clears it)
 	if($_POST['action'] === "edit") {
-		$update['changePass'] = (!empty($_POST['changePass']) && strlen($_POST['password']) === 0) ? 1 : 0;
-		$update['disabled']   = !empty($_POST['disabled']) ? 1 : 0;
+		$update['changePass']    = (!empty($_POST['changePass']) && strlen($_POST['password']) === 0) ? 1 : 0;
+		$update['disabled']      = !empty($_POST['disabled']) ? 1 : 0;
+		$update['force_passkey'] = !empty($_POST['force_passkey']) ? 1 : 0;
 		# language preference (NULL = use tenant default)
 		$update['lang_id'] = (!empty($_POST['lang_id']) && is_numeric($_POST['lang_id'])) ? (int)$_POST['lang_id'] : null;
 	}
@@ -120,7 +121,7 @@ if($_POST['action']!=="add") {
 # edit: check for actual changes
 if($_POST['action']==="edit") {
 	$is_change = false;
-	foreach(['name', 'email', 'permission', 'days', 'days_expired', 'changePass', 'disabled', 'lang_id'] as $k) {
+	foreach(['name', 'email', 'permission', 'days', 'days_expired', 'changePass', 'disabled', 'force_passkey', 'lang_id'] as $k) {
 		if(isset($update[$k]) && $edit_user->$k != $update[$k]) {
 			$is_change = true;
 			break;

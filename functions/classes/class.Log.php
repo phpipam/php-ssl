@@ -54,7 +54,9 @@ class Log extends Common
 		"rollback",
 		"sync",
 		"notification",
-		"impersonate"
+		"impersonate",
+		"passkey_login",
+		"passkey_register"
 	];
 
 	/**

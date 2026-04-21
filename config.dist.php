@@ -102,3 +102,20 @@ $mail_sender_settings->email     = "php-ssl@ydomain.com";		// help - mail footer
 $mail_sender_settings->www       = "https://mywebsite.com";
 $mail_sender_settings->bcc       = "";							// always BCC
 $mail_sender_settings->url       = "myurl";
+
+/**
+ * WebAuthn / Passkey settings
+ *
+ * Set these explicitly when running behind a reverse proxy that terminates TLS,
+ * so PHP cannot reliably detect the public origin from $_SERVER.
+ *
+ * $webauthn_origin — full public origin: scheme + host (+ port if non-standard)
+ *                    e.g. "https://php-ssl.example.com"
+ * $webauthn_rpid   — relying-party ID: the hostname without scheme or port
+ *                    e.g. "php-ssl.example.com"
+ *
+ * Leave both as empty string to auto-detect from the HTTP request (only works
+ * when PHP can see the correct scheme via $_SERVER['HTTPS']).
+ */
+$webauthn_origin = "";
+$webauthn_rpid   = "";

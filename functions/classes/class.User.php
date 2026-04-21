@@ -232,6 +232,10 @@ class User extends Common
 	{
 		// fetch user details
 		$user = $this->fetch_user_details($email);
+		// block password login if passkey-only is enforced
+		if ($user && !empty($user->force_passkey)) {
+			$this->show("danger", _("This account requires passkey authentication. Use the passkey option to sign in."), true);
+		}
 		// auth ok
 		if ($user->password == hash('sha512', $password)) {
 			// regenerate session ID to prevent session fixation

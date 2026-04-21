@@ -20,6 +20,7 @@ for certificate changes and upcoming expirations.
 - **Ignored issuers** — suppress notifications for specific certificate issuers per tenant
 - **Active Directory / LDAP** user synchronization
 - **Per-tenant configuration** overrides (expiry thresholds, mail settings, etc.)
+- **passKey** passwordless authentication
 - **Audit logging** — full change history for all managed objects
 - **Search** across certificates, zones, and hosts
 - **Dark / light theme** toggle

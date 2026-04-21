@@ -120,6 +120,13 @@ if(!isset($_SESSION['theme'])) { $_SESSION['theme'] = "dark"; }
 	  </div>
 	</div>
 
+	<div class="modal fade" id="modal3" tabindex="-3" aria-labelledby="modal3" aria-hidden="true">
+	  <div class="modal-dialog modal-lg">
+	    <div class="modal-content">
+	    </div>
+	  </div>
+	</div>
+
 	<div class="modal fade" id="modal2" tabindex="-2" aria-labelledby="modal2" aria-hidden="true">
 	  <div class="modal-dialog modal-xl">
 	    <div class="modal-content">

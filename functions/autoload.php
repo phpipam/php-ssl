@@ -135,6 +135,7 @@ include ("classes/class.Agent.php");
 include ("classes/class.Log.php");
 include ("classes/class.ADsync.php");
 include ("classes/class.Migration.php");
+include ("classes/class.WebAuthn.php");
 
 # required extensions
 $required_extensions = ['curl', 'openssl', 'pcntl', 'posix', 'pdo', 'pdo_mysql', 'session', 'hash'];

@@ -1822,3 +1822,67 @@ msgstr "Es tut uns leid, die angeforderte Seite wurde nicht gefunden."
 
 msgid "Backup script: missing write permission"
 msgstr "Backup-Skript: Fehlende Schreibberechtigung"
+
+# ── Passkeys ──────────────────────────────────────────────────────────────────
+msgid "Sign in with Passkey"
+msgstr "Mit Passkey anmelden"
+
+msgid "Your browser does not support passkeys."
+msgstr "Ihr Browser unterstützt keine Passkeys."
+
+msgid "Passkey authentication was cancelled."
+msgstr "Passkey-Authentifizierung wurde abgebrochen."
+
+msgid "Passkey authentication failed."
+msgstr "Passkey-Authentifizierung fehlgeschlagen."
+
+msgid "Passkeys"
+msgstr "Passkeys"
+
+msgid "Disabled — passkey only"
+msgstr "Deaktiviert — nur Passkey"
+
+msgid "Passkey registered"
+msgstr "Passkey registriert"
+
+msgid "Passwordless only"
+msgstr "Nur passwortlos"
+
+msgid "Password login disabled"
+msgstr "Passwortanmeldung deaktiviert"
+
+msgid "Force passkey login"
+msgstr "Passkey-Anmeldung erzwingen"
+
+msgid "Disable password login — user must authenticate with a passkey"
+msgstr "Passwortanmeldung deaktivieren — Benutzer muss sich mit einem Passkey authentifizieren"
+
+msgid "Add passkey"
+msgstr "Passkey hinzufügen"
+
+msgid "Passkeys are not configured."
+msgstr "Passkeys sind nicht konfiguriert."
+
+msgid "Password login is disabled — this account requires passkey authentication."
+msgstr "Passwortanmeldung ist deaktiviert — dieses Konto erfordert Passkey-Authentifizierung."
+
+msgid "Passkey name"
+msgstr "Passkey-Name"
+
+msgid "No passkeys registered yet."
+msgstr "Noch keine Passkeys registriert."
+
+msgid "Please enter a name for the passkey."
+msgstr "Bitte geben Sie einen Namen für den Passkey ein."
+
+msgid "Passkey registered. Reloading..."
+msgstr "Passkey registriert. Wird neu geladen..."
+
+msgid "Passkey registration was cancelled."
+msgstr "Passkey-Registrierung wurde abgebrochen."
+
+msgid "Delete passkey"
+msgstr "Passkey löschen"
+
+msgid "Could not delete passkey."
+msgstr "Passkey konnte nicht gelöscht werden."
