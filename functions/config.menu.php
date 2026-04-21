@@ -121,6 +121,9 @@ $url_items["certificates"] = [
 			],
 			"imported" => [
 				"title" => _("Imported"),
+			],
+			"pkeys" => [
+				"title" => _("Private Keys"),
 			]
 		]
 	];

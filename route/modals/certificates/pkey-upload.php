@@ -1,0 +1,121 @@
+<?php
+
+/**
+ * Modal: upload a private key for a certificate.
+ * Loaded via data-bs-toggle="modal" — renders the form HTML only.
+ */
+
+require('../../../functions/autoload.php');
+$User->validate_session(false, false, false);
+
+$cert_id = (int) ($_GET['cert_id'] ?? 0);
+
+if ($cert_id <= 0) {
+    $Modal->modal_print(_("Error"), "<div class='alert alert-danger'>"._("Invalid request.")."</div>", "", "", false, "danger");
+    exit;
+}
+
+// Fetch cert — enforce tenant access
+if ($user->admin === "1") {
+    $cert = $Database->getObjectQuery("SELECT * FROM certificates WHERE id = ?", [$cert_id]);
+} else {
+    $cert = $Database->getObjectQuery("SELECT * FROM certificates WHERE id = ? AND t_id = ?", [$cert_id, $user->t_id]);
+}
+
+if (!$cert) {
+    $Modal->modal_print(_("Error"), "<div class='alert alert-danger'>"._("Certificate not found.")."</div>", "", "", false, "danger");
+    exit;
+}
+
+global $private_key_encryption_key;
+if (empty($private_key_encryption_key[$cert->t_id])) {
+    $Modal->modal_print(
+        _("Private key encryption not configured"),
+        "<div class='alert alert-warning'>"
+            ._("No encryption key is configured for this tenant.")." "
+            ._("Add an entry to \$private_key_encryption_key in config.php before uploading private keys.")
+            ."</div>",
+        "", "", false, "warning"
+    );
+    exit;
+}
+
+$cert_info = openssl_x509_parse($cert->certificate);
+$cn        = htmlspecialchars($cert_info['subject']['CN'] ?? '');
+
+$content  = "<div class='mb-3'>";
+$content .= "<p class='text-secondary mb-2'>"
+          . sprintf(_("Upload the private key for certificate <b>%s</b>."), $cn)
+          . "</p>";
+$content .= "<p class='text-secondary' style='font-size:12px;'>"
+          . _("Paste the PEM private key below, or select a .key / .pem file.")
+          . "</p>";
+$content .= "</div>";
+
+$content .= "<div class='mb-2'>";
+$content .= "<label class='form-label'>"._("Select file (optional)")."</label>";
+$content .= "<input type='file' id='pkey-file-input' class='form-control form-control-sm' accept='.key,.pem'>";
+$content .= "</div>";
+
+$content .= "<div>";
+$content .= "<label class='form-label'>"._("PEM private key")."</label>";
+$content .= "<textarea id='pkey-pem-input' class='form-control' rows='8' "
+          . "style='font-family:monospace;font-size:11px;' "
+          . "placeholder='-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----'></textarea>";
+$content .= "</div>";
+
+$content .= "<div id='pkey-upload-result' class='mt-2'></div>";
+
+$Modal->modal_print(_("Upload private key"), $content, _("Upload"), "", false, "info");
+?>
+
+<script>
+(function () {
+    // File → textarea
+    document.getElementById('pkey-file-input').addEventListener('change', function () {
+        var file = this.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            document.getElementById('pkey-pem-input').value = e.target.result;
+        };
+        reader.readAsText(file);
+    });
+
+    // Upload on modal confirm
+    $(document).off('click.pkeyUpload').on('click.pkeyUpload', '.modal-execute', function () {
+        var pem = document.getElementById('pkey-pem-input').value.trim();
+        var $result = $('#pkey-upload-result');
+
+        if (!pem) {
+            $result.html("<div class='alert alert-warning p-2'><?php print addslashes(_("Please paste or select a private key.")); ?></div>");
+            return false;
+        }
+
+        var $btn = $(this).prop('disabled', true);
+        $result.html('');
+
+        fetch('/route/ajax/pkey-upload.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ certificate_id: <?php print (int)$cert_id; ?>, pem: pem })
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            if (data.status === 'ok') {
+                $('#modal1').modal('hide');
+                location.reload();
+            } else {
+                $result.html("<div class='alert alert-danger p-2'>" + (data.message || '<?php print addslashes(_("Upload failed.")); ?>') + "</div>");
+                $btn.prop('disabled', false);
+            }
+        })
+        .catch(function () {
+            $result.html("<div class='alert alert-danger p-2'><?php print addslashes(_("Upload failed.")); ?></div>");
+            $btn.prop('disabled', false);
+        });
+
+        return false;
+    });
+})();
+</script>

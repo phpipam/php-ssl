@@ -172,7 +172,7 @@ DROP TABLE IF EXISTS `pkey`;
 
 CREATE TABLE `pkey` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `key` text DEFAULT NULL,
+  `private_key_enc` text DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -278,6 +278,7 @@ CREATE TABLE `users` (
   `notif_id` int(11) unsigned DEFAULT 0,
   `changePass` tinyint(1) NOT NULL DEFAULT 0,
   `disabled` tinyint(1) NOT NULL DEFAULT 0,
+  `force_passkey` tinyint(1) NOT NULL DEFAULT 0,
   `lang_id` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `u_tenants` (`t_id`),
@@ -368,6 +369,27 @@ CREATE TABLE `logs` (
   PRIMARY KEY (`id`),
   KEY `object_id` (`object_id`),
   KEY `object_t_id` (`object_t_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+# Dump of table passkeys
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `passkeys`;
+
+CREATE TABLE `passkeys` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) unsigned NOT NULL,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `credential_id` varchar(512) NOT NULL,
+  `public_key` text NOT NULL,
+  `sign_count` int(11) unsigned NOT NULL DEFAULT 0,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_used_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `credential_id` (`credential_id`(255)),
+  KEY `passkeys_user_id` (`user_id`),
+  CONSTRAINT `passkeys_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

@@ -32,6 +32,7 @@ foreach ($url_items["certificates"]["submenu"] as $k=>$m) {
 	elseif($k=="expired") 		{ $textcol = "red"; }
 	elseif($k=="orphaned") 		{ $textcol = "info"; }
 	elseif($k=="imported") 		{ $textcol = "purple"; }
+	elseif($k=="pkeys") 		{ $textcol = "green"; }
 	elseif($k=="ignored") 		{ $textcol = "default"; }
 	else 						{ $textcol = "light"; }
 
@@ -132,6 +133,10 @@ window.ajaxRequest = params => {
         }
     });
 }
+
+$('#table').on('post-body.bs.table', function () {
+    tippy('[data-bs-toggle="tooltip"]', { duration: 0, arrow: false, followCursor: false, allowHTML: true, offset: [0, 10] });
+});
 
 function loadingMessage () {
   return '<span class="loading-wrap">' +

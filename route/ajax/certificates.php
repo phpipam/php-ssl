@@ -39,8 +39,8 @@ try {
 	$expire_days = isset($user->days) ? $user->days : (isset($expired_days) ? $expired_days : 30);
 
 	// formulate query - fetch certificate details with hosts
-	$query 	   .= "select c.id, c.serial, c.expires, c.z_id, c.t_id, c.certificate, c.is_manual, z.name as zone_name, t.href as tenant_href from certificates c left join zones z on c.z_id = z.id left join tenants t on c.t_id = t.id left join hosts h on c.id = h.c_id where 1=1 ";
-	$query_all .= "select count(distinct c.id) as cnt from certificates c left join zones z on c.z_id = z.id left join tenants t on c.t_id = t.id left join hosts h on c.id = h.c_id where 1=1 ";
+	$query 	   .= "select c.id, c.serial, c.expires, c.z_id, c.t_id, c.certificate, c.is_manual, z.name as zone_name, t.href as tenant_href, (pk.id is not null and pk.private_key_enc is not null and pk.private_key_enc != '') as has_pkey from certificates c left join zones z on c.z_id = z.id left join tenants t on c.t_id = t.id left join hosts h on c.id = h.c_id left join pkey pk on c.pkey_id = pk.id where 1=1 ";
+	$query_all .= "select count(distinct c.id) as cnt from certificates c left join zones z on c.z_id = z.id left join tenants t on c.t_id = t.id left join hosts h on c.id = h.c_id left join pkey pk on c.pkey_id = pk.id where 1=1 ";
 
 	// not admin ?
 	if($user->admin=="0") {
@@ -86,6 +86,13 @@ try {
 		$query         .= " and c.is_manual = 1";
 		$query_all     .= " and c.is_manual = 1";
 	}
+	elseif($filter=="pkeys") {
+		$query         .= " and pk.private_key_enc is not null and pk.private_key_enc != ''";
+		$query_all     .= " and pk.private_key_enc is not null and pk.private_key_enc != ''";
+	}
+
+	// deduplicate (hosts join is 1-to-many)
+	$query .= " group by c.id ";
 
 	// order, sort
 	if (strlen($_POST['sort'])>0 && in_array($_POST['sort'], ['id','serial','expires','created','zone_name'])) {
@@ -160,15 +167,18 @@ try {
 			// save t_id before unsetting
 			$t_id = $c->t_id;
 			$z_id = $c->z_id;
+			$has_pkey = $c->has_pkey;
 
 			// remove id - not needed
 			unset($c->id);
 			unset($c->certificate);
 			unset($c->z_id);
 			unset($c->t_id);
+			unset($c->has_pkey);
 
 			// add new fields
-			$c->status = $status['text'];
+			$pkey_icon = $has_pkey == "1" ? " <span class='badge bg-green-lt' title='"._("Private key available")."'><svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='icon'><path stroke='none' d='M0 0h24v24H0z' fill='none'/><path d='M16.555 3.843l3.602 3.602a2.877 2.877 0 0 1 0 4.069l-2.643 2.643a2.877 2.877 0 0 1 -4.069 0l-.301 -.301l-6.558 6.558a2 2 0 0 1 -1.239 .578l-.175 .008h-1.172a1 1 0 0 1 -.993 -.883l-.007 -.117v-1.172a2 2 0 0 1 .467 -1.284l.119 -.13l.414 -.414h2v-2h2v-2l2.144 -2.144l-.301 -.301a2.877 2.877 0 0 1 0 -4.069l2.643 -2.643a2.877 2.877 0 0 1 4.069 0z' /><circle cx='15' cy='9' r='1' fill='currentColor' stroke='none' /></svg></span>" : "";
+			$c->status = $status['text'].$pkey_icon;
 			$c->common_name = $common_name;
 
 			$c->days_valid = $days_valid;

@@ -1889,3 +1889,145 @@ msgstr "Passkey konnte nicht gelöscht werden."
 
 msgid "Cannot enable passwordless-only login: user has no registered passkeys."
 msgstr "Passwortlose Anmeldung kann nicht aktiviert werden: Benutzer hat keine registrierten Passkeys."
+
+
+# ── Transform certificate ─────────────────────────────────────────────────────
+msgid "Upload and detect"
+msgstr "Hochladen und erkennen"
+
+msgid "Certificate file"
+msgstr "Zertifikatsdatei"
+
+msgid "Supported: PEM (.pem, .crt, .cer) and DER binary (.der, .cer)"
+msgstr "Unterstützt: PEM (.pem, .crt, .cer) und DER binär (.der, .cer)"
+
+msgid "File upload failed."
+msgstr "Datei-Upload fehlgeschlagen."
+
+msgid "File too large. Maximum size is 128 KB."
+msgstr "Datei zu groß. Maximale Größe beträgt 128 KB."
+
+msgid "Could not read uploaded file."
+msgstr "Hochgeladene Datei konnte nicht gelesen werden."
+
+msgid "Could not parse certificate. Please upload a valid X.509 certificate."
+msgstr "Zertifikat konnte nicht geparst werden. Bitte laden Sie ein gültiges X.509-Zertifikat hoch."
+
+msgid "Certificate chain detected — only the first certificate was processed."
+msgstr "Zertifikatskette erkannt — nur das erste Zertifikat wurde verarbeitet."
+
+msgid "PEM (Base64 text)"
+msgstr "PEM (Base64-Text)"
+
+msgid "DER (Binary)"
+msgstr "DER (Binär)"
+
+msgid "Valid until"
+msgstr "Gültig bis"
+
+msgid "Alt names"
+msgstr "Alternative Namen"
+
+msgid "Download as PEM"
+msgstr "Als PEM herunterladen"
+
+msgid "Download as DER"
+msgstr "Als DER herunterladen"
+
+# ── Private key storage ───────────────────────────────────────────────────────
+msgid "Private key"
+msgstr "Privater Schlüssel"
+
+msgid "Stored"
+msgstr "Gespeichert"
+
+msgid "Upload private key"
+msgstr "Privaten Schlüssel hochladen"
+
+msgid "Download key"
+msgstr "Schlüssel herunterladen"
+
+msgid "Remove key"
+msgstr "Schlüssel entfernen"
+
+msgid "Remove stored private key for this certificate?"
+msgstr "Gespeicherten privaten Schlüssel für dieses Zertifikat entfernen?"
+
+msgid "Upload the private key for certificate <b>%s</b>."
+msgstr "Laden Sie den privaten Schlüssel für Zertifikat <b>%s</b> hoch."
+
+msgid "Paste the PEM private key below, or select a .key / .pem file."
+msgstr "Fügen Sie den privaten PEM-Schlüssel unten ein oder wählen Sie eine .key / .pem-Datei."
+
+msgid "Select file (optional)"
+msgstr "Datei auswählen (optional)"
+
+msgid "PEM private key"
+msgstr "Privater PEM-Schlüssel"
+
+msgid "Please paste or select a private key."
+msgstr "Bitte fügen Sie einen privaten Schlüssel ein oder wählen Sie einen aus."
+
+msgid "Upload failed."
+msgstr "Upload fehlgeschlagen."
+
+msgid "Private key stored successfully."
+msgstr "Privater Schlüssel erfolgreich gespeichert."
+
+msgid "Private key removed."
+msgstr "Privater Schlüssel entfernt."
+
+msgid "Private key does not match this certificate."
+msgstr "Privater Schlüssel stimmt nicht mit diesem Zertifikat überein."
+
+msgid "The uploaded data does not appear to be a PEM private key."
+msgstr "Die hochgeladenen Daten scheinen kein PEM-Privatschlüssel zu sein."
+
+msgid "Private key encryption is not configured for this tenant."
+msgstr "Die Verschlüsselung privater Schlüssel ist für diesen Mandanten nicht konfiguriert."
+
+msgid "No encryption key is configured for this tenant."
+msgstr "Für diesen Mandanten ist kein Verschlüsselungsschlüssel konfiguriert."
+
+msgid "Add an entry to $private_key_encryption_key in config.php before uploading private keys."
+msgstr "Fügen Sie einen Eintrag zu $private_key_encryption_key in config.php hinzu, bevor Sie private Schlüssel hochladen."
+
+msgid "Private key encryption not configured"
+msgstr "Verschlüsselung privater Schlüssel nicht konfiguriert"
+
+# ── Key export (pkey-export) ──
+msgid "Export key"
+msgstr ""
+
+msgid "Export key for <b>%s</b>."
+msgstr ""
+
+msgid "Private key (.pem)"
+msgstr ""
+
+msgid "Certificate + key (.p12)"
+msgstr ""
+
+msgid "(optional — leave empty for no encryption)"
+msgstr ""
+
+msgid "Export failed."
+msgstr ""
+
+msgid "Download .p12"
+msgstr ""
+
+msgid "Failed to generate PKCS12 file."
+msgstr ""
+
+msgid "Failed to encrypt private key."
+msgstr ""
+
+msgid "Failed to parse certificate or key."
+msgstr ""
+
+msgid "Download chain"
+msgstr ""
+
+msgid "Private Keys"
+msgstr ""

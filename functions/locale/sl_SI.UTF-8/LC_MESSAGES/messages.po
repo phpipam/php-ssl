@@ -1994,3 +1994,145 @@ msgstr "Ključa ni bilo mogoče izbrisati."
 
 msgid "Cannot enable passwordless-only login: user has no registered passkeys."
 msgstr "Ni mogoče omogočiti prijave samo s ključem: uporabnik nima registriranih ključev."
+
+
+# ── Transform certificate ─────────────────────────────────────────────────────
+msgid "Upload and detect"
+msgstr "Naloži in zaznaj"
+
+msgid "Certificate file"
+msgstr "Datoteka certifikata"
+
+msgid "Supported: PEM (.pem, .crt, .cer) and DER binary (.der, .cer)"
+msgstr "Podprto: PEM (.pem, .crt, .cer) in DER binarno (.der, .cer)"
+
+msgid "File upload failed."
+msgstr "Nalaganje datoteke ni uspelo."
+
+msgid "File too large. Maximum size is 128 KB."
+msgstr "Datoteka je prevelika. Največja velikost je 128 KB."
+
+msgid "Could not read uploaded file."
+msgstr "Naložene datoteke ni bilo mogoče prebrati."
+
+msgid "Could not parse certificate. Please upload a valid X.509 certificate."
+msgstr "Certifikata ni bilo mogoče razčleniti. Naložite veljaven certifikat X.509."
+
+msgid "Certificate chain detected — only the first certificate was processed."
+msgstr "Zaznana veriga certifikatov — obdelan je bil samo prvi certifikat."
+
+msgid "PEM (Base64 text)"
+msgstr "PEM (Base64 besedilo)"
+
+msgid "DER (Binary)"
+msgstr "DER (binarno)"
+
+msgid "Valid until"
+msgstr "Veljavno do"
+
+msgid "Alt names"
+msgstr "Alternativna imena"
+
+msgid "Download as PEM"
+msgstr "Prenesi kot PEM"
+
+msgid "Download as DER"
+msgstr "Prenesi kot DER"
+
+# ── Private key storage ───────────────────────────────────────────────────────
+msgid "Private key"
+msgstr "Zasebni ključ"
+
+msgid "Stored"
+msgstr "Shranjeno"
+
+msgid "Upload private key"
+msgstr "Naloži zasebni ključ"
+
+msgid "Download key"
+msgstr "Prenesi ključ"
+
+msgid "Remove key"
+msgstr "Odstrani ključ"
+
+msgid "Remove stored private key for this certificate?"
+msgstr "Odstraniti shranjeni zasebni ključ za ta certifikat?"
+
+msgid "Upload the private key for certificate <b>%s</b>."
+msgstr "Naložite zasebni ključ za certifikat <b>%s</b>."
+
+msgid "Paste the PEM private key below, or select a .key / .pem file."
+msgstr "Prilepite zasebni ključ PEM spodaj ali izberite datoteko .key / .pem."
+
+msgid "Select file (optional)"
+msgstr "Izberite datoteko (neobvezno)"
+
+msgid "PEM private key"
+msgstr "Zasebni ključ PEM"
+
+msgid "Please paste or select a private key."
+msgstr "Prilepite ali izberite zasebni ključ."
+
+msgid "Upload failed."
+msgstr "Nalaganje ni uspelo."
+
+msgid "Private key stored successfully."
+msgstr "Zasebni ključ uspešno shranjen."
+
+msgid "Private key removed."
+msgstr "Zasebni ključ odstranjen."
+
+msgid "Private key does not match this certificate."
+msgstr "Zasebni ključ se ne ujema s tem certifikatom."
+
+msgid "The uploaded data does not appear to be a PEM private key."
+msgstr "Naloženi podatki niso videti kot zasebni ključ PEM."
+
+msgid "Private key encryption is not configured for this tenant."
+msgstr "Šifriranje zasebnega ključa ni konfigurirano za tega najemnika."
+
+msgid "No encryption key is configured for this tenant."
+msgstr "Za tega najemnika ni konfiguriran šifrirni ključ."
+
+msgid "Add an entry to $private_key_encryption_key in config.php before uploading private keys."
+msgstr "Dodajte vnos v $private_key_encryption_key v config.php preden naložite zasebne ključe."
+
+msgid "Private key encryption not configured"
+msgstr "Šifriranje zasebnega ključa ni konfigurirano"
+
+# ── Key export (pkey-export) ──
+msgid "Export key"
+msgstr ""
+
+msgid "Export key for <b>%s</b>."
+msgstr ""
+
+msgid "Private key (.pem)"
+msgstr ""
+
+msgid "Certificate + key (.p12)"
+msgstr ""
+
+msgid "(optional — leave empty for no encryption)"
+msgstr ""
+
+msgid "Export failed."
+msgstr ""
+
+msgid "Download .p12"
+msgstr ""
+
+msgid "Failed to generate PKCS12 file."
+msgstr ""
+
+msgid "Failed to encrypt private key."
+msgstr ""
+
+msgid "Failed to parse certificate or key."
+msgstr ""
+
+msgid "Download chain"
+msgstr ""
+
+msgid "Private Keys"
+msgstr ""

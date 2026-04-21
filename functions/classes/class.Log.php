@@ -56,7 +56,10 @@ class Log extends Common
 		"notification",
 		"impersonate",
 		"passkey_login",
-		"passkey_register"
+		"passkey_register",
+		"pkey_upload",
+		"pkey_download",
+		"pkey_delete"
 	];
 
 	/**

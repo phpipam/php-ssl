@@ -10,7 +10,7 @@
  * @var int $version_minor
  */
 $version_major = 0;
-$version_minor = 7;
+$version_minor = 8;
 
 /**
  * Full version string, e.g. "1.0"

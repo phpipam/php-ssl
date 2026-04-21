@@ -119,3 +119,18 @@ $mail_sender_settings->url       = "myurl";
  */
 $webauthn_origin = "";
 $webauthn_rpid   = "";
+
+/**
+ * Private key encryption keys — one entry per tenant (keyed by tenant ID).
+ *
+ * Each value is used to derive a 256-bit AES-GCM key for encrypting stored
+ * private keys. Use a long random string (32+ chars) per tenant and keep this
+ * file out of version control.
+ *
+ * Example:
+ *   $private_key_encryption_key[1] = 'change-me-to-a-long-random-secret';
+ *   $private_key_encryption_key[2] = 'another-secret-for-tenant-2';
+ *
+ * @var array<int, string>
+ */
+$private_key_encryption_key = [];

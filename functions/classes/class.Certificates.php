@@ -678,4 +678,74 @@ class Certificates extends Common
 		// not found - default
 		return false;
 	}
+
+
+	// ── Private key encryption ────────────────────────────────────────────────
+
+	/**
+	 * Derives a 32-byte AES key from the per-tenant config string.
+	 * Returns null if no key is configured for the given tenant.
+	 */
+	private function pkey_get_enc_key(int $t_id): ?string
+	{
+		global $private_key_encryption_key;
+		if (empty($private_key_encryption_key[$t_id])) {
+			return null;
+		}
+		return hash('sha256', $private_key_encryption_key[$t_id], true);
+	}
+
+	/**
+	 * Encrypts a PEM private key string with AES-256-GCM.
+	 * Stored format: base64( iv[12] . tag[16] . ciphertext )
+	 * Returns null if tenant has no encryption key configured.
+	 */
+	public function pkey_encrypt(string $pem, int $t_id): ?string
+	{
+		$key = $this->pkey_get_enc_key($t_id);
+		if ($key === null) {
+			return null;
+		}
+		$iv  = random_bytes(12);
+		$tag = '';
+		$ct  = openssl_encrypt($pem, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag, '', 16);
+		if ($ct === false) {
+			return null;
+		}
+		return base64_encode($iv . $tag . $ct);
+	}
+
+	/**
+	 * Decrypts a value produced by pkey_encrypt().
+	 * Returns false on failure (wrong key, tampered data, etc.).
+	 */
+	public function pkey_decrypt(string $stored, int $t_id)
+	{
+		$key = $this->pkey_get_enc_key($t_id);
+		if ($key === null) {
+			return false;
+		}
+		$raw = base64_decode($stored, true);
+		if ($raw === false || strlen($raw) < 29) {
+			return false;
+		}
+		$iv  = substr($raw, 0, 12);
+		$tag = substr($raw, 12, 16);
+		$ct  = substr($raw, 28);
+		return openssl_decrypt($ct, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag);
+	}
+
+	/**
+	 * Checks whether a PEM private key matches the public key in a PEM certificate.
+	 */
+	public function pkey_matches_cert(string $private_key_pem, string $cert_pem): bool
+	{
+		$priv = @openssl_pkey_get_private($private_key_pem);
+		if (!$priv) {
+			return false;
+		}
+		$pub_from_priv = openssl_pkey_get_details($priv)['key'] ?? '';
+		$pub_from_cert = openssl_pkey_get_details(@openssl_pkey_get_public($cert_pem))['key'] ?? '';
+		return !empty($pub_from_priv) && $pub_from_priv === $pub_from_cert;
+	}
 }
