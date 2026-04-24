@@ -71,6 +71,7 @@ foreach ($all_csrs as $c) { $groups[$c->t_id][] = $c; }
 <tbody>
 <?php
 
+$sign_icon  = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 12l2 2l4 -4" /><path d="M11 3a8 8 0 1 0 0 16a8 8 0 0 0 0 -16" /><path d="M21 21l-1.5 -1.5" /></svg>';
 $renew_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" /><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" /></svg>';
 $key_icon   = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M16.555 3.843l3.602 3.602a2.877 2.877 0 0 1 0 4.069l-2.643 2.643a2.877 2.877 0 0 1 -4.069 0l-.301 -.301l-6.558 6.558a2 2 0 0 1 -1.239 .578l-.175 .008h-1.172a1 1 0 0 1 -.993 -.883l-.007 -.117v-1.172a2 2 0 0 1 .467 -1.284l.119 -.13l.414 -.414h2v-2h2v-2l2.144 -2.144l-.301 -.301a2.877 2.877 0 0 1 0 -4.069l2.643 -2.643a2.877 2.877 0 0 1 4.069 0z" /><circle cx="15" cy="9" r="1" fill="currentColor" stroke="none" /></svg>';
 $dl_icon    = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>';
@@ -151,14 +152,24 @@ if (empty($groups)) {
                 }
             }
 
+            if ($c->status !== 'signed') {
+                $actions  = "<a class='btn btn-sm bg-purple-lt text-purple me-1'"
+                          . " href='/route/modals/csrs/sign.php?csr_id={$csr_id}'"
+                          . " data-bs-toggle='modal' data-bs-target='#modal1'>"
+                          . "{$sign_icon} " . _("Sign") . "</a>";
+            }
+            else {
+                $actions = "";
+            }
+
             // Actions
             if ($has_key) {
-                $actions = "<a class='btn btn-sm bg-azure-lt text-azure me-1'"
+                $actions .= "<a class='btn btn-sm bg-azure-lt text-azure me-1'"
                          . " href='/route/modals/csrs/create.php?csr_id={$csr_id}'"
                          . " data-bs-toggle='modal' data-bs-target='#modal2'>"
                          . "{$renew_icon} " . _("Renew") . "</a>";
             } else {
-                $actions = "<button type='button' class='btn btn-sm bg-red-lt text-red me-1 disabled'"
+                $actions .= "<button type='button' class='btn btn-sm bg-red-lt text-red me-1 disabled'"
                          . " data-tippy-content='" . _("Private key not stored — cannot renew") . "' disabled>"
                          . "{$renew_icon} " . _("Renew") . "</button>";
             }

@@ -39,7 +39,8 @@ class Log extends Common
 		"domains",
 		"logs",
 		"csr_templates",
-		"csrs"
+		"csrs",
+		"cas"
 	];
 
 	/**
@@ -62,7 +63,9 @@ class Log extends Common
 		"pkey_upload",
 		"pkey_download",
 		"pkey_delete",
-		"generate"
+		"generate",
+		"sign",
+		"passkey_delete"
 	];
 
 	/**

@@ -1,53 +1,17 @@
+
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
-
-# Dump of table translations
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `translations`;
-
-CREATE TABLE `translations` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL COMMENT 'English name, e.g. Slovenian',
-  `native_name` varchar(100) NOT NULL COMMENT 'Native name, e.g. Slovenščina',
-  `locale_code` varchar(30) NOT NULL COMMENT 'gettext locale, e.g. sl_SI.UTF-8',
-  `lang_code` varchar(5) NOT NULL COMMENT 'ISO 639-1, e.g. sl',
-  `flag` varchar(10) DEFAULT NULL COMMENT 'Emoji flag',
-  `enabled` tinyint(1) NOT NULL DEFAULT 1,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `locale_code` (`locale_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Available UI translation languages';
-
-INSERT INTO `translations` (`id`, `name`, `native_name`, `locale_code`, `lang_code`, `flag`) VALUES
-  (1, 'English',   'English',     'en_US.UTF-8', 'en', '🇬🇧'),
-  (2, 'Slovenian', 'Slovenščina', 'sl_SI.UTF-8', 'sl', '🇸🇮');
-
-
-# Dump of table migrations
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `migrations`;
-
-CREATE TABLE `migrations` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `filename` varchar(255) NOT NULL,
-  `applied_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `filename` (`filename`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-# Dump of table agents
-# ------------------------------------------------------------
-
 DROP TABLE IF EXISTS `agents`;
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `agents` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `t_id` int(11) unsigned NOT NULL,
@@ -64,15 +28,32 @@ CREATE TABLE `agents` (
   PRIMARY KEY (`id`),
   KEY `atenants` (`t_id`),
   CONSTRAINT `atenants` FOREIGN KEY (`t_id`) REFERENCES `tenants` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
-# Dump of table certificates
-# ------------------------------------------------------------
-
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `cas`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cas` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `t_id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `certificate` text NOT NULL,
+  `pkey_id` int(11) unsigned DEFAULT NULL,
+  `parent_ca_id` int(11) DEFAULT NULL,
+  `subject` varchar(500) DEFAULT NULL,
+  `expires` datetime DEFAULT NULL,
+  `created` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `t_id` (`t_id`),
+  KEY `pkey_id` (`pkey_id`),
+  KEY `parent_ca_id` (`parent_ca_id`),
+  CONSTRAINT `cas_parent_fk` FOREIGN KEY (`parent_ca_id`) REFERENCES `cas` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `cas_pkey_fk` FOREIGN KEY (`pkey_id`) REFERENCES `pkey` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `certificates`;
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `certificates` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `z_id` int(11) unsigned NOT NULL,
@@ -92,15 +73,11 @@ CREATE TABLE `certificates` (
   CONSTRAINT `c_pkey` FOREIGN KEY (`pkey_id`) REFERENCES `pkey` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `c_tenants` FOREIGN KEY (`t_id`) REFERENCES `tenants` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `c_zones` FOREIGN KEY (`z_id`) REFERENCES `zones` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
-# Dump of table config
-# ------------------------------------------------------------
-
+) ENGINE=InnoDB AUTO_INCREMENT=13811 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `config`;
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `config` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `t_id` int(11) unsigned DEFAULT NULL,
@@ -109,15 +86,11 @@ CREATE TABLE `config` (
   PRIMARY KEY (`id`),
   KEY `s_tenants` (`t_id`),
   CONSTRAINT `s_tenants` FOREIGN KEY (`t_id`) REFERENCES `tenants` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
-# Dump of table cron
-# ------------------------------------------------------------
-
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `cron`;
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `cron` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `t_id` int(11) unsigned NOT NULL,
@@ -128,110 +101,86 @@ CREATE TABLE `cron` (
   `weekday` varchar(6) NOT NULL DEFAULT '*',
   `script` varchar(255) NOT NULL DEFAULT '',
   `last_executed` timestamp NULL DEFAULT NULL,
-  `force` tinyint(1) unsigned NOT NULL DEFAULT 0,
+  `force` tinyint(1) unsigned NOT NULL DEFAULT 0 COMMENT 'Force execution on next cron run',
   PRIMARY KEY (`id`),
   KEY `cront_tenant` (`t_id`),
   CONSTRAINT `cront_tenant` FOREIGN KEY (`t_id`) REFERENCES `tenants` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
-# Dump of table hosts
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `hosts`;
-
-CREATE TABLE `hosts` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `z_id` int(11) unsigned NOT NULL,
-  `c_id` int(11) unsigned DEFAULT NULL,
-  `c_id_old` int(11) unsigned DEFAULT NULL,
-  `pg_id` int(11) unsigned NOT NULL DEFAULT 1,
-  `ignore` tinyint(1) NOT NULL DEFAULT 0,
-  `mute` tinyint(1) NOT NULL DEFAULT 0,
-  `hostname` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
-  `ip` varchar(15) CHARACTER SET utf8 DEFAULT NULL,
-  `port` int(5) DEFAULT NULL,
-  `h_recipients` text CHARACTER SET utf8 DEFAULT NULL,
-  `last_check` timestamp NULL DEFAULT NULL,
-  `last_change` timestamp NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `zone_hostname` (`z_id`,`hostname`),
-  KEY `h_domain` (`z_id`),
-  KEY `h_cert` (`c_id`),
-  CONSTRAINT `h_cert` FOREIGN KEY (`c_id`) REFERENCES `certificates` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `h_domain` FOREIGN KEY (`z_id`) REFERENCES `zones` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_slovenian_ci;
-
-
-
-# Dump of table pkey
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `pkey`;
-
-CREATE TABLE `pkey` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `private_key_enc` text DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
-# Dump of table ssl_port_groups
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `ssl_port_groups`;
-
-CREATE TABLE `ssl_port_groups` (
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `csr_templates`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `csr_templates` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `t_id` int(11) unsigned NOT NULL,
-  `name` varchar(64) DEFAULT NULL,
-  `ports` varchar(128) DEFAULT NULL,
+  `name` varchar(128) NOT NULL DEFAULT '',
+  `key_algo` enum('RSA','EC') NOT NULL DEFAULT 'RSA',
+  `key_size` int(5) NOT NULL DEFAULT 2048,
+  `country` varchar(2) DEFAULT NULL,
+  `state` varchar(128) DEFAULT NULL,
+  `locality` varchar(128) DEFAULT NULL,
+  `org` varchar(256) DEFAULT NULL,
+  `ou` varchar(256) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `key_usage` text DEFAULT NULL,
+  `ext_key_usage` text DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `pg_tenant` (`t_id`),
-  CONSTRAINT `pg_tenant` FOREIGN KEY (`t_id`) REFERENCES `tenants` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
-# Dump of table tenants
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `tenants`;
-
-CREATE TABLE `tenants` (
+  KEY `csr_tpl_tenant` (`t_id`),
+  CONSTRAINT `csr_tpl_tenant` FOREIGN KEY (`t_id`) REFERENCES `tenants` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `csrs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `csrs` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  `href` varchar(255) DEFAULT NULL,
-  `description` text DEFAULT NULL,
-  `active` tinyint(1) NOT NULL DEFAULT 1,
-  `admin` tinyint(1) NOT NULL DEFAULT 0,
-  `recipients` text DEFAULT NULL,
-  `mail_style` enum('table','list') DEFAULT 'list',
-  `remove_orphaned` tinyint(1) NOT NULL DEFAULT 1,
-  `order` int(2) DEFAULT 99,
-  `log_retention` int(4) NOT NULL DEFAULT 30,
-  `lang_id` int(11) unsigned DEFAULT NULL,
+  `t_id` int(11) unsigned NOT NULL,
+  `cn` varchar(255) NOT NULL DEFAULT '',
+  `sans` text DEFAULT NULL,
+  `key_algo` enum('RSA','EC') NOT NULL DEFAULT 'RSA',
+  `key_size` int(5) NOT NULL DEFAULT 2048,
+  `country` varchar(2) DEFAULT NULL,
+  `state` varchar(128) DEFAULT NULL,
+  `locality` varchar(128) DEFAULT NULL,
+  `org` varchar(256) DEFAULT NULL,
+  `ou` varchar(256) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `status` enum('pending','submitted','signed') NOT NULL DEFAULT 'pending',
+  `csr_pem` text DEFAULT NULL,
+  `extensions` text DEFAULT NULL,
+  `pkey_id` int(11) unsigned DEFAULT NULL,
+  `cert_id` int(11) unsigned DEFAULT NULL,
+  `renewed_by` int(11) unsigned DEFAULT NULL,
+  `created` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
-  KEY `tenants_lang_id` (`lang_id`),
-  CONSTRAINT `tenants_lang_id` FOREIGN KEY (`lang_id`) REFERENCES `translations` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
-# Default tenant
-# ------------------------------------------------------------
-INSERT INTO `tenants` (`id`, `name`, `href`, `description`, `active`, `admin`, `recipients`, `mail_style`, `remove_orphaned`, `order`, `log_retention`)
-VALUES
-  (1, 'Administrators', 'admin', 'Administrator tenant', 1, 1, NULL, 'list', 1, 1, 30);
-
-
-# Dump of table domains
-# ------------------------------------------------------------
-
+  KEY `csrs_tenant` (`t_id`),
+  KEY `csrs_pkey` (`pkey_id`),
+  KEY `csrs_cert` (`cert_id`),
+  KEY `csr_renewed_by` (`renewed_by`),
+  CONSTRAINT `csr_renewed_by` FOREIGN KEY (`renewed_by`) REFERENCES `csrs` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `csrs_cert` FOREIGN KEY (`cert_id`) REFERENCES `certificates` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `csrs_pkey` FOREIGN KEY (`pkey_id`) REFERENCES `pkey` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `csrs_tenant` FOREIGN KEY (`t_id`) REFERENCES `tenants` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = latin1 */ ;
+/*!50003 SET character_set_results = latin1 */ ;
+/*!50003 SET collation_connection  = latin1_swedish_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`phpssladmin`@`127.0.0.1`*/ /*!50003 TRIGGER csrs_cert_nulled BEFORE UPDATE ON csrs FOR EACH ROW BEGIN IF NEW.cert_id IS NULL AND OLD.cert_id IS NOT NULL AND NEW.status = 'signed' THEN SET NEW.status = 'pending'; END IF; END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 DROP TABLE IF EXISTS `domains`;
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `domains` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `t_id` int(11) unsigned NOT NULL DEFAULT 1,
@@ -249,23 +198,160 @@ CREATE TABLE `domains` (
   `active` set('Yes','No') DEFAULT 'No',
   PRIMARY KEY (`id`),
   KEY `t_id` (`t_id`),
-  CONSTRAINT `fk_domains_t_id` FOREIGN KEY (`t_id`) REFERENCES `tenants` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
-
-# Default local domain
-# ------------------------------------------------------------
-INSERT INTO `domains` (`id`, `t_id`, `name`, `type`, `account_suffix`, `base_dn`, `domain_controllers`, `use_ssl`, `use_tls`, `port`, `adminUsername`, `adminPassword`, `autocreateGroup`, `active`)
-VALUES
-  (1, 1, 'local', 'local', '@local', '', '', 0, 0, 0, NULL, NULL, NULL, 'Yes');
-
-
-
-# Dump of table users
-# ------------------------------------------------------------
-
+  CONSTRAINT `fk_domains_t_id` FOREIGN KEY (`t_id`) REFERENCES `tenants` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `hosts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `hosts` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `z_id` int(11) unsigned NOT NULL,
+  `c_id` int(11) unsigned DEFAULT NULL,
+  `c_id_old` int(11) unsigned DEFAULT NULL,
+  `pg_id` int(11) unsigned NOT NULL DEFAULT 1,
+  `ignore` tinyint(1) NOT NULL DEFAULT 0,
+  `mute` tinyint(1) NOT NULL DEFAULT 0,
+  `hostname` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+  `ip` varchar(15) CHARACTER SET utf8 DEFAULT NULL,
+  `port` int(5) DEFAULT NULL,
+  `tls_version` varchar(32) COLLATE utf8_slovenian_ci DEFAULT NULL,
+  `h_recipients` text CHARACTER SET utf8 DEFAULT NULL,
+  `last_check` timestamp NULL DEFAULT NULL,
+  `last_success` timestamp NULL DEFAULT NULL,
+  `last_change` timestamp NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `h_domain` (`z_id`),
+  KEY `h_cert` (`c_id`),
+  KEY `zone_hostname` (`z_id`,`hostname`,`pg_id`),
+  CONSTRAINT `h_cert` FOREIGN KEY (`c_id`) REFERENCES `certificates` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `h_domain` FOREIGN KEY (`z_id`) REFERENCES `zones` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=86369 DEFAULT CHARSET=utf8 COLLATE=utf8_slovenian_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `ignored_issuers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ignored_issuers` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `t_id` int(11) unsigned NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `ski` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_sku_tid` (`t_id`,`ski`),
+  CONSTRAINT `tid` FOREIGN KEY (`t_id`) REFERENCES `tenants` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `logs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `logs` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `object` varchar(32) NOT NULL,
+  `object_id` int(11) unsigned DEFAULT NULL,
+  `object_t_id` int(11) unsigned DEFAULT NULL,
+  `object_u_id` int(11) unsigned DEFAULT NULL,
+  `action` varchar(32) NOT NULL,
+  `public` tinyint(1) NOT NULL DEFAULT 0,
+  `text` text DEFAULT NULL,
+  `json_object_old` text DEFAULT NULL,
+  `json_object_new` text DEFAULT NULL,
+  `is_revertable` tinyint(1) NOT NULL DEFAULT 0,
+  `date` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `object_id` (`object_id`),
+  KEY `object_t_id` (`object_t_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2811 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `migrations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `migrations` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `filename` varchar(255) NOT NULL,
+  `applied_at` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `filename` (`filename`)
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `passkeys`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `passkeys` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) unsigned NOT NULL,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `credential_id` varchar(512) NOT NULL,
+  `public_key` text NOT NULL,
+  `sign_count` int(11) unsigned NOT NULL DEFAULT 0,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `last_used_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `credential_id` (`credential_id`(255)),
+  KEY `passkeys_user_id` (`user_id`),
+  CONSTRAINT `passkeys_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `pkey`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `pkey` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `private_key_enc` text DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `ssl_port_groups`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ssl_port_groups` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `t_id` int(11) unsigned NOT NULL,
+  `name` varchar(64) DEFAULT NULL,
+  `ports` varchar(128) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `pg_tenant` (`t_id`),
+  CONSTRAINT `pg_tenant` FOREIGN KEY (`t_id`) REFERENCES `tenants` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `tenants`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tenants` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `href` varchar(255) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT 1,
+  `admin` tinyint(1) NOT NULL DEFAULT 0,
+  `recipients` text DEFAULT NULL,
+  `mail_style` enum('table','list') DEFAULT 'list',
+  `remove_orphaned` tinyint(1) NOT NULL DEFAULT 1,
+  `order` int(2) DEFAULT 99,
+  `log_retention` int(4) NOT NULL DEFAULT 30,
+  `lang_id` int(11) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `tenants_lang_id` (`lang_id`),
+  CONSTRAINT `tenants_lang_id` FOREIGN KEY (`lang_id`) REFERENCES `translations` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `translations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `translations` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL COMMENT 'English name, e.g. Slovenian',
+  `native_name` varchar(100) NOT NULL COMMENT 'Native name, e.g. Slovenščina',
+  `locale_code` varchar(30) NOT NULL COMMENT 'gettext locale, e.g. sl_SI.UTF-8',
+  `lang_code` varchar(5) NOT NULL COMMENT 'ISO 639-1, e.g. sl',
+  `flag` varchar(10) DEFAULT NULL COMMENT 'Emoji flag',
+  `enabled` tinyint(1) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `locale_code` (`locale_code`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='Available UI translation languages';
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `users`;
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `users` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `t_id` int(11) unsigned NOT NULL,
@@ -273,34 +359,24 @@ CREATE TABLE `users` (
   `password` varchar(128) DEFAULT NULL,
   `name` varchar(255) NOT NULL DEFAULT '',
   `permission` int(1) NOT NULL DEFAULT 0,
-  `days` int(4) NOT NULL DEFAULT 30,
-  `days_expired` int(4) NOT NULL DEFAULT 30,
+  `days` int(4) NOT NULL DEFAULT 20,
+  `days_expired` int(4) NOT NULL DEFAULT 10,
   `notif_id` int(11) unsigned DEFAULT 0,
   `changePass` tinyint(1) NOT NULL DEFAULT 0,
   `disabled` tinyint(1) NOT NULL DEFAULT 0,
   `force_passkey` tinyint(1) NOT NULL DEFAULT 0,
   `lang_id` int(11) unsigned DEFAULT NULL,
+  `test` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `u_tenants` (`t_id`),
   KEY `users_lang_id` (`lang_id`),
   CONSTRAINT `u_tenants` FOREIGN KEY (`t_id`) REFERENCES `tenants` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `users_lang_id` FOREIGN KEY (`lang_id`) REFERENCES `translations` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-# Default user
-# ------------------------------------------------------------
-INSERT INTO `users` (`id`, `t_id`, `email`, `password`, `name`, `permission`, `days`, `days_expired`, `notif_id`)
-VALUES
-  (1, 1, 'admin', 'c7ad44cbad762a5da0a452f9e854fdc1e0e7a52a38015f23f3eab1d80b931dd472634dfac71cd34ebc35d16ab7fb8a90c81f975113d6c7538dc69dd8de9077ec', 'Administrator', 3, 30, 30, 0);
-
-
-
-# Dump of table zones
-# ------------------------------------------------------------
-
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `zones`;
-
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `zones` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `t_id` int(11) unsigned NOT NULL,
@@ -328,130 +404,15 @@ CREATE TABLE `zones` (
   CONSTRAINT `d_agent` FOREIGN KEY (`agent_id`) REFERENCES `agents` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `d_tenant` FOREIGN KEY (`t_id`) REFERENCES `tenants` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_zone_private_uid` FOREIGN KEY (`private_zone_uid`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
-
-
-# Dump of table ignored_issuers
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `ignored_issuers`;
-
-CREATE TABLE `ignored_issuers` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `t_id` int(11) unsigned NOT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `ski` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_sku_tid` (`t_id`,`ski`),
-  CONSTRAINT `tid` FOREIGN KEY (`t_id`) REFERENCES `tenants` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-# Dump of table logs
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `logs`;
-
-CREATE TABLE `logs` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `object` varchar(32) NOT NULL,
-  `object_id` int(11) unsigned DEFAULT NULL,
-  `object_t_id` int(11) unsigned DEFAULT NULL,
-  `object_u_id` int(11) unsigned DEFAULT NULL,
-  `action` varchar(32) NOT NULL,
-  `public` tinyint(1) NOT NULL DEFAULT 0,
-  `text` text DEFAULT NULL,
-  `json_object_old` text DEFAULT NULL,
-  `json_object_new` text DEFAULT NULL,
-  `is_revertable` tinyint(1) NOT NULL DEFAULT 0,
-  `date` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  PRIMARY KEY (`id`),
-  KEY `object_id` (`object_id`),
-  KEY `object_t_id` (`object_t_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-# Dump of table passkeys
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `passkeys`;
-
-CREATE TABLE `passkeys` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) unsigned NOT NULL,
-  `name` varchar(255) NOT NULL DEFAULT '',
-  `credential_id` varchar(512) NOT NULL,
-  `public_key` text NOT NULL,
-  `sign_count` int(11) unsigned NOT NULL DEFAULT 0,
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `last_used_at` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `credential_id` (`credential_id`(255)),
-  KEY `passkeys_user_id` (`user_id`),
-  CONSTRAINT `passkeys_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-# Dump of table csr_templates
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `csr_templates`;
-
-CREATE TABLE `csr_templates` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `t_id` int(11) unsigned NOT NULL,
-  `name` varchar(128) NOT NULL DEFAULT '',
-  `key_algo` enum('RSA','EC') NOT NULL DEFAULT 'RSA',
-  `key_size` int(5) NOT NULL DEFAULT 2048,
-  `country` varchar(2) DEFAULT NULL,
-  `state` varchar(128) DEFAULT NULL,
-  `locality` varchar(128) DEFAULT NULL,
-  `org` varchar(256) DEFAULT NULL,
-  `ou` varchar(256) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `csr_tpl_tenant` (`t_id`),
-  CONSTRAINT `csr_tpl_tenant` FOREIGN KEY (`t_id`) REFERENCES `tenants` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-# Dump of table csrs
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `csrs`;
-
-CREATE TABLE `csrs` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `t_id` int(11) unsigned NOT NULL,
-  `cn` varchar(255) NOT NULL DEFAULT '',
-  `sans` text DEFAULT NULL,
-  `key_algo` enum('RSA','EC') NOT NULL DEFAULT 'RSA',
-  `key_size` int(5) NOT NULL DEFAULT 2048,
-  `country` varchar(2) DEFAULT NULL,
-  `state` varchar(128) DEFAULT NULL,
-  `locality` varchar(128) DEFAULT NULL,
-  `org` varchar(256) DEFAULT NULL,
-  `ou` varchar(256) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `status` enum('pending','submitted','signed') NOT NULL DEFAULT 'pending',
-  `csr_pem` text DEFAULT NULL,
-  `pkey_id` int(11) unsigned DEFAULT NULL,
-  `cert_id` int(11) unsigned DEFAULT NULL,
-  `created` timestamp NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`id`),
-  KEY `csrs_tenant` (`t_id`),
-  KEY `csrs_pkey` (`pkey_id`),
-  KEY `csrs_cert` (`cert_id`),
-  CONSTRAINT `csrs_tenant` FOREIGN KEY (`t_id`) REFERENCES `tenants` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `csrs_pkey` FOREIGN KEY (`pkey_id`) REFERENCES `pkey` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `csrs_cert` FOREIGN KEY (`cert_id`) REFERENCES `certificates` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+

@@ -1,13 +1,31 @@
 <?php
 
 /**
- * Modal: generate a new self-signed CA certificate.
+ * Modal: generate a new CA certificate (self-signed root or intermediate signed by a parent CA).
  */
 
 require('../../../functions/autoload.php');
 $User->validate_session(false, false, false);
 
 global $private_key_encryption_key;
+
+// Load CAs with private keys for parent selector (scoped to user's tenant; admin sees all)
+if ($user->admin === "1") {
+    $parent_cas = $Database->getObjectsQuery(
+        "SELECT ca.id, ca.name, ca.subject, ca.t_id FROM cas ca
+         INNER JOIN pkey pk ON ca.pkey_id = pk.id
+         WHERE pk.private_key_enc IS NOT NULL AND pk.private_key_enc != ''
+         ORDER BY ca.name ASC", []
+    );
+} else {
+    $parent_cas = $Database->getObjectsQuery(
+        "SELECT ca.id, ca.name, ca.subject FROM cas ca
+         INNER JOIN pkey pk ON ca.pkey_id = pk.id
+         WHERE ca.t_id = ? AND pk.private_key_enc IS NOT NULL AND pk.private_key_enc != ''
+         ORDER BY ca.name ASC", [$user->t_id]
+    );
+}
+$all_tenants_map = $user->admin === "1" ? $Tenants->get_all() : [];
 
 $content  = "<form id='modal-form'>";
 $content .= "<table class='table table-borderless table-sm align-middle'>";
@@ -51,6 +69,37 @@ $content .= "</td></tr>";
 $content .= "<tr><th>" . _("Validity (days)") . "</th>";
 $content .= "<td><input type='number' id='ca-days' class='form-control form-control-sm' style='width:100px' value='3650' min='1' max='36500'></td></tr>";
 
+// Parent CA
+$content .= "<tr><th>" . _("Parent CA") . "</th><td>";
+$content .= "<select id='ca-parent' class='form-select form-select-sm'>";
+$content .= "<option value=''>\xe2\x80\x94 " . _("None (self-signed root)") . " \xe2\x80\x94</option>";
+if ($user->admin === "1") {
+    $seen_tenants = [];
+    foreach ($parent_cas as $pc) {
+        $tid = (int)$pc->t_id;
+        if (!isset($seen_tenants[$tid])) {
+            if ($seen_tenants) $content .= "</optgroup>";
+            $tname = isset($all_tenants_map[$tid]) ? htmlspecialchars($all_tenants_map[$tid]->name) : $tid;
+            $content .= "<optgroup label='" . $tname . "'>";
+            $seen_tenants[$tid] = true;
+        }
+        $label = htmlspecialchars($pc->name);
+        if (!empty($pc->subject)) $label .= ' — <small class="text-muted">' . htmlspecialchars($pc->subject) . '</small>';
+        $content .= "<option value='" . (int)$pc->id . "'>" . htmlspecialchars($pc->name) . (empty($pc->subject) ? '' : ' (' . htmlspecialchars($pc->subject) . ')') . "</option>";
+    }
+    if ($seen_tenants) $content .= "</optgroup>";
+} else {
+    foreach ($parent_cas as $pc) {
+        $content .= "<option value='" . (int)$pc->id . "'>" . htmlspecialchars($pc->name) . (empty($pc->subject) ? '' : ' (' . htmlspecialchars($pc->subject) . ')') . "</option>";
+    }
+}
+$content .= "</select></td></tr>";
+
+// Pathlen (hidden unless parent selected)
+$content .= "<tr id='ca-pathlen-row' style='display:none'><th>" . _("Path length") . "</th>";
+$content .= "<td><input type='number' id='ca-pathlen' class='form-control form-control-sm' style='width:80px' value='0' min='0' max='10'>";
+$content .= " <small class='text-muted'>" . _("Max chain depth below this CA (0 = end-entity only)") . "</small></td></tr>";
+
 // Subject fields
 $content .= "<tr><td colspan='2' style='padding-top:16px'><small class='text-muted'>" . _("Subject fields") . "</small><hr></td></tr>";
 $content .= "<tr><th>" . _("Common Name") . " <span class='text-danger'>*</span></th>";
@@ -83,6 +132,14 @@ $Modal->modal_print(_("Create Certificate Authority"), $content, _("Create CA"),
         ecSel.style.display  = isEc ? 'inline-block' : 'none'; ecSel.disabled  = !isEc;
     }
     algoSel.addEventListener('change', syncAlgo);
+
+    var parentSel   = document.getElementById('ca-parent');
+    var pathlenRow  = document.getElementById('ca-pathlen-row');
+    function syncParent() {
+        var hasParent = parentSel.value !== '';
+        pathlenRow.style.display = hasParent ? '' : 'none';
+    }
+    parentSel.addEventListener('change', syncParent);
 
     <?php if ($user->admin === "1"): ?>
     var tenantSel = document.getElementById('ca-tenant');
@@ -120,17 +177,20 @@ $Modal->modal_print(_("Create Certificate Authority"), $content, _("Create CA"),
         }
 
         var isEc = algoSel.value === 'EC';
+        var parentVal = parentSel.value;
         var payload = {
-            name:     name,
-            cn:       cn,
-            key_algo: algoSel.value,
-            key_size: parseInt(isEc ? ecSel.value : rsaSel.value),
-            days:     days,
-            org:      (document.getElementById('ca-org').value      || '').trim(),
-            ou:       (document.getElementById('ca-ou').value       || '').trim(),
-            country:  (document.getElementById('ca-country').value  || '').trim(),
-            state:    (document.getElementById('ca-state').value    || '').trim(),
-            locality: (document.getElementById('ca-locality').value || '').trim(),
+            name:         name,
+            cn:           cn,
+            key_algo:     algoSel.value,
+            key_size:     parseInt(isEc ? ecSel.value : rsaSel.value),
+            days:         days,
+            org:          (document.getElementById('ca-org').value      || '').trim(),
+            ou:           (document.getElementById('ca-ou').value       || '').trim(),
+            country:      (document.getElementById('ca-country').value  || '').trim(),
+            state:        (document.getElementById('ca-state').value    || '').trim(),
+            locality:     (document.getElementById('ca-locality').value || '').trim(),
+            parent_ca_id: parentVal ? parseInt(parentVal) : null,
+            pathlen:      parentVal ? parseInt(document.getElementById('ca-pathlen').value) : null,
         };
         <?php if ($user->admin === "1"): ?>
         payload.t_id = parseInt(document.getElementById('ca-tenant').value);
