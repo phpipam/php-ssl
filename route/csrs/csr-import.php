@@ -138,15 +138,7 @@ if (!empty($cert_pem)) {
 
 // Store private key if encryption is configured
 global $private_key_encryption_key;
-if ($user->admin === "1" && !empty($body['t_id'])) {
-    $t_id = (int)$body['t_id'];
-    if (!$Database->getObject("tenants", $t_id)) {
-        print json_encode(['status' => 'error', 'message' => _("Invalid tenant.")]);
-        exit;
-    }
-} else {
-    $t_id = (int)$user->t_id;
-}
+$t_id    = (int)$user->t_id;
 $pkey_id = null;
 
 if (!empty($private_key_encryption_key[$t_id])) {
@@ -171,7 +163,7 @@ $Database->runQuery(
         $key_algo, $key_size,
         $country ?: null, $state ?: null, $locality ?: null,
         $org ?: null, $ou ?: null, $email ?: null,
-        $source, $csr_pem, $extensions_json, $pkey_id,
+        $csr_pem, $source, $extensions_json, $pkey_id,
     ]
 );
 $csr_db_id = $Database->lastInsertId();

@@ -1,3 +1,3 @@
 <?php
-$is_local = true;
+$is_local = false;
 require(dirname(__DIR__) . '/_csr_list.php');

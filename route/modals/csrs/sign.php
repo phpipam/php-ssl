@@ -206,6 +206,11 @@ foreach ($eku_options as $val => $label) {
 $content .= "</div>";
 $content .= "</div>";
 
+$content .= "<div class='mt-3 d-flex align-items-center gap-2'>";
+$content .= "<button type='button' class='btn btn-sm bg-danger-lt text-danger' id='sign-reject-btn'>";
+$content .= "<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='icon'><path stroke='none' d='M0 0h24v24H0z' fill='none'/><path d='M18 6l-12 12' /><path d='M6 6l12 12' /></svg> ";
+$content .= _("Reject") . "</button>";
+$content .= "</div>";
 $content .= "<div id='sign-result' class='mt-3'></div>";
 
 $Modal->modal_print(_("Sign CSR"), $content, _("Sign"), "", false, "purple");
@@ -219,6 +224,32 @@ $Modal->modal_print(_("Sign CSR"), $content, _("Sign"), "", false, "purple");
     overrideCb.addEventListener('change', function () {
         readonly.style.display  = this.checked ? 'none' : '';
         override.style.display  = this.checked ? '' : 'none';
+    });
+
+    document.getElementById('sign-reject-btn').addEventListener('click', function () {
+        if (!confirm(<?php print json_encode(_("Reject this CSR? Status will be set to Rejected.")); ?>)) return;
+        var btn     = this;
+        var $result = $('#sign-result');
+        btn.disabled = true;
+        fetch('/route/ajax/csr-reject.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ csr_id: <?php print (int)$csr_id; ?> })
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            if (data.status === 'ok') {
+                $result.html("<div class='alert alert-warning p-2'><?php print addslashes(_("CSR rejected.")); ?></div>");
+                setTimeout(function () { $('#modal1').modal('hide'); }, 800);
+            } else {
+                $result.html("<div class='alert alert-danger p-2'>" + (data.message || '<?php print addslashes(_("Error.")); ?>') + "</div>");
+                btn.disabled = false;
+            }
+        })
+        .catch(function () {
+            $result.html("<div class='alert alert-danger p-2'><?php print addslashes(_("Request failed.")); ?></div>");
+            btn.disabled = false;
+        });
     });
 
     $(document).off('click.csrSign').on('click.csrSign', '.modal-execute', function () {

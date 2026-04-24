@@ -10,7 +10,7 @@ $User->validate_session(false, false, false);
 // Pre-fill from an existing certificate (renew flow) or an existing CSR
 $renew_cert_id = (int)($_GET['cert_id'] ?? 0);
 $renew_csr_id  = (int)($_GET['csr_id']  ?? 0);
-$prefill = ['cn' => '', 'sans' => '', 'key_algo' => 'RSA', 'key_size' => 2048,
+$prefill = ['cn' => '', 'sans' => '', 'key_algo' => 'RSA', 'key_size' => 4096,
             'country' => '', 'state' => '', 'locality' => '', 'org' => '', 'ou' => '', 'email' => '',
             'key_usage' => [], 'ext_key_usage' => []];
 $is_renew = false;
@@ -31,7 +31,7 @@ if ($renew_csr_id > 0) {
         $prefill['ou']         = $renew_csr->ou       ?? '';
         $prefill['email']      = $renew_csr->email    ?? '';
         $prefill['key_algo']   = $renew_csr->key_algo ?? 'RSA';
-        $prefill['key_size']   = (int)($renew_csr->key_size ?? 2048);
+        $prefill['key_size']   = (int)($renew_csr->key_size ?? 4096);
         $sans_stored = trim($renew_csr->sans ?? '');
         if (empty($sans_stored) && !empty($renew_csr->csr_pem)) {
             $pem_sans    = $SSL->csr_extract_sans($renew_csr->csr_pem);
@@ -87,7 +87,7 @@ if ($renew_cert_id > 0) {
                 $prefill['key_size'] = ($details['bits'] ?? 256) >= 384 ? 384 : 256;
             } else {
                 $prefill['key_algo'] = 'RSA';
-                $prefill['key_size'] = in_array((int)($details['bits'] ?? 2048), [2048, 4096]) ? (int)$details['bits'] : 2048;
+                $prefill['key_size'] = in_array((int)($details['bits'] ?? 4096), [2048, 4096]) ? (int)$details['bits'] : 4096;
             }
         }
     }
@@ -178,7 +178,7 @@ $content .= "<option value='RSA' {$algo_rsa}>RSA</option><option value='EC' {$al
 $content .= "</select></td></tr>";
 
 // Key size (RSA and EC selects toggled by JS)
-$sz_rsa   = !$is_ec ? $prefill['key_size'] : 2048;
+$sz_rsa   = !$is_ec ? $prefill['key_size'] : 4096;
 $sz_ec    = $is_ec  ? $prefill['key_size'] : 256;
 $content .= "<tr>";
 $content .= "<th>" . _("Key size") . "</th>";
