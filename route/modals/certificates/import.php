@@ -80,11 +80,24 @@ else {
 		$content[] = "	<th style='width:120px;'>" . _("Zone") . "</th>";
 		$content[] = "	<td>";
 		$content[] = "		<select name='zone_id' id='zone-select' class='form-select form-select-sm'>";
-		foreach ($all_zones as $z) {
-			$t_href = isset($all_tenants[$z->t_id]) ? htmlspecialchars($all_tenants[$z->t_id]->href) : '';
-			$label  = htmlspecialchars($z->name);
-			if ($user->admin == "1") { $label .= " (" . htmlspecialchars($z->tenant_name) . ")"; }
-			$content[] = "			<option value='" . $z->id . "' data-tenant='" . $t_href . "'>" . $label . "</option>";
+		if ($user->admin == "1") {
+			$by_tenant = [];
+			foreach ($all_zones as $z) {
+				$by_tenant[$z->tenant_name][] = $z;
+			}
+			foreach ($by_tenant as $tenant_name => $zones) {
+				$content[] = "			<optgroup label='" . htmlspecialchars($tenant_name) . "'>";
+				foreach ($zones as $z) {
+					$t_href = isset($all_tenants[$z->t_id]) ? htmlspecialchars($all_tenants[$z->t_id]->href) : '';
+					$content[] = "				<option value='" . $z->id . "' data-tenant='" . $t_href . "'>" . htmlspecialchars($z->name) . "</option>";
+				}
+				$content[] = "			</optgroup>";
+			}
+		} else {
+			foreach ($all_zones as $z) {
+				$t_href = isset($all_tenants[$z->t_id]) ? htmlspecialchars($all_tenants[$z->t_id]->href) : '';
+				$content[] = "			<option value='" . $z->id . "' data-tenant='" . $t_href . "'>" . htmlspecialchars($z->name) . "</option>";
+			}
 		}
 		$content[] = "		</select>";
 		$content[] = "	</td>";
@@ -94,12 +107,12 @@ else {
 	$content[] = "<tr>";
 	$content[] = "	<th style='vertical-align:top;padding-top:8px;'>" . _("Upload file") . "</th>";
 	$content[] = "	<td>";
-	$content[] = "		<input type='file' id='cert-file-input' accept='.pem,.crt,.cer,.pfx' style='display:none'>";
+	$content[] = "		<input type='file' id='cert-file-input' accept='.pem,.crt,.cer,.pfx,.p12' style='display:none'>";
 	$content[] = "		<div class='input-group input-group-sm'>";
 	$content[] = "			<button type='button' class='btn btn-sm bg-info-lt' onclick='document.getElementById(\"cert-file-input\").click()'>" . _("Choose file") . "</button>";
 	$content[] = "			<span class='form-control text-muted' id='cert-file-label' style='cursor:pointer' onclick='document.getElementById(\"cert-file-input\").click()'>" . _("No file chosen") . "</span>";
 	$content[] = "		</div>";
-	$content[] = "		<small class='text-muted'>" . _("Select a .pem / .crt / .cer / .pfx file, or paste below") . "</small>";
+	$content[] = "		<small class='text-muted'>" . _("Select a .pem / .crt / .cer / .pfx / .p12 file, or paste below") . "</small>";
 	$content[] = "	</td>";
 	$content[] = "</tr>";
 
@@ -117,10 +130,34 @@ else {
 	$content[] = "<tr>";
 	$content[] = "	<th style='vertical-align:top;padding-top:8px;'>" . _("Certificate") . "</th>";
 	$content[] = "	<td>";
-	$content[] = "		<textarea name='certificate' id='cert-pem-textarea' class='form-control' rows='12' style='font-family:monospace;font-size:11px;' placeholder='-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----'></textarea>";
+	$content[] = "		<textarea name='certificate' id='cert-pem-textarea' class='form-control' rows='8' style='font-family:monospace;font-size:11px;' placeholder='-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----'></textarea>";
 	$content[] = "		<small class='text-muted'>" . _("PEM-encoded certificate (-----BEGIN CERTIFICATE----- block)") . "</small>";
 	$content[] = "	</td>";
 	$content[] = "</tr>";
+
+	// Check if encryption is configured for at least one tenant the user can access
+	global $private_key_encryption_key;
+	$pkey_enc_available = $user->admin === "1"
+		? !empty($private_key_encryption_key)
+		: !empty($private_key_encryption_key[(int)$user->t_id]);
+
+	if ($pkey_enc_available) {
+		$content[] = "<tr>";
+		$content[] = "	<th style='vertical-align:top;padding-top:8px;'>" . _("Private key") . " <span class='text-muted fw-normal small'>(" . _("optional") . ")</span></th>";
+		$content[] = "	<td>";
+		$content[] = "		<input type='file' id='pkey-file-input' accept='.pem,.key' style='display:none'>";
+		$content[] = "		<div class='input-group input-group-sm mb-1'>";
+		$content[] = "			<button type='button' class='btn btn-sm bg-info-lt' onclick='document.getElementById(\"pkey-file-input\").click()'>" . _("Choose file") . "</button>";
+		$content[] = "			<span class='form-control text-muted' id='pkey-file-label' style='cursor:pointer' onclick='document.getElementById(\"pkey-file-input\").click()'>" . _("No file chosen") . "</span>";
+		$content[] = "		</div>";
+		$content[] = "		<textarea name='pkey_pem' id='pkey-pem-textarea' class='form-control' rows='4' style='font-family:monospace;font-size:11px;' placeholder='-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----'></textarea>";
+		$content[] = "		<div id='pkey-passphrase-wrap' style='display:none' class='mt-1'>";
+		$content[] = "			<input type='password' name='pkey_passphrase' id='pkey-passphrase' class='form-control form-control-sm' placeholder='" . _("Passphrase (if encrypted)") . "'>";
+		$content[] = "		</div>";
+		$content[] = "		<small class='text-muted'>" . _("Will be encrypted and stored. Leave empty to skip.") . "</small>";
+		$content[] = "	</td>";
+		$content[] = "</tr>";
+	}
 
 	$content[] = "</table>";
 	$content[] = "</form>";
@@ -155,6 +192,12 @@ else {
 	$content[] = "        .then(function(data) {";
 	$content[] = "            if (data.pem) {";
 	$content[] = "                document.getElementById('cert-pem-textarea').value = data.pem.trim();";
+	$content[] = "                var pkeyTa = document.getElementById('pkey-pem-textarea');";
+	$content[] = "                if (pkeyTa && data.pkey_pem) {";
+	$content[] = "                    pkeyTa.value = data.pkey_pem.trim();";
+	$content[] = "                    document.getElementById('pkey-file-label').textContent = '" . addslashes(_("Extracted from PFX")) . "';";
+	$content[] = "                    document.getElementById('pkey-file-label').classList.remove('text-muted');";
+	$content[] = "                }";
 	$content[] = "            } else {";
 	$content[] = "                var errEl = document.getElementById('pfx-convert-error');";
 	$content[] = "                errEl.textContent = data.error || '" . _("Conversion failed.") . "';";
@@ -191,6 +234,29 @@ else {
 	$content[] = "    }";
 	$content[] = "});";
 	$content[] = "document.getElementById('pfx-convert-btn').addEventListener('click', convertPfx);";
+
+	if ($pkey_enc_available) {
+		$content[] = "function togglePkeyPassphrase(val) {";
+		$content[] = "    var wrap = document.getElementById('pkey-passphrase-wrap');";
+		$content[] = "    if (wrap) wrap.style.display = val.indexOf('ENCRYPTED') !== -1 ? '' : 'none';";
+		$content[] = "}";
+		$content[] = "document.getElementById('pkey-file-input').addEventListener('change', function() {";
+		$content[] = "    var file = this.files[0];";
+		$content[] = "    if (!file) return;";
+		$content[] = "    document.getElementById('pkey-file-label').textContent = file.name;";
+		$content[] = "    document.getElementById('pkey-file-label').classList.remove('text-muted');";
+		$content[] = "    var reader = new FileReader();";
+		$content[] = "    reader.onload = function(e) {";
+		$content[] = "        document.getElementById('pkey-pem-textarea').value = e.target.result.trim();";
+		$content[] = "        togglePkeyPassphrase(e.target.result);";
+		$content[] = "    };";
+		$content[] = "    reader.readAsText(file);";
+		$content[] = "});";
+		$content[] = "document.getElementById('pkey-pem-textarea').addEventListener('input', function() {";
+		$content[] = "    togglePkeyPassphrase(this.value);";
+		$content[] = "});";
+	}
+
 	$content[] = "</script>";
 
 	$btn_text = _("Import certificate");

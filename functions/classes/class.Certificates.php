@@ -738,9 +738,9 @@ class Certificates extends Common
 	/**
 	 * Checks whether a PEM private key matches the public key in a PEM certificate.
 	 */
-	public function pkey_matches_cert(string $private_key_pem, string $cert_pem): bool
+	public function pkey_matches_cert(string $private_key_pem, string $cert_pem, ?string $passphrase = null): bool
 	{
-		$priv = @openssl_pkey_get_private($private_key_pem);
+		$priv = @openssl_pkey_get_private($private_key_pem, $passphrase ?? '');
 		if (!$priv) {
 			return false;
 		}

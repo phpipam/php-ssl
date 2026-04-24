@@ -2136,3 +2136,286 @@ msgstr ""
 
 msgid "Private Keys"
 msgstr ""
+
+# ── CSR Requests ─────────────────────────────────────────────────────────────
+msgid "CSR Requests"
+msgstr "CSR zahteve"
+
+msgid "New CSR"
+msgstr "Nova CSR"
+
+msgid "Generate CSR"
+msgstr "Generiraj CSR"
+
+msgid "Generating..."
+msgstr "Generiram..."
+
+msgid "Alt. names (SANs)"
+msgstr "Alternativna imena (SAN)"
+
+msgid "Alt. names"
+msgstr "Alternativna imena"
+
+msgid "Key algorithm"
+msgstr "Algoritem ključa"
+
+msgid "Subject / organisation fields"
+msgstr "Polja subjekta / organizacije"
+
+msgid "Country (2 letters)"
+msgstr "Država (2 črki)"
+
+msgid "State / Province"
+msgstr "Država / Pokrajina"
+
+msgid "Locality / City"
+msgstr "Kraj / Mesto"
+
+msgid "Org. Unit"
+msgstr "Organizacijska enota"
+
+msgid "Load from template"
+msgstr "Naloži iz predloge"
+
+msgid "— manual input —"
+msgstr "— ročni vnos —"
+
+msgid "One per line — CN is always included automatically"
+msgstr "Eno na vrstico — CN je vedno vključen samodejno"
+
+msgid "CSR (Certificate Signing Request)"
+msgstr "CSR (zahteva za podpis certifikata)"
+
+msgid "Copy"
+msgstr "Kopiraj"
+
+msgid "Download .csr"
+msgstr "Prenesi .csr"
+
+msgid "Download .key"
+msgstr "Prenesi .key"
+
+msgid "Private key stored securely (encrypted). Download it anytime from the CSR list."
+msgstr "Zasebni ključ je varno shranjen (šifriran). Prenesite ga kadarkoli s seznama CSR."
+
+msgid "Private key — save it now, it will not be stored"
+msgstr "Zasebni ključ — shranite ga zdaj, ne bo shranjen"
+
+msgid "Encryption not configured for this tenant — the private key is shown once. Download or copy it now."
+msgstr "Šifriranje ni konfigurirano za tega najemnika — zasebni ključ je prikazan enkrat. Prenesite ali kopirajte ga zdaj."
+
+msgid "Common name is required."
+msgstr "Skupno ime je obvezno."
+
+msgid "Generation failed."
+msgstr "Generiranje ni uspelo."
+
+msgid "CSR deleted."
+msgstr "CSR je bil izbrisan."
+
+msgid "CSR not found."
+msgstr "CSR ni bil najden."
+
+msgid "Private key not available."
+msgstr "Zasebni ključ ni na voljo."
+
+msgid "Failed to decrypt private key."
+msgstr "Dešifriranje zasebnega ključa ni uspelo."
+
+msgid "Templates"
+msgstr "Predloge"
+
+msgid "Add template"
+msgstr "Dodaj predlogo"
+
+msgid "Template name"
+msgstr "Ime predloge"
+
+msgid "Edit template"
+msgstr "Uredi predlogo"
+
+msgid "Save template"
+msgstr "Shrani predlogo"
+
+msgid "Template saved."
+msgstr "Predloga je bila shranjena."
+
+msgid "Template not found."
+msgstr "Predloga ni bila najdena."
+
+msgid "Template deleted."
+msgstr "Predloga je bila izbrisana."
+
+msgid "Template name is required."
+msgstr "Ime predloge je obvezno."
+
+msgid "Subject fields (optional — pre-fill when creating CSRs)"
+msgstr "Polja subjekta (neobvezno — samodejno izpolni pri ustvarjanju CSR)"
+
+msgid "Delete template"
+msgstr "Izbriši predlogo"
+
+msgid "Delete CSR for"
+msgstr "Izbriši CSR za"
+
+msgid "Private key stored"
+msgstr "Zasebni ključ shranjen"
+
+msgid "Pending"
+msgstr "V teku"
+
+msgid "Submitted"
+msgstr "Oddano"
+
+msgid "Signed"
+msgstr "Podpisano"
+
+msgid "Upload cert"
+msgstr "Naloži certifikat"
+
+msgid "Upload signed certificate"
+msgstr "Naloži podpisani certifikat"
+
+msgid "Paste the signed certificate for <b>%s</b> below."
+msgstr "Prilepite podpisani certifikat za <b>%s</b> spodaj."
+
+msgid "The certificate will be imported into this zone."
+msgstr "Certifikat bo uvožen v to cono."
+
+msgid "Certificate PEM"
+msgstr "Certifikat PEM"
+
+msgid "Already signed"
+msgstr "Že podpisano"
+
+msgid "This CSR already has a linked certificate."
+msgstr "Ta CSR ima že povezan certifikat."
+
+msgid "Please paste or select a certificate."
+msgstr "Prilepite ali izberite certifikat."
+
+msgid "Import failed."
+msgstr "Uvoz ni uspel."
+
+msgid "Signed certificate imported for CN %s"
+msgstr "Podpisani certifikat uvožen za CN %s"
+
+msgid "Requested extensions"
+msgstr "Zahtevane razširitve"
+
+msgid "Key Usage"
+msgstr "Uporaba ključa"
+
+msgid "Extended Key Usage"
+msgstr "Razširjena uporaba ključa"
+
+msgid "Ext. Key Usage"
+msgstr "Razš. uporaba ključa"
+
+msgid "Digital Signature"
+msgstr "Digitalni podpis"
+
+msgid "Content Commitment"
+msgstr "Zaveza vsebine"
+
+msgid "Key Encipherment"
+msgstr "Šifriranje ključa"
+
+msgid "Data Encipherment"
+msgstr "Šifriranje podatkov"
+
+msgid "Key Agreement"
+msgstr "Dogovor o ključu"
+
+msgid "Certificate Sign"
+msgstr "Podpisovanje certifikatov"
+
+msgid "CRL Sign"
+msgstr "Podpisovanje CRL"
+
+msgid "TLS Web Server Auth"
+msgstr "TLS avtentikacija spletnega strežnika"
+
+msgid "TLS Web Client Auth"
+msgstr "TLS avtentikacija spletnega odjemalca"
+
+msgid "Code Signing"
+msgstr "Podpisovanje kode"
+
+msgid "Email Protection"
+msgstr "Zaščita e-pošte"
+
+msgid "Time Stamping"
+msgstr "Časovni žig"
+
+msgid "OCSP Signing"
+msgstr "OCSP podpisovanje"
+
+msgid "Renew"
+msgstr "Obnovi"
+
+msgid "Renew certificate — generate CSR"
+msgstr "Obnova certifikata — generiranje CSR"
+
+msgid "Fields pre-filled from the existing certificate. Review and adjust before generating."
+msgstr "Polja so bila samodejno izpolnjena iz obstoječega certifikata. Preverite in po potrebi prilagodite."
+
+msgid "Import CSR"
+msgstr "Uvozi CSR"
+
+msgid "CSR (PEM)"
+msgstr "CSR (PEM)"
+
+msgid "Private key (PEM)"
+msgstr "Zasebni ključ (PEM)"
+
+msgid "Certificate (PEM)"
+msgstr "Certifikat (PEM)"
+
+msgid "optional"
+msgstr "neobvezno"
+
+msgid "Import certificate into zone"
+msgstr "Uvozi certifikat v cono"
+
+msgid "Required when a certificate is provided."
+msgstr "Obvezno, ko je podan certifikat."
+
+msgid "Please provide the CSR PEM."
+msgstr "Prosimo, vnesite CSR v PEM obliki."
+
+msgid "Please provide the private key PEM."
+msgstr "Prosimo, vnesite zasebni ključ v PEM obliki."
+
+msgid "CSR and private key are required."
+msgstr "CSR in zasebni ključ sta obvezna."
+
+msgid "Cannot parse CSR. Please provide a valid PEM-encoded CSR."
+msgstr "CSR ni mogoče razčleniti. Vnesite veljavni PEM-kodiran CSR."
+
+msgid "CSR has no Common Name."
+msgstr "CSR nima skupnega imena (CN)."
+
+msgid "Cannot read public key from CSR."
+msgstr "Javnega ključa iz CSR ni mogoče prebrati."
+
+msgid "Cannot parse private key. Ensure it is an unencrypted PEM."
+msgstr "Zasebnega ključa ni mogoče razčleniti. Zagotovite, da je v nešifriranem PEM formatu."
+
+msgid "Private key does not match the CSR."
+msgstr "Zasebni ključ se ne ujema s CSR."
+
+msgid "Zone is required when importing a certificate."
+msgstr "Cona je obvezna pri uvozu certifikata."
+
+msgid "A certificate with this serial number already exists in this zone."
+msgstr "Certifikat s to serijsko številko v tej coni že obstaja."
+
+msgid "Certificate does not match this CSR."
+msgstr "Certifikat se ne ujema s tem CSR."
+
+msgid "Certificate does not match the private key."
+msgstr "Certifikat se ne ujema z zasebnim ključem."
+
+msgid "Renewed"
+msgstr "Obnovljen"

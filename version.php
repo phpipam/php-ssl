@@ -11,12 +11,13 @@
  */
 $version_major = 0;
 $version_minor = 8;
+$version_patch = 2;
 
 /**
  * Full version string, e.g. "1.0"
  * @var string
  */
-$version = "{$version_major}.{$version_minor}";
+$version = "{$version_major}.{$version_minor}.{$version_patch}";
 
 /**
  * Last agent version

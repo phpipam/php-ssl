@@ -57,11 +57,17 @@ $content .= "<label class='form-label'>"._("Select file (optional)")."</label>";
 $content .= "<input type='file' id='pkey-file-input' class='form-control form-control-sm' accept='.key,.pem'>";
 $content .= "</div>";
 
-$content .= "<div>";
+$content .= "<div class='mb-2'>";
 $content .= "<label class='form-label'>"._("PEM private key")."</label>";
 $content .= "<textarea id='pkey-pem-input' class='form-control' rows='8' "
           . "style='font-family:monospace;font-size:11px;' "
           . "placeholder='-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----'></textarea>";
+$content .= "</div>";
+
+$content .= "<div id='pkey-passphrase-wrap' class='mb-2' style='display:none'>";
+$content .= "<label class='form-label'>"._("Key passphrase")." <span class='text-danger'>*</span></label>";
+$content .= "<input type='password' id='pkey-passphrase-input' class='form-control form-control-sm'"
+          . " placeholder='" . _("Passphrase for encrypted private key") . "'>";
 $content .= "</div>";
 
 $content .= "<div id='pkey-upload-result' class='mt-2'></div>";
@@ -71,6 +77,12 @@ $Modal->modal_print(_("Upload private key"), $content, _("Upload"), "", false, "
 
 <script>
 (function () {
+    function togglePassphrase(val) {
+        var encrypted = val.indexOf('ENCRYPTED') !== -1;
+        document.getElementById('pkey-passphrase-wrap').style.display = encrypted ? '' : 'none';
+        if (!encrypted) document.getElementById('pkey-passphrase-input').value = '';
+    }
+
     // File → textarea
     document.getElementById('pkey-file-input').addEventListener('change', function () {
         var file = this.files[0];
@@ -78,27 +90,35 @@ $Modal->modal_print(_("Upload private key"), $content, _("Upload"), "", false, "
         var reader = new FileReader();
         reader.onload = function (e) {
             document.getElementById('pkey-pem-input').value = e.target.result;
+            togglePassphrase(e.target.result);
         };
         reader.readAsText(file);
     });
 
+    document.getElementById('pkey-pem-input').addEventListener('input', function () {
+        togglePassphrase(this.value);
+    });
+
     // Upload on modal confirm
     $(document).off('click.pkeyUpload').on('click.pkeyUpload', '.modal-execute', function () {
-        var pem = document.getElementById('pkey-pem-input').value.trim();
-        var $result = $('#pkey-upload-result');
+        var pem        = document.getElementById('pkey-pem-input').value.trim();
+        var passphrase = document.getElementById('pkey-passphrase-input').value;
+        var $result    = $('#pkey-upload-result');
 
         if (!pem) {
             $result.html("<div class='alert alert-warning p-2'><?php print addslashes(_("Please paste or select a private key.")); ?></div>");
             return false;
         }
-
         var $btn = $(this).prop('disabled', true);
         $result.html('');
+
+        var payload = { certificate_id: <?php print (int)$cert_id; ?>, pem: pem };
+        if (pem.indexOf('ENCRYPTED') !== -1) payload.passphrase = passphrase;
 
         fetch('/route/ajax/pkey-upload.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ certificate_id: <?php print (int)$cert_id; ?>, pem: pem })
+            body: JSON.stringify(payload)
         })
         .then(function (r) { return r.json(); })
         .then(function (data) {

@@ -13,9 +13,10 @@ header('Content-Type: application/json');
 
 $User->validate_session(false, false, false);
 
-$body   = json_decode(file_get_contents('php://input'), true);
-$cert_id = (int) ($body['certificate_id'] ?? 0);
-$pem     = trim($body['pem'] ?? '');
+$body       = json_decode(file_get_contents('php://input'), true);
+$cert_id    = (int) ($body['certificate_id'] ?? 0);
+$pem        = trim($body['pem'] ?? '');
+$passphrase = $body['passphrase'] ?? null;
 
 if ($cert_id <= 0 || empty($pem)) {
     http_response_code(400);
@@ -52,7 +53,7 @@ if (strpos($pem, '-----BEGIN') === false || strpos($pem, 'PRIVATE KEY') === fals
 }
 
 // Validate private key matches certificate's public key
-if (!$Certificates->pkey_matches_cert($pem, $cert->certificate)) {
+if (!$Certificates->pkey_matches_cert($pem, $cert->certificate, $passphrase)) {
     http_response_code(422);
     print json_encode(['status' => 'error', 'message' => _("Private key does not match this certificate.")]);
     exit;

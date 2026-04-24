@@ -115,7 +115,7 @@ else {
 			else										{ $script_name = "Unknown"; }
 
 			print "<tr class='$trclass'>";
-			print "	<td style='padding-left:15px'><span class='text-secondary'>".$url_items['scanning']['submenu']['cron']['icon']." </span>".$script_name."</td>";
+			print "	<td style='padding-left:15px'><span class='text-muted'>".$url_items['scanning']['submenu']['cron']['icon']." </span>".$script_name."</td>";
 			print "	<td class='text-muted text-center d-none d-lg-table-cell lastCheckSec' style='width:50px'></td>";
 			print "	<td class='text-muted text-center d-none d-lg-table-cell'>".$t->minute."</td>";
 			print "	<td class='text-muted text-center d-none d-lg-table-cell'>".$t->hour."</td>";

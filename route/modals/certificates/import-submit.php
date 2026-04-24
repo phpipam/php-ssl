@@ -40,7 +40,9 @@ if($zone->t_id != $tenant->id)
 $Result->show("danger", _("Access denied") . ".", true, false, false, false);
 
 # validate certificate input
-$cert_pem = trim($_POST['certificate']);
+$cert_pem       = trim($_POST['certificate']);
+$pkey_pem       = trim($_POST['pkey_pem']       ?? '');
+$pkey_passphrase = $_POST['pkey_passphrase']    ?? '';
 if(strlen($cert_pem) == 0)
 $Result->show("danger", _("Certificate is required") . ".", true, false, false, false);
 
@@ -58,16 +60,39 @@ $existing = $Database->getObjectQuery("SELECT id FROM certificates WHERE z_id = 
 if(!is_null($existing))
 $Result->show("danger", _("A certificate with this serial number already exists in this zone."), true, false, false, false);
 
+# validate and store private key if provided
+$pkey_id = null;
+if (!empty($pkey_pem)) {
+	global $private_key_encryption_key;
+	if (empty($private_key_encryption_key[$tenant->id])) {
+		$Result->show("danger", _("Private key encryption is not configured for this tenant."), true, false, false, false);
+	}
+	$pkey_res = openssl_pkey_get_private($pkey_pem, $pkey_passphrase);
+	if ($pkey_res === false) {
+		$Result->show("danger", _("Cannot parse private key. Check the passphrase if encrypted."), true, false, false, false);
+	}
+	if (!$Certificates->pkey_matches_cert($pkey_pem, $cert_pem, $pkey_passphrase ?: null)) {
+		$Result->show("danger", _("Private key does not match the certificate."), true, false, false, false);
+	}
+	$encrypted = $Certificates->pkey_encrypt($pkey_pem, $tenant->id);
+	if ($encrypted === null) {
+		$Result->show("danger", _("Private key encryption failed."), true, false, false, false);
+	}
+	$Database->runQuery("INSERT INTO pkey (private_key_enc) VALUES (?)", [$encrypted]);
+	$pkey_id = $Database->lastInsertId();
+}
+
 # insert certificate
 try {
 	$insert = [
-		"z_id"      => $zone->id,
-		"t_id"      => $tenant->id,
-		"serial"    => $serial,
+		"z_id"        => $zone->id,
+		"t_id"        => $tenant->id,
+		"serial"      => $serial,
 		"certificate" => $cert_pem,
-		"expires"   => $expires,
-		"is_manual" => 1
+		"expires"     => $expires,
+		"is_manual"   => 1,
 	];
+	if ($pkey_id !== null) $insert['pkey_id'] = $pkey_id;
 	$new_id = $Database->insertObject("certificates", $insert);
 	# refetch for logging
 	$new_cert = $Database->getObject("certificates", $new_id);

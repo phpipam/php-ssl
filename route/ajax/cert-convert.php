@@ -29,11 +29,14 @@ if (empty($_FILES['pfx_file']['tmp_name']) || $_FILES['pfx_file']['error'] !== U
 $pfx_data   = file_get_contents($_FILES['pfx_file']['tmp_name']);
 $passphrase = $_POST['passphrase'] ?? '';
 
-$pem = $SSL->pfx_to_pem($pfx_data, $passphrase);
+$extracted = $SSL->pfx_extract($pfx_data, $passphrase);
 
-if ($pem === false) {
+if ($extracted === false) {
 	print json_encode(['error' => _("Failed to read PFX file. Check the passphrase and make sure the file is a valid PKCS#12 archive.")]);
 	exit;
 }
 
-print json_encode(['pem' => $pem]);
+print json_encode([
+	'pem'      => $extracted['cert'],
+	'pkey_pem' => $extracted['pkey'],
+]);

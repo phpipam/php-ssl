@@ -632,6 +632,20 @@ class SSL extends Common
 		return $certs['cert'] ?? false;
 	}
 
+	// Extract cert PEM and optional private key PEM from a PKCS#12 archive.
+	// Returns ['cert' => string, 'pkey' => string|null] or false on failure.
+	public function pfx_extract(string $pfx_data, string $passphrase = "")
+	{
+		$certs = [];
+		if (!openssl_pkcs12_read($pfx_data, $certs, $passphrase)) {
+			return false;
+		}
+		return [
+			'cert' => $certs['cert'] ?? null,
+			'pkey' => $certs['pkey'] ?? null,
+		];
+	}
+
 	/**
 	 * Converts a PEM-encoded certificate (and optional private key) to PKCS#12 (PFX) binary.
 	 * @method pem_to_pfx
@@ -647,6 +661,179 @@ class SSL extends Common
 			return false;
 		}
 		return $pfx_data;
+	}
+
+	/**
+	 * Extract Subject Alternative Names from a CSR PEM by parsing the ASN.1 DER directly.
+	 * PHP's openssl_csr_sign does not reliably copy requested extensions, so we walk the
+	 * binary structure ourselves.  Returns plain strings: DNS names and IPv4/IPv6 addresses.
+	 *
+	 * @param  string $csr_pem  PEM-encoded certificate signing request
+	 * @return array            e.g. ['example.com', 'www.example.com', '192.168.1.1']
+	 */
+	public function csr_extract_sans(string $csr_pem): array
+	{
+		$der = base64_decode(preg_replace('/-----[^-]+-----|[\r\n\s]/', '', $csr_pem));
+		if (!$der) return [];
+
+		// subjectAltName OID 2.5.29.17 = bytes 55 1d 11
+		$oid    = "\x55\x1d\x11";
+		$offset = 0;
+
+		while (($p = strpos($der, $oid, $offset)) !== false) {
+			$offset = $p + 1;
+			$p += 3; // skip past the three OID value bytes
+
+			// Skip optional BOOLEAN critical flag: 01 01 ff
+			if (isset($der[$p]) && ord($der[$p]) === 0x01) $p += 3;
+
+			// Expect OCTET STRING (04) wrapping the extension value
+			if (!isset($der[$p]) || ord($der[$p]) !== 0x04) continue;
+			$p++;
+			$this->_asn1_len($der, $p); // advance past length
+
+			// Expect SEQUENCE (30) = GeneralNames
+			if (!isset($der[$p]) || ord($der[$p]) !== 0x30) continue;
+			$p++;
+			$seq_len = $this->_asn1_len($der, $p);
+			$seq_end = $p + $seq_len;
+
+			$names = [];
+			while ($p < $seq_end && $p < strlen($der)) {
+				$tag = ord($der[$p++]);
+				$len = $this->_asn1_len($der, $p);
+				$val = substr($der, $p, $len);
+				$p  += $len;
+
+				if ($tag === 0x82) {       // dNSName  [2] IMPLICIT IA5String
+					$names[] = $val;
+				} elseif ($tag === 0x87) { // iPAddress [7] IMPLICIT OCTET STRING
+					if ($len === 4) {
+						$names[] = implode('.', array_map('ord', str_split($val)));
+					} elseif ($len === 16) { // IPv6
+						$parts = [];
+						for ($i = 0; $i < 16; $i += 2) {
+							$parts[] = sprintf('%04x', (ord($val[$i]) << 8) | ord($val[$i + 1]));
+						}
+						$names[] = implode(':', $parts);
+					}
+				}
+			}
+
+			if (!empty($names)) return $names;
+		}
+
+		return [];
+	}
+
+	/**
+	 * Extract keyUsage and extKeyUsage from a CSR PEM by parsing the ASN.1 DER directly.
+	 * Returns an array compatible with the `extensions` JSON column:
+	 *   ['keyUsage' => [...], 'extKeyUsage' => [...]]
+	 */
+	public function csr_extract_extensions(string $csr_pem): array
+	{
+		$der = base64_decode(preg_replace('/-----[^-]+-----|[\r\n\s]/', '', $csr_pem));
+		if (!$der) return [];
+
+		$result = [];
+
+		// keyUsage OID 2.5.29.15 = 55 1d 0f
+		$ku_val = $this->_asn1_extension_value($der, "\x55\x1d\x0f");
+		if ($ku_val !== null) {
+			$ku = $this->_parse_key_usage_bitstring($ku_val);
+			if (!empty($ku)) $result['keyUsage'] = $ku;
+		}
+
+		// extKeyUsage OID 2.5.29.37 = 55 1d 25
+		$eku_val = $this->_asn1_extension_value($der, "\x55\x1d\x25");
+		if ($eku_val !== null) {
+			$eku = $this->_parse_ext_key_usage_seq($eku_val);
+			if (!empty($eku)) $result['extKeyUsage'] = $eku;
+		}
+
+		return $result;
+	}
+
+	// Find an extension by its 3-byte OID value and return the raw OCTET STRING contents.
+	private function _asn1_extension_value(string $der, string $oid): ?string
+	{
+		$p = strpos($der, $oid);
+		if ($p === false) return null;
+		$p += 3; // skip past OID value bytes
+
+		// Skip optional BOOLEAN critical flag: 01 01 ff
+		if (isset($der[$p]) && ord($der[$p]) === 0x01) $p += 3;
+
+		// Expect OCTET STRING (04)
+		if (!isset($der[$p]) || ord($der[$p]) !== 0x04) return null;
+		$p++;
+		$len = $this->_asn1_len($der, $p);
+		return substr($der, $p, $len);
+	}
+
+	// Parse a keyUsage BIT STRING value into flag names.
+	private function _parse_key_usage_bitstring(string $val): array
+	{
+		// BIT STRING: 03 <len> <unused_bits> <byte1> [<byte2>]
+		if (!isset($val[0]) || ord($val[0]) !== 0x03) return [];
+		$p    = 1;
+		$this->_asn1_len($val, $p); // skip length
+		$b1   = isset($val[$p + 1]) ? ord($val[$p + 1]) : 0;
+
+		$bits = [
+			[0x80, 'digitalSignature'],
+			[0x40, 'contentCommitment'],
+			[0x20, 'keyEncipherment'],
+			[0x10, 'dataEncipherment'],
+			[0x08, 'keyAgreement'],
+			[0x04, 'keyCertSign'],
+			[0x02, 'cRLSign'],
+		];
+		$result = [];
+		foreach ($bits as [$mask, $name]) {
+			if ($b1 & $mask) $result[] = $name;
+		}
+		return $result;
+	}
+
+	// Parse an extKeyUsage SEQUENCE of OIDs into purpose names.
+	private function _parse_ext_key_usage_seq(string $val): array
+	{
+		// SEQUENCE (30) of OID (06) entries
+		if (!isset($val[0]) || ord($val[0]) !== 0x30) return [];
+		$p       = 1;
+		$seq_end = $p + $this->_asn1_len($val, $p);
+
+		$oid_map = [
+			"\x2b\x06\x01\x05\x05\x07\x03\x01" => 'serverAuth',
+			"\x2b\x06\x01\x05\x05\x07\x03\x02" => 'clientAuth',
+			"\x2b\x06\x01\x05\x05\x07\x03\x03" => 'codeSigning',
+			"\x2b\x06\x01\x05\x05\x07\x03\x04" => 'emailProtection',
+			"\x2b\x06\x01\x05\x05\x07\x03\x08" => 'timeStamping',
+			"\x2b\x06\x01\x05\x05\x07\x03\x09" => 'OCSPSigning',
+		];
+
+		$result = [];
+		while ($p < $seq_end && isset($val[$p])) {
+			if (ord($val[$p]) !== 0x06) break;
+			$p++;
+			$len      = $this->_asn1_len($val, $p);
+			$oid_bytes = substr($val, $p, $len);
+			$p        += $len;
+			if (isset($oid_map[$oid_bytes])) $result[] = $oid_map[$oid_bytes];
+		}
+		return $result;
+	}
+
+	private function _asn1_len(string $der, int &$p): int
+	{
+		$b = ord($der[$p++]);
+		if ($b < 0x80) return $b;
+		$n = $b & 0x7f;
+		$len = 0;
+		for ($i = 0; $i < $n; $i++) $len = ($len << 8) | ord($der[$p++]);
+		return $len;
 	}
 
 }

@@ -2031,3 +2031,286 @@ msgstr ""
 
 msgid "Private Keys"
 msgstr ""
+
+# ── CSR Requests ─────────────────────────────────────────────────────────────
+msgid "CSR Requests"
+msgstr "CSR-Anfragen"
+
+msgid "New CSR"
+msgstr "Neue CSR"
+
+msgid "Generate CSR"
+msgstr "CSR generieren"
+
+msgid "Generating..."
+msgstr "Wird generiert..."
+
+msgid "Alt. names (SANs)"
+msgstr "Alternative Namen (SANs)"
+
+msgid "Alt. names"
+msgstr "Alternative Namen"
+
+msgid "Key algorithm"
+msgstr "Schlüsselalgorithmus"
+
+msgid "Subject / organisation fields"
+msgstr "Betreff- / Organisationsfelder"
+
+msgid "Country (2 letters)"
+msgstr "Land (2 Buchstaben)"
+
+msgid "State / Province"
+msgstr "Bundesland / Provinz"
+
+msgid "Locality / City"
+msgstr "Ort / Stadt"
+
+msgid "Org. Unit"
+msgstr "Organisationseinheit"
+
+msgid "Load from template"
+msgstr "Aus Vorlage laden"
+
+msgid "— manual input —"
+msgstr "— manuelle Eingabe —"
+
+msgid "One per line — CN is always included automatically"
+msgstr "Einer pro Zeile — CN wird immer automatisch eingefügt"
+
+msgid "CSR (Certificate Signing Request)"
+msgstr "CSR (Zertifikatsignieranfrage)"
+
+msgid "Copy"
+msgstr "Kopieren"
+
+msgid "Download .csr"
+msgstr ".csr herunterladen"
+
+msgid "Download .key"
+msgstr ".key herunterladen"
+
+msgid "Private key stored securely (encrypted). Download it anytime from the CSR list."
+msgstr "Privater Schlüssel sicher gespeichert (verschlüsselt). Jederzeit aus der CSR-Liste herunterladen."
+
+msgid "Private key — save it now, it will not be stored"
+msgstr "Privater Schlüssel — jetzt speichern, er wird nicht gespeichert"
+
+msgid "Encryption not configured for this tenant — the private key is shown once. Download or copy it now."
+msgstr "Verschlüsselung nicht konfiguriert — der private Schlüssel wird einmal angezeigt. Jetzt herunterladen oder kopieren."
+
+msgid "Common name is required."
+msgstr "Allgemeiner Name ist erforderlich."
+
+msgid "Generation failed."
+msgstr "Generierung fehlgeschlagen."
+
+msgid "CSR deleted."
+msgstr "CSR wurde gelöscht."
+
+msgid "CSR not found."
+msgstr "CSR nicht gefunden."
+
+msgid "Private key not available."
+msgstr "Privater Schlüssel nicht verfügbar."
+
+msgid "Failed to decrypt private key."
+msgstr "Entschlüsselung des privaten Schlüssels fehlgeschlagen."
+
+msgid "Templates"
+msgstr "Vorlagen"
+
+msgid "Add template"
+msgstr "Vorlage hinzufügen"
+
+msgid "Template name"
+msgstr "Vorlagenname"
+
+msgid "Edit template"
+msgstr "Vorlage bearbeiten"
+
+msgid "Save template"
+msgstr "Vorlage speichern"
+
+msgid "Template saved."
+msgstr "Vorlage gespeichert."
+
+msgid "Template not found."
+msgstr "Vorlage nicht gefunden."
+
+msgid "Template deleted."
+msgstr "Vorlage gelöscht."
+
+msgid "Template name is required."
+msgstr "Vorlagenname ist erforderlich."
+
+msgid "Subject fields (optional — pre-fill when creating CSRs)"
+msgstr "Betrefffelder (optional — beim Erstellen von CSRs vorausfüllen)"
+
+msgid "Delete template"
+msgstr "Vorlage löschen"
+
+msgid "Delete CSR for"
+msgstr "CSR löschen für"
+
+msgid "Private key stored"
+msgstr "Privater Schlüssel gespeichert"
+
+msgid "Pending"
+msgstr "Ausstehend"
+
+msgid "Submitted"
+msgstr "Eingereicht"
+
+msgid "Signed"
+msgstr "Signiert"
+
+msgid "Upload cert"
+msgstr "Zertifikat hochladen"
+
+msgid "Upload signed certificate"
+msgstr "Signiertes Zertifikat hochladen"
+
+msgid "Paste the signed certificate for <b>%s</b> below."
+msgstr "Fügen Sie das signierte Zertifikat für <b>%s</b> unten ein."
+
+msgid "The certificate will be imported into this zone."
+msgstr "Das Zertifikat wird in diese Zone importiert."
+
+msgid "Certificate PEM"
+msgstr "Zertifikat PEM"
+
+msgid "Already signed"
+msgstr "Bereits signiert"
+
+msgid "This CSR already has a linked certificate."
+msgstr "Dieser CSR hat bereits ein verknüpftes Zertifikat."
+
+msgid "Please paste or select a certificate."
+msgstr "Bitte fügen Sie ein Zertifikat ein oder wählen Sie eines aus."
+
+msgid "Import failed."
+msgstr "Import fehlgeschlagen."
+
+msgid "Signed certificate imported for CN %s"
+msgstr "Signiertes Zertifikat für CN %s importiert"
+
+msgid "Requested extensions"
+msgstr "Angeforderte Erweiterungen"
+
+msgid "Key Usage"
+msgstr "Schlüsselverwendung"
+
+msgid "Extended Key Usage"
+msgstr "Erweiterte Schlüsselverwendung"
+
+msgid "Ext. Key Usage"
+msgstr "Erw. Schlüsselverwendung"
+
+msgid "Digital Signature"
+msgstr "Digitale Signatur"
+
+msgid "Content Commitment"
+msgstr "Inhaltsverpflichtung"
+
+msgid "Key Encipherment"
+msgstr "Schlüsselverschlüsselung"
+
+msgid "Data Encipherment"
+msgstr "Datenverschlüsselung"
+
+msgid "Key Agreement"
+msgstr "Schlüsselvereinbarung"
+
+msgid "Certificate Sign"
+msgstr "Zertifikat signieren"
+
+msgid "CRL Sign"
+msgstr "CRL signieren"
+
+msgid "TLS Web Server Auth"
+msgstr "TLS-Webserver-Authentifizierung"
+
+msgid "TLS Web Client Auth"
+msgstr "TLS-Webclient-Authentifizierung"
+
+msgid "Code Signing"
+msgstr "Code-Signierung"
+
+msgid "Email Protection"
+msgstr "E-Mail-Schutz"
+
+msgid "Time Stamping"
+msgstr "Zeitstempelung"
+
+msgid "OCSP Signing"
+msgstr "OCSP-Signierung"
+
+msgid "Renew"
+msgstr "Erneuern"
+
+msgid "Renew certificate — generate CSR"
+msgstr "Zertifikat erneuern — CSR generieren"
+
+msgid "Fields pre-filled from the existing certificate. Review and adjust before generating."
+msgstr "Felder wurden aus dem vorhandenen Zertifikat vorausgefüllt. Bitte prüfen und anpassen."
+
+msgid "Import CSR"
+msgstr "CSR importieren"
+
+msgid "CSR (PEM)"
+msgstr "CSR (PEM)"
+
+msgid "Private key (PEM)"
+msgstr "Privater Schlüssel (PEM)"
+
+msgid "Certificate (PEM)"
+msgstr "Zertifikat (PEM)"
+
+msgid "optional"
+msgstr "optional"
+
+msgid "Import certificate into zone"
+msgstr "Zertifikat in Zone importieren"
+
+msgid "Required when a certificate is provided."
+msgstr "Erforderlich, wenn ein Zertifikat angegeben wird."
+
+msgid "Please provide the CSR PEM."
+msgstr "Bitte geben Sie den CSR im PEM-Format an."
+
+msgid "Please provide the private key PEM."
+msgstr "Bitte geben Sie den privaten Schlüssel im PEM-Format an."
+
+msgid "CSR and private key are required."
+msgstr "CSR und privater Schlüssel sind erforderlich."
+
+msgid "Cannot parse CSR. Please provide a valid PEM-encoded CSR."
+msgstr "CSR kann nicht geparst werden. Bitte geben Sie einen gültigen PEM-codierten CSR an."
+
+msgid "CSR has no Common Name."
+msgstr "CSR hat keinen Common Name."
+
+msgid "Cannot read public key from CSR."
+msgstr "Der öffentliche Schlüssel aus dem CSR kann nicht gelesen werden."
+
+msgid "Cannot parse private key. Ensure it is an unencrypted PEM."
+msgstr "Privater Schlüssel kann nicht geparst werden. Stellen Sie sicher, dass es ein unverschlüsseltes PEM ist."
+
+msgid "Private key does not match the CSR."
+msgstr "Der private Schlüssel stimmt nicht mit dem CSR überein."
+
+msgid "Zone is required when importing a certificate."
+msgstr "Zone ist erforderlich beim Importieren eines Zertifikats."
+
+msgid "A certificate with this serial number already exists in this zone."
+msgstr "Ein Zertifikat mit dieser Seriennummer existiert bereits in dieser Zone."
+
+msgid "Certificate does not match this CSR."
+msgstr "Das Zertifikat stimmt nicht mit diesem CSR überein."
+
+msgid "Certificate does not match the private key."
+msgstr "Das Zertifikat stimmt nicht mit dem privaten Schlüssel überein."
+
+msgid "Renewed"
+msgstr "Erneuert"

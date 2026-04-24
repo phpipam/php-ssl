@@ -37,7 +37,9 @@ class Log extends Common
 		"portgroups",
 		"cron",
 		"domains",
-		"logs"
+		"logs",
+		"csr_templates",
+		"csrs"
 	];
 
 	/**
@@ -59,7 +61,8 @@ class Log extends Common
 		"passkey_register",
 		"pkey_upload",
 		"pkey_download",
-		"pkey_delete"
+		"pkey_delete",
+		"generate"
 	];
 
 	/**

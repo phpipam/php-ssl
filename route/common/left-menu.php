@@ -36,7 +36,7 @@
 
 
             php-ssl-scan
-            <span class="badge  ms-2" style="font-size:10px;font-weight:500;vertical-align:middle">v<?php global $version; print htmlspecialchars($version, ENT_QUOTES); ?></span>
+            <span class="badge" style="font-size:9px;font-weight:500;vertical-align:middle;margin-top:20px">v<?php global $version; print htmlspecialchars($version, ENT_QUOTES); ?></span>
         </div>
         <!-- END NAVBAR LOGO -->
 

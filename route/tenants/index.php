@@ -84,7 +84,7 @@ else {
 	}
 
 	print "<tr>";
-	print "	<td>".$url_items["tenants"]['icon']." ".$t->name." ".$warning_icon."</td>";
+	print "	<td><span class='text-muted'>".$url_items["tenants"]['icon']."</span> ".$t->name." ".$warning_icon."</td>";
 	print "	<td><span class='badge' style='width:100%'>".$t->id."</span></td>";
 	print "	<td>".$status."</td>";
 	print "	<td class='text-muted'>".$t->description."</td>";
