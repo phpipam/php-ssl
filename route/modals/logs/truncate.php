@@ -7,7 +7,7 @@
 # functions
 require('../../../functions/autoload.php');
 # validate user session
-$User->validate_session (true, true);
+$User->validate_session (false, true);
 # validate permissions
 $User->validate_user_permissions (3, true);
 

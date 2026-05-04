@@ -1,6 +1,6 @@
 <?php
 # validate user session - requires admin
-$User->validate_session ();
+$User->validate_session (true);
 
 # admin only
 if ($user->admin !== "1") {

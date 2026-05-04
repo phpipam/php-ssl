@@ -6,7 +6,7 @@
  * POST JSON body: { id }  (passkey row id)
  */
 
-require('../../functions/autoload.php');
+require('../../../functions/autoload.php');
 header('Content-Type: application/json');
 
 $User->validate_session(false, false, false);

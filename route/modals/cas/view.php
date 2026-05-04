@@ -101,9 +101,14 @@ if ($user->admin === "1") {
     $content .= $row(_("Tenant"), $tname);
 }
 $content .= $row(_("Parent CA"),       $ca->parent_ca_name ? htmlspecialchars($ca->parent_ca_name) : "<span class='text-muted'>" . _("None (self-signed root)") . "</span>");
-$content .= $row(_("Private key"),     $ca->has_pkey
-    ? "<span class='badge bg-green-lt'>" . _("Stored — can sign") . "</span>"
-    : "<span class='badge bg-danger-lt text-danger'>" . _("Not stored") . "</span>");
+if ($user->admin === "1" || (int)$user->permission >= 3) {
+    $pkey_val = $ca->has_pkey
+        ? "<span class='badge bg-green-lt me-2'>" . _("Stored — can sign") . "</span>"
+          . "<a class='btn btn-sm bg-info-lt text-info py-0' href='/route/ajax/ca/download.php?ca_id={$ca_id}&type=pkey'>"
+          . "<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='icon'><path stroke='none' d='M0 0h24v24H0z' fill='none'/><path d='M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2' /><path d='M7 11l5 5l5 -5' /><path d='M12 4l0 12' /></svg> .key</a>"
+        : "<span class='badge bg-danger-lt text-danger'>" . _("Not stored") . "</span>";
+    $content .= $row(_("Private key"), $pkey_val);
+}
 $content .= $row(_("Created"),         htmlspecialchars($ca->created ?? '&mdash;'));
 
 $content .= "<tr><td colspan='2' class='pt-3 pb-1'><small class='text-muted text-uppercase fw-bold'>" . _("Subject") . "</small></td></tr>";

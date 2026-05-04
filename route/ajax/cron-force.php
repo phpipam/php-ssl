@@ -37,6 +37,13 @@ if ($cronjob === null) {
 }
 
 // Permission: admin or same tenant
+if (!$user->can_edit) {
+	http_response_code(403);
+	print json_encode(['success' => false, 'error' => 'Access denied']);
+	exit;
+}
+
+// Permission: admin or same tenant
 if ($user->admin !== '1' && $user->t_id != $cronjob->t_id) {
 	http_response_code(403);
 	print json_encode(['success' => false, 'error' => 'Access denied']);

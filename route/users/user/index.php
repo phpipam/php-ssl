@@ -1,7 +1,7 @@
 <?php
 
 # validate user session
-$User->validate_session();
+$User->validate_session(false);
 
 # fetch user
 $view_user = $Database->getObjectQuery("select * from users where email = ?", [$_params['app']]);

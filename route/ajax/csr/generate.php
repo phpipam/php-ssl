@@ -11,11 +11,13 @@
  */
 
 ob_start();
-require('../../functions/autoload.php');
+require('../../../functions/autoload.php');
 ob_clean();
 header('Content-Type: application/json');
 
 $User->validate_session(false, false, false);
+# validate permissions
+$User->validate_user_permissions (3, true);
 
 $body          = json_decode(file_get_contents('php://input'), true);
 $source_csr_id = (int)($body['source_csr_id'] ?? 0);
@@ -43,21 +45,27 @@ if (empty($cn)) {
     exit;
 }
 
+$valid_hostname = function(string $s): bool {
+    if (filter_var($s, FILTER_VALIDATE_IP)) return true;
+    return (bool)preg_match('/^(\*\.)?[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)*$/i', $s);
+};
+
 if ($key_algo === 'RSA') {
     if (!in_array($key_size, [2048, 4096])) $key_size = 2048;
 } else {
     if (!in_array($key_size, [256, 384])) $key_size = 256;
 }
 
-// Parse SANs
+// Parse SANs — skip entries that are not valid hostnames/IPs
 $sans_list = [];
 if (!empty($sans_raw)) {
     foreach (preg_split('/[\r\n,]+/', $sans_raw) as $s) {
         $s = trim($s);
-        if ($s !== '') $sans_list[] = $s;
+        if ($s !== '' && $valid_hostname($s)) $sans_list[] = $s;
     }
 }
-if (!in_array($cn, $sans_list)) {
+// Only add CN as SAN if it is a valid hostname or IP
+if ($valid_hostname($cn) && !in_array($cn, $sans_list)) {
     array_unshift($sans_list, $cn);
 }
 
@@ -69,16 +77,16 @@ foreach (array_unique($sans_list) as $s) {
 $san_string = implode(', ', $san_parts);
 
 // Write temporary OpenSSL config with extensions
+$has_extensions = !empty($san_string) || !empty($key_usage) || !empty($ext_key_usage);
 $tmp_conf = tempnam(sys_get_temp_dir(), 'phpssl_csr_');
-$conf  = "[req]\ndistinguished_name = req_dn\nreq_extensions = v3_req\nprompt = no\n";
+$conf  = "[req]\ndistinguished_name = req_dn\nprompt = no\n";
+if ($has_extensions) $conf .= "req_extensions = v3_req\n";
 $conf .= "[req_dn]\n";
-$conf .= "[v3_req]\n";
-$conf .= "subjectAltName = {$san_string}\n";
-if (!empty($key_usage)) {
-    $conf .= "keyUsage = critical," . implode(', ', $key_usage) . "\n";
-}
-if (!empty($ext_key_usage)) {
-    $conf .= "extendedKeyUsage = " . implode(', ', $ext_key_usage) . "\n";
+if ($has_extensions) {
+    $conf .= "[v3_req]\n";
+    if (!empty($san_string))   $conf .= "subjectAltName = {$san_string}\n";
+    if (!empty($key_usage))    $conf .= "keyUsage = critical," . implode(', ', $key_usage) . "\n";
+    if (!empty($ext_key_usage)) $conf .= "extendedKeyUsage = " . implode(', ', $ext_key_usage) . "\n";
 }
 file_put_contents($tmp_conf, $conf);
 

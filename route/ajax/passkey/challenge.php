@@ -7,7 +7,7 @@
  * GET ?action=auth      — no session required
  */
 
-require('../../functions/autoload.php');
+require('../../../functions/autoload.php');
 
 header('Content-Type: application/json');
 

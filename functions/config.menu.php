@@ -82,7 +82,7 @@ if ($user->admin!="1") {
 if ($user->admin!="1" && $user->permission!=3) {
 	unset($url_items["users"]);
 	unset($url_items["domains"]);
-	$url_items["logs"]['mtitle'] = _("Administration");
+	unset($url_items["logs"]);
 }
 
 

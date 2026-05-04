@@ -6,7 +6,7 @@
  * GET ?csr_id=<int>&type=csr|pkey
  */
 
-require('../../functions/autoload.php');
+require('../../../functions/autoload.php');
 $User->validate_session(false, false, false);
 
 $csr_id = (int)($_GET['csr_id'] ?? 0);
@@ -39,7 +39,11 @@ if ($type === 'csr') {
     exit;
 }
 
-// Private key download
+// Private key download — requires permission level 3+
+if ($type === 'pkey') {
+    $User->validate_user_permissions(3);
+}
+
 if (!$csr->pkey_id) {
     http_response_code(404);
     print _("Private key not available.");

@@ -8,8 +8,6 @@
 require('../../../functions/autoload.php');
 # validate user session
 $User->validate_session (true, true);
-# validate permissions
-$User->validate_user_permissions (3, true);
 
 # strip tags
 $_GET = $User->strip_input_tags ($_GET);

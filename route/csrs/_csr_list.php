@@ -138,10 +138,11 @@ if (empty($groups)) {
                 'signed'    => ['label' => _("Signed"),    'cls' => 'success'],
                 'rejected'  => ['label' => _("Rejected"),  'cls' => 'danger'],
             ];
-            $sm = $status_map[$c->status] ?? ['label' => $c->status, 'cls' => 'secondary'];
-            $status_html = "<span class='badge bg-{$sm['cls']}-lt text-{$sm['cls']}'>{$sm['label']}</span>";
             if (!empty($c->renewed_by)) {
-                $status_html .= " <span class='badge bg-muted-lt text-muted'>" . _("Renewed") . "</span>";
+                $status_html = "<span class='badge bg-muted-lt text-muted'>" . _("Renewed") . "</span>";
+            } else {
+                $sm = $status_map[$c->status] ?? ['label' => $c->status, 'cls' => 'secondary'];
+                $status_html = "<span class='badge bg-{$sm['cls']}-lt text-{$sm['cls']}'>{$sm['label']}</span>";
             }
 
             // Certificate status
@@ -164,7 +165,7 @@ if (empty($groups)) {
             // Actions
             $actions = '';
 
-            if ($c->status !== 'signed' && $c->status !== 'rejected') {
+            if ($c->status !== 'signed' && $c->status !== 'rejected' && empty($c->renewed_by)) {
                 $actions .= "<a class='btn btn-sm bg-purple-lt text-purple me-1'"
                           . " href='/route/modals/csrs/sign.php?csr_id={$csr_id}'"
                           . " data-bs-toggle='modal' data-bs-target='#modal1'>"
@@ -176,10 +177,16 @@ if (empty($groups)) {
                          . " href='/route/modals/csrs/create.php?csr_id={$csr_id}'"
                          . " data-bs-toggle='modal' data-bs-target='#modal2'>"
                          . "{$renew_icon} " . _("Renew") . "</a>";
-                $actions .= "<a class='btn btn-sm bg-info-lt text-info me-1' href='/route/ajax/csr-download.php?csr_id={$csr_id}&type=pkey'>{$dl_icon} .key</a>";
+                if (!empty($c->pkey_id)) {
+                    if ($user->admin === "1" || (int)$user->permission >= 3) {
+                        $actions .= "<a class='btn btn-sm bg-info-lt text-info me-1' href='/route/ajax/csr/download.php?csr_id={$csr_id}&type=pkey'>{$dl_icon} .key</a>";
+                    } else {
+                        $actions .= "<a class='btn btn-sm bg-danger-lt text-danger me-1 disabled' tabindex='-1' title='" . _("Insufficient permissions") . "'>{$dl_icon} .key</a>";
+                    }
+                }
             }
 
-            $actions .= "<a class='btn btn-sm bg-info-lt text-info me-1' href='/route/ajax/csr-download.php?csr_id={$csr_id}&type=csr'>{$dl_icon} .csr</a>";
+            $actions .= "<a class='btn btn-sm bg-info-lt text-info me-1' href='/route/ajax/csr/download.php?csr_id={$csr_id}&type=csr'>{$dl_icon} .csr</a>";
 
             if (!empty($c->cert_id)) {
                 $actions .= "<a class='btn btn-sm bg-info-lt text-info me-1' href='/route/ajax/cert-download.php?cert_id={$c->cert_id}'>{$dl_icon} .crt</a>";
@@ -232,7 +239,7 @@ $(document).on('click', '.btn-csr-delete', function() {
 	var cn = $(this).data('cn');
 	if (!confirm(<?php print json_encode(_("Delete CSR for") . ' "'); ?> + cn + '"?')) return;
 	$.ajax({
-		type: 'POST', url: '/route/ajax/csr-delete.php',
+		type: 'POST', url: '/route/ajax/csr/delete.php',
 		contentType: 'application/json',
 		data: JSON.stringify({ csr_id: id }),
 		dataType: 'json',

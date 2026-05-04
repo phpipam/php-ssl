@@ -4,7 +4,7 @@
  * AJAX data for CSR templates list (Bootstrap Table server-side).
  */
 
-require('../../functions/autoload.php');
+require('../../../functions/autoload.php');
 $User->validate_session(false, true, false);
 
 try {

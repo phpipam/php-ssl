@@ -17,7 +17,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || ($_SERVER['HTTP_X_REQUESTED_WITH'] 
 }
 
 // Require session and admin
-$User->validate_session();
 $User->validate_csrf_token();
 
 if ($user->admin !== '1') {

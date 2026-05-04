@@ -6,11 +6,14 @@
  */
 
 ob_start();
-require('../../functions/autoload.php');
+require('../../../functions/autoload.php');
 ob_clean();
 header('Content-Type: application/json');
 
+# session
 $User->validate_session(false, false, false);
+# validate permissions
+$User->validate_user_permissions (3, true);
 
 global $private_key_encryption_key;
 

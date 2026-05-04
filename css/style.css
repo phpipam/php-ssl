@@ -366,3 +366,11 @@ padding: .25rem .5rem;
         background: var(--tblr-body-bg);
     }
 }
+
+
+
+@media (min-width:992px) {
+    .navbar-vertical.navbar-expand-lg .navbar-brand {
+        padding: 6px 5px 7px 0px;
+    }
+}

@@ -1,8 +1,9 @@
 <?php
+// valdate session
 $User->validate_session();
-
+// get all tenants
 $all_tenants = $Tenants->get_all();
-
+// set query
 $select = "SELECT ca.id, ca.t_id, ca.name, ca.subject, ca.expires, ca.created, ca.parent_ca_id,
            pca.name AS parent_ca_name,
            (pk.id IS NOT NULL AND pk.private_key_enc IS NOT NULL AND pk.private_key_enc != '') AS has_pkey
@@ -11,7 +12,7 @@ $select = "SELECT ca.id, ca.t_id, ca.name, ca.subject, ca.expires, ca.created, c
            LEFT JOIN cas pca ON ca.parent_ca_id = pca.id"
          . ($user->admin !== "1" ? " WHERE ca.t_id = " . (int)$user->t_id : "")
          . " ORDER BY ca.parent_ca_id IS NOT NULL ASC, ca.name ASC";
-
+// fetch all ca
 $all_cas = $Database->getObjectsQuery($select, []);
 
 $groups = [];
@@ -33,13 +34,13 @@ foreach ($all_cas as $ca) { $groups[$ca->t_id][] = $ca; }
 
 <div style="margin-bottom:10px">
 	<a href="/route/modals/cas/create.php"
-	   class="btn btn-sm bg-green-lt text-green"
+	   class="btn btn-sm bg-green-lt text-green <?php print $user->actions_disab1led; ?>"
 	   data-bs-toggle="modal" data-bs-target="#modal1">
 		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14"/><path d="M5 12l14 0"/></svg>
 		<?php print _("Create CA"); ?>
 	</a>
 	<a href="/route/modals/cas/import.php"
-	   class="btn btn-sm bg-info-lt text-info"
+	   class="btn btn-sm bg-info-lt text-info <?php print $user->actions_disab1led; ?>"
 	   data-bs-toggle="modal" data-bs-target="#modal1">
 		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 9l5 -5l5 5" /><path d="M12 4l0 12" /></svg>
 		<?php print _("Import CA"); ?>
@@ -74,6 +75,7 @@ foreach ($all_cas as $ca) { $groups[$ca->t_id][] = $ca; }
 
 $key_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M16.555 3.843l3.602 3.602a2.877 2.877 0 0 1 0 4.069l-2.643 2.643a2.877 2.877 0 0 1 -4.069 0l-.301 -.301l-6.558 6.558a2 2 0 0 1 -1.239 .578l-.175 .008h-1.172a1 1 0 0 1 -.993 -.883l-.007 -.117v-1.172a2 2 0 0 1 .467 -1.284l.119 -.13l.414 -.414h2v-2h2v-2l2.144 -2.144l-.301 -.301a2.877 2.877 0 0 1 0 -4.069l2.643 -2.643a2.877 2.877 0 0 1 4.069 0z" /><circle cx="15" cy="9" r="1" fill="currentColor" stroke="none" /></svg>';
 $del_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>';
+$dl_icon  = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>';
 
 if (empty($groups)) {
     print "<tr><td colspan='6' class='text-muted'>" . _("No certificate authorities found.") . "</td></tr>";
@@ -115,7 +117,20 @@ if (empty($groups)) {
                 $key_html = "<span class='badge bg-danger-lt text-danger' data-tippy-content='" . _("No private key — cannot sign") . "'>{$key_icon}</span>";
             }
 
-            $actions  = "<button type='button' class='btn btn-sm bg-danger-lt text-danger btn-ca-delete' data-ca-id='{$ca_id}' data-name='{$name_esc}'>{$del_icon} " . _("Delete") . "</button>";
+            $can_manage = $user->admin === "1" || (int)$user->permission >= 3;
+            $actions  = "<a class='btn btn-sm bg-info-lt text-info me-1' href='/route/ajax/ca/download.php?ca_id={$ca_id}&type=crt'>{$dl_icon} .crt</a>";
+            if ($ca->has_pkey) {
+                if ($can_manage) {
+                    $actions .= "<a class='btn btn-sm bg-info-lt text-info me-1' href='/route/ajax/ca/download.php?ca_id={$ca_id}&type=pkey'>{$dl_icon} .key</a>";
+                } else {
+                    $actions .= "<a class='btn btn-sm bg-danger-lt text-danger me-1 disabled' tabindex='-1' title='" . _("Insufficient permissions") . "'>{$dl_icon} .key</a>";
+                }
+            }
+            if ($can_manage) {
+                $actions .= "<button type='button' class='btn btn-sm bg-danger-lt text-danger btn-ca-delete' data-ca-id='{$ca_id}' data-name='{$name_esc}'>{$del_icon} " . _("Delete") . "</button>";
+            } else {
+                $actions .= "<button type='button' class='btn btn-sm bg-danger-lt text-danger disabled' tabindex='-1' title='" . _("Insufficient permissions") . "'>{$del_icon} " . _("Delete") . "</button>";
+            }
 
             print "<tr>";
             $ca_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="icon icon-tabler icons-tabler-filled icon-tabler-rosette-discount-check text-muted"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12.01 2.011a3.2 3.2 0 0 1 2.113 .797l.154 .145l.698 .698a1.2 1.2 0 0 0 .71 .341l.135 .008h1a3.2 3.2 0 0 1 3.195 3.018l.005 .182v1c0 .27 .092 .533 .258 .743l.09 .1l.697 .698a3.2 3.2 0 0 1 .147 4.382l-.145 .154l-.698 .698a1.2 1.2 0 0 0 -.341 .71l-.008 .135v1a3.2 3.2 0 0 1 -3.018 3.195l-.182 .005h-1a1.2 1.2 0 0 0 -.743 .258l-.1 .09l-.698 .697a3.2 3.2 0 0 1 -4.382 .147l-.154 -.145l-.698 -.698a1.2 1.2 0 0 0 -.71 -.341l-.135 -.008h-1a3.2 3.2 0 0 1 -3.195 -3.018l-.005 -.182v-1a1.2 1.2 0 0 0 -.258 -.743l-.09 -.1l-.697 -.698a3.2 3.2 0 0 1 -.147 -4.382l.145 -.154l.698 -.698a1.2 1.2 0 0 0 .341 -.71l.008 -.135v-1l.005 -.182a3.2 3.2 0 0 1 3.013 -3.013l.182 -.005h1a1.2 1.2 0 0 0 .743 -.258l.1 -.09l.698 -.697a3.2 3.2 0 0 1 2.269 -.944zm3.697 7.282a1 1 0 0 0 -1.414 0l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.32 1.497l2 2l.094 .083a1 1 0 0 0 1.32 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" /></svg>';
@@ -149,7 +164,7 @@ $(document).on('click', '.btn-ca-delete', function() {
 	var name = $(this).data('name');
 	if (!confirm(<?php print json_encode(_("Delete CA") . ' "'); ?> + name + '"?')) return;
 	$.ajax({
-		type: 'POST', url: '/route/ajax/ca-delete.php',
+		type: 'POST', url: '/route/ajax/ca/delete.php',
 		contentType: 'application/json',
 		data: JSON.stringify({ ca_id: id }),
 		dataType: 'json',

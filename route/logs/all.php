@@ -27,7 +27,7 @@ $last_log = $Database->getObjectQuery("select id from logs order by id desc limi
 $last_log_id = $last_log ? $last_log->id : 0;
 $num_unread = $Log->count_new_logs($user);
 $btn_disabled = $num_unread == 0 ? "disabled" : "";
-$btn_disabled_truncate = $last_log_id == 0 ? "disabled" : "";
+$btn_disabled_truncate = $last_log_id == 0 || !$user->can_edit ? "disabled" : "";
 
 print '</div>';
 print '<div style="text-align:right !important;float:right">';

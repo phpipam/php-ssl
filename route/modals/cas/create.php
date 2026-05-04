@@ -6,6 +6,8 @@
 
 require('../../../functions/autoload.php');
 $User->validate_session(false, false, false);
+# validate permissions
+$User->validate_user_permissions (3, true);
 
 global $private_key_encryption_key;
 
@@ -199,7 +201,7 @@ $Modal->modal_print(_("Create Certificate Authority"), $content, _("Create CA"),
         var $btn = $(this).prop('disabled', true).text(<?php print json_encode(_("Creating...")); ?>);
         $result.html('');
 
-        fetch('/route/ajax/ca-create.php', {
+        fetch('/route/ajax/ca/create.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)

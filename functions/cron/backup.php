@@ -101,10 +101,11 @@ try {
 	fwrite($fh, "/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;\n");
 
 	# --- DELETEs ---
-	# logs.object_t_id has no FK constraint, must be deleted explicitly
+	# logs.object_t_id and cas.t_id have no FK cascade to tenants — delete explicitly
 	# deleting the tenant row cascades all other related tables automatically
-	fwrite($fh, "\n-- Delete tenant data (logs have no FK cascade, tenant delete cascades the rest)\n");
-	fwrite($fh, "DELETE FROM `logs`    WHERE object_t_id = {$tid};\n");
+	fwrite($fh, "\n-- Delete tenant data\n");
+	fwrite($fh, "DELETE FROM `logs` WHERE object_t_id = {$tid};\n");
+	fwrite($fh, "DELETE FROM `cas`  WHERE t_id = {$tid};\n");
 	fwrite($fh, "DELETE FROM `tenants` WHERE id = {$tid};\n");
 
 	# --- INSERTs in FK dependency order (parent → child) ---
@@ -122,13 +123,28 @@ try {
 	# zones (FK → tenants, agents, users)
 	$dump_table('zones',           "t_id = ?",                                  [$tid]);
 	# pkey is shared across tenants — INSERT IGNORE, no DELETE
+	# covers pkey rows referenced by certificates, cas, and csrs
 	$dump_table('pkey',
-		"id IN (SELECT pkey_id FROM certificates WHERE t_id = ? AND pkey_id IS NOT NULL)",
-		[$tid], true);
+		"id IN (
+			SELECT pkey_id FROM certificates WHERE t_id = ? AND pkey_id IS NOT NULL
+			UNION
+			SELECT pkey_id FROM cas  WHERE t_id = ? AND pkey_id IS NOT NULL
+			UNION
+			SELECT pkey_id FROM csrs WHERE t_id = ? AND pkey_id IS NOT NULL
+		)",
+		[$tid, $tid, $tid], true);
 	# certificates (FK → tenants, zones, pkey)
 	$dump_table('certificates',    "t_id = ?",                                  [$tid]);
 	# hosts (FK → zones; no direct t_id)
 	$dump_table('hosts',           "z_id IN (SELECT id FROM zones WHERE t_id = ?)", [$tid]);
+	# cas — root CAs first (parent_ca_id IS NULL), then intermediates
+	$dump_table('cas',             "t_id = ? ORDER BY (parent_ca_id IS NOT NULL) ASC, id ASC", [$tid]);
+	# csr_templates (FK → tenants)
+	$dump_table('csr_templates',   "t_id = ?",                                  [$tid]);
+	# csrs (FK → tenants, pkey, certificates; self-ref renewed_by)
+	$dump_table('csrs',            "t_id = ?",                                  [$tid]);
+	# passkeys (FK → users ON DELETE CASCADE; no t_id — scope via users)
+	$dump_table('passkeys',        "user_id IN (SELECT id FROM users WHERE t_id = ?)", [$tid]);
 	# logs (object_t_id — no FK, but tenant-scoped)
 	$dump_table('logs',            "object_t_id = ?",                           [$tid]);
 

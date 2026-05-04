@@ -231,7 +231,7 @@ $Modal->modal_print(_("Sign CSR"), $content, _("Sign"), "", false, "purple");
         var btn     = this;
         var $result = $('#sign-result');
         btn.disabled = true;
-        fetch('/route/ajax/csr-reject.php', {
+        fetch('/route/ajax/csr/reject.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ csr_id: <?php print (int)$csr_id; ?> })
@@ -284,7 +284,7 @@ $Modal->modal_print(_("Sign CSR"), $content, _("Sign"), "", false, "purple");
         var $btn = $(this).prop('disabled', true).text(<?php print json_encode(_("Signing...")); ?>);
         $result.html('');
 
-        fetch('/route/ajax/csr-sign.php', {
+        fetch('/route/ajax/csr/sign.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)

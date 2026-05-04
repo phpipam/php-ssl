@@ -6,7 +6,7 @@
  * POST JSON body: { name, credential }  (credential = navigator.credentials.create() response)
  */
 
-require('../../functions/autoload.php');
+require('../../../functions/autoload.php');
 header('Content-Type: application/json');
 
 $User->validate_session(false, false, false);

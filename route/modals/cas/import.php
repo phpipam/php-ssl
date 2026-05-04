@@ -180,7 +180,7 @@ $Modal->modal_print(_("Import Certificate Authority"), $content, _("Import"), ""
         var $btn = $(this).prop('disabled', true);
         $result.html('');
 
-        fetch('/route/ajax/ca-import.php', {
+        fetch('/route/ajax/ca/import.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)

@@ -158,7 +158,7 @@ $pk_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewB
         }
 
         try {
-            var resp = await fetch('/route/ajax/passkey-challenge.php?action=register');
+            var resp = await fetch('/route/ajax/passkey/challenge.php?action=register');
             var data = await resp.json();
             if (data.status !== 'ok') throw new Error(data.message);
 
@@ -190,7 +190,7 @@ $pk_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewB
                     }
                 };
 
-            var reg     = await fetch('/route/ajax/passkey-register.php', {
+            var reg     = await fetch('/route/ajax/passkey/register.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: name, credential: encoded }),
@@ -218,7 +218,7 @@ $pk_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewB
             if (!confirm(<?php print json_encode(_("Delete passkey")); ?> + ' "' + name + '"?')) return;
 
             try {
-                var resp = await fetch('/route/ajax/passkey-delete.php', {
+                var resp = await fetch('/route/ajax/passkey/delete.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ id: parseInt(id) }),

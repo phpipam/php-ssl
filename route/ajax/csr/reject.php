@@ -1,11 +1,13 @@
 <?php
 
 ob_start();
-require('../../functions/autoload.php');
+require('../../../functions/autoload.php');
 ob_clean();
 header('Content-Type: application/json');
 
 $User->validate_session(false, false, false);
+# validate permissions
+$User->validate_user_permissions (3, true);
 
 $body   = json_decode(file_get_contents('php://input'), true);
 $csr_id = (int)($body['csr_id'] ?? 0);

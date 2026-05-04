@@ -76,8 +76,8 @@ $content .= "</td></tr>";
 // Extensions — restore saved values or use defaults
 $ku_default  = ['digitalSignature', 'keyEncipherment'];
 $eku_default = ['serverAuth', 'clientAuth'];
-$saved_ku    = $tpl && !empty($tpl->key_usage)     ? json_decode($tpl->key_usage, true)     : $ku_default;
-$saved_eku   = $tpl && !empty($tpl->ext_key_usage) ? json_decode($tpl->ext_key_usage, true) : $eku_default;
+$saved_ku    = $tpl ? (!empty($tpl->key_usage)     ? json_decode($tpl->key_usage, true)     : []) : $ku_default;
+$saved_eku   = $tpl ? (!empty($tpl->ext_key_usage) ? json_decode($tpl->ext_key_usage, true) : []) : $eku_default;
 
 $ku_options = [
     'digitalSignature'  => _("Digital Signature"),

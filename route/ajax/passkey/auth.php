@@ -8,7 +8,7 @@
  * On success returns { status: 'ok', redirect: '/' } and establishes a session.
  */
 
-require('../../functions/autoload.php');
+require('../../../functions/autoload.php');
 header('Content-Type: application/json');
 
 $body = json_decode(file_get_contents('php://input'), true);

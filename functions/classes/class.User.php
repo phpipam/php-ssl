@@ -161,6 +161,8 @@ class User extends Common
 			// save
 			if ($user != null) {
 				$this->user = $user;
+				$this->set_user_permissions ();
+				$this->set_user_can_edit ();
 			}
 		}
 	}
@@ -484,6 +486,31 @@ class User extends Common
 	}
 
 	/**
+	 * Manually override user permissions for admins
+	 * @method set_user_permissions
+	 */
+	private function set_user_permissions () {
+		if ($this->user->admin=="1") {
+			$this->user->permission = 4;
+		}
+	}
+
+	/**
+	 * Set flag if user can edit
+	 * @method set_user_canedit
+	 */
+	private function set_user_can_edit () {
+		if ((int)$this->user->permission>=3) {
+			$this->user->can_edit         = true;
+			$this->user->actions_disabled = "";
+		}
+		else {
+			$this->user->can_edit         = false;
+			$this->user->actions_disabled = "disabled";
+		}
+	}
+
+	/**
 	 * Make sure user has permission to access resource
 	 * @method validate_user_permissions
 	 * @param  int $required
@@ -538,6 +565,23 @@ class User extends Common
 				return "Admin";
 			default:
 				return "No access";
+		}
+	}
+
+	/**
+	 * Get users passkeys
+	 *
+	 * @method get_user_passkeys
+	 * @param  int $user_id
+	 * @return array
+	 */
+	public function get_user_passkeys ($user_id = 0)
+	{
+		try {
+			return $this->Database->getObjectsQuery("SELECT id, name, created_at, last_used_at FROM passkeys WHERE user_id = ? ORDER BY created_at DESC", [(int) $user_id]);
+		}
+		catch (Exception $e) {
+			return [];
 		}
 	}
 

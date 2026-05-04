@@ -4,7 +4,7 @@
  * AJAX: import a signed certificate and link it to a CSR.
  */
 
-require('../../functions/autoload.php');
+require('../../../functions/autoload.php');
 $User->validate_session(false, true, false);
 
 $body = json_decode(file_get_contents('php://input'), true);

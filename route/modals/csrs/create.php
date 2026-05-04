@@ -12,8 +12,9 @@ $renew_cert_id = (int)($_GET['cert_id'] ?? 0);
 $renew_csr_id  = (int)($_GET['csr_id']  ?? 0);
 $prefill = ['cn' => '', 'sans' => '', 'key_algo' => 'RSA', 'key_size' => 4096,
             'country' => '', 'state' => '', 'locality' => '', 'org' => '', 'ou' => '', 'email' => '',
-            'key_usage' => [], 'ext_key_usage' => []];
-$is_renew = false;
+            'key_usage' => null, 'ext_key_usage' => null];
+$is_renew   = false;
+$renew_t_id = 0;
 
 if ($renew_csr_id > 0) {
     if ($user->admin === "1") {
@@ -23,6 +24,7 @@ if ($renew_csr_id > 0) {
     }
     if ($renew_csr) {
         $is_renew              = true;
+        $renew_t_id            = (int)$renew_csr->t_id;
         $prefill['cn']         = $renew_csr->cn       ?? '';
         $prefill['country']    = $renew_csr->country  ?? '';
         $prefill['state']      = $renew_csr->state    ?? '';
@@ -40,9 +42,13 @@ if ($renew_csr_id > 0) {
         $prefill['sans'] = $sans_stored;
         if (!empty($renew_csr->extensions)) {
             $ext = json_decode($renew_csr->extensions, true) ?? [];
-            $prefill['key_usage']     = $ext['keyUsage']    ?? [];
-            $prefill['ext_key_usage'] = $ext['extKeyUsage'] ?? [];
+        } elseif (!empty($renew_csr->csr_pem)) {
+            $ext = $SSL->csr_extract_extensions($renew_csr->csr_pem);
+        } else {
+            $ext = [];
         }
+        $prefill['key_usage']     = $ext['keyUsage']    ?? [];
+        $prefill['ext_key_usage'] = $ext['extKeyUsage'] ?? [];
     }
 }
 
@@ -54,6 +60,7 @@ if ($renew_cert_id > 0) {
     }
     if ($renew_cert) {
         $is_renew   = true;
+        $renew_t_id = (int)$renew_cert->t_id;
         $parsed     = openssl_x509_parse($renew_cert->certificate);
         $subj       = $parsed['subject'] ?? [];
         $prefill['cn']      = $subj['CN'] ?? '';
@@ -89,6 +96,47 @@ if ($renew_cert_id > 0) {
                 $prefill['key_algo'] = 'RSA';
                 $prefill['key_size'] = in_array((int)($details['bits'] ?? 4096), [2048, 4096]) ? (int)$details['bits'] : 4096;
             }
+        }
+
+        // Always reset to empty for cert renew — if cert has no extensions, show nothing (not defaults)
+        $prefill['key_usage']     = [];
+        $prefill['ext_key_usage'] = [];
+
+        // Extract KU and EKU from certificate extensions
+        $ku_map = [
+            'Digital Signature'  => 'digitalSignature',
+            'Non Repudiation'    => 'contentCommitment',
+            'Content Commitment' => 'contentCommitment',
+            'Key Encipherment'   => 'keyEncipherment',
+            'Data Encipherment'  => 'dataEncipherment',
+            'Key Agreement'      => 'keyAgreement',
+            'Certificate Sign'   => 'keyCertSign',
+            'CRL Sign'           => 'cRLSign',
+        ];
+        $eku_map = [
+            'TLS Web Server Authentication' => 'serverAuth',
+            'TLS Web Client Authentication' => 'clientAuth',
+            'Code Signing'                  => 'codeSigning',
+            'E-mail Protection'             => 'emailProtection',
+            'Email Protection'              => 'emailProtection',
+            'Time Stamping'                 => 'timeStamping',
+            'OCSP Signing'                  => 'OCSPSigning',
+        ];
+        $ku_raw  = $parsed['extensions']['keyUsage']         ?? '';
+        $eku_raw = $parsed['extensions']['extendedKeyUsage'] ?? '';
+        if (!empty($ku_raw)) {
+            foreach (explode(',', $ku_raw) as $entry) {
+                $entry = trim(ltrim(trim($entry), 'critical,'));
+                if (isset($ku_map[$entry])) $prefill['key_usage'][] = $ku_map[$entry];
+            }
+            $prefill['key_usage'] = array_values(array_unique($prefill['key_usage']));
+        }
+        if (!empty($eku_raw)) {
+            foreach (explode(',', $eku_raw) as $entry) {
+                $entry = trim(ltrim(trim($entry), 'critical,'));
+                if (isset($eku_map[$entry])) $prefill['ext_key_usage'][] = $eku_map[$entry];
+            }
+            $prefill['ext_key_usage'] = array_values(array_unique($prefill['ext_key_usage']));
         }
     }
 }
@@ -148,7 +196,8 @@ if ($user->admin === "1") {
     $content .= "<tr><th style='width:140px'>" . _("Tenant") . " <span class='text-danger'>*</span></th><td>";
     $content .= "<select id='csr-tenant' name='t_id' class='form-select form-select-sm'>";
     foreach ($all_tenants_for_form as $t) {
-        $content .= "<option value='" . (int)$t->id . "'>" . htmlspecialchars($t->name) . "</option>";
+        $sel = ($renew_t_id > 0 && (int)$t->id === $renew_t_id) ? " selected" : "";
+        $content .= "<option value='" . (int)$t->id . "'{$sel}>" . htmlspecialchars($t->name) . "</option>";
     }
     $content .= "</select></td></tr>";
 }
@@ -209,12 +258,13 @@ $ku_options = [
     'keyCertSign'       => _("Certificate Sign"),
     'cRLSign'           => _("CRL Sign"),
 ];
-$ku_default = ['digitalSignature', 'keyEncipherment'];
+$ku_default  = ['digitalSignature', 'keyEncipherment'];
+$ku_initial  = $prefill['key_usage']     !== null ? $prefill['key_usage']     : $ku_default;
 
 $content .= "<tr><td colspan='2'><span class='text-muted small fw-bold text-uppercase'>" . _("Key Usage") . "</span></td></tr>";
 $content .= "<tr><td colspan='2'><div class='d-flex flex-wrap gap-2 pb-1'>";
 foreach ($ku_options as $val => $label) {
-    $checked = in_array($val, $ku_default) ? " checked" : "";
+    $checked = in_array($val, $ku_initial) ? " checked" : "";
     $content .= "<label class='d-flex align-items-center gap-1' style='cursor:pointer;white-space:nowrap'>";
     $content .= "<input type='checkbox' class='form-check-input csr-ku' value='{$val}'{$checked}> " . htmlspecialchars($label);
     $content .= "</label>";
@@ -229,12 +279,13 @@ $eku_options = [
     'timeStamping'    => _("Time Stamping"),
     'OCSPSigning'     => _("OCSP Signing"),
 ];
-$eku_default = ['serverAuth', 'clientAuth'];
+$eku_default  = ['serverAuth', 'clientAuth'];
+$eku_initial  = $prefill['ext_key_usage'] !== null ? $prefill['ext_key_usage'] : $eku_default;
 
 $content .= "<tr><td colspan='2' style='padding-top:6px'><span class='text-muted small fw-bold text-uppercase'>" . _("Extended Key Usage") . "</span></td></tr>";
 $content .= "<tr><td colspan='2'><div class='d-flex flex-wrap gap-2'>";
 foreach ($eku_options as $val => $label) {
-    $checked = in_array($val, $eku_default) ? " checked" : "";
+    $checked = in_array($val, $eku_initial) ? " checked" : "";
     $content .= "<label class='d-flex align-items-center gap-1' style='cursor:pointer;white-space:nowrap'>";
     $content .= "<input type='checkbox' class='form-check-input csr-eku' value='{$val}'{$checked}> " . htmlspecialchars($label);
     $content .= "</label>";
@@ -328,16 +379,14 @@ $Modal->modal_print($modal_title, $content, _("Generate CSR"), "", false, "azure
             orgRows.style.display = '';
             orgToggle.textContent = orgToggle.textContent.replace('▾', '▴');
         }
-        if (tpl.key_usage) {
-            document.querySelectorAll('.csr-ku').forEach(function(cb) {
-                cb.checked = tpl.key_usage.indexOf(cb.value) !== -1;
-            });
-        }
-        if (tpl.ext_key_usage) {
-            document.querySelectorAll('.csr-eku').forEach(function(cb) {
-                cb.checked = tpl.ext_key_usage.indexOf(cb.value) !== -1;
-            });
-        }
+        var ku = Array.isArray(tpl.key_usage) ? tpl.key_usage : [];
+        document.querySelectorAll('.csr-ku').forEach(function(cb) {
+            cb.checked = ku.indexOf(cb.value) !== -1;
+        });
+        var eku = Array.isArray(tpl.ext_key_usage) ? tpl.ext_key_usage : [];
+        document.querySelectorAll('.csr-eku').forEach(function(cb) {
+            cb.checked = eku.indexOf(cb.value) !== -1;
+        });
     });
     <?php endif; ?>
 
@@ -398,7 +447,7 @@ $Modal->modal_print($modal_title, $content, _("Generate CSR"), "", false, "azure
         var $btn = $(this).prop('disabled', true).text(<?php print json_encode(_("Generating...")); ?>);
         $result.html('');
 
-        fetch('/route/ajax/csr-generate.php', {
+        fetch('/route/ajax/csr/generate.php', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(payload)

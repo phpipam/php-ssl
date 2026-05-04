@@ -1,6 +1,8 @@
 <?php
 $User->validate_session();
 
+$can_manage = $user->admin === "1" || (int)$user->permission >= 3;
+
 $all_tpls    = $Database->getObjectsQuery("SELECT * FROM csr_templates" . ($user->admin !== "1" ? " WHERE t_id = " . (int)$user->t_id : "") . " ORDER BY name ASC", []);
 $all_tenants = $Tenants->get_all();
 
@@ -20,12 +22,19 @@ foreach ($all_tpls as $tpl) { $groups[$tpl->t_id][] = $tpl; }
 <p class='text-secondary'><?php print _("Saved organisation and key settings for quick CSR generation."); ?></p>
 
 <div style="margin-bottom:10px">
+	<?php if ($can_manage): ?>
 	<a href="/route/modals/csr-templates/edit.php"
 	   class="btn btn-sm bg-info-lt text-green"
 	   data-bs-toggle="modal" data-bs-target="#modal1">
 		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14"/><path d="M5 12l14 0"/></svg>
 		<?php print _("Add template"); ?>
 	</a>
+	<?php else: ?>
+	<button type="button" class="btn btn-sm bg-danger-lt text-danger disabled" tabindex="-1" title="<?php print _("Insufficient permissions"); ?>">
+		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14"/><path d="M5 12l14 0"/></svg>
+		<?php print _("Add template"); ?>
+	</button>
+	<?php endif; ?>
 </div>
 
 <div class="card">
@@ -78,8 +87,13 @@ if (empty($groups)) {
 
             $tpl_id   = (int)$t->id;
             $name_esc = htmlspecialchars($t->name, ENT_QUOTES);
-            $actions  = "<a class='btn btn-sm bg-info-lt text-info me-1' href='/route/modals/csr-templates/edit.php?id={$tpl_id}' data-bs-toggle='modal' data-bs-target='#modal1'>{$edit_icon} " . _("Edit") . "</a>";
-            $actions .= "<button type='button' class='btn btn-sm bg-danger-lt text-danger btn-tpl-delete' data-tpl-id='{$tpl_id}' data-name='{$name_esc}'>{$del_icon} " . _("Delete") . "</button>";
+            if ($can_manage) {
+                $actions  = "<a class='btn btn-sm bg-info-lt text-info me-1' href='/route/modals/csr-templates/edit.php?id={$tpl_id}' data-bs-toggle='modal' data-bs-target='#modal1'>{$edit_icon} " . _("Edit") . "</a>";
+                $actions .= "<button type='button' class='btn btn-sm bg-danger-lt text-danger btn-tpl-delete' data-tpl-id='{$tpl_id}' data-name='{$name_esc}'>{$del_icon} " . _("Delete") . "</button>";
+            } else {
+                $actions  = "<button type='button' class='btn btn-sm bg-danger-lt text-danger disabled me-1' tabindex='-1' title='" . _("Insufficient permissions") . "'>{$edit_icon} " . _("Edit") . "</button>";
+                $actions .= "<button type='button' class='btn btn-sm bg-danger-lt text-danger disabled' tabindex='-1' title='" . _("Insufficient permissions") . "'>{$del_icon} " . _("Delete") . "</button>";
+            }
             $tpl_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-template text-muted"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M4 5a1 1 0 0 1 1 -1h14a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-14a1 1 0 0 1 -1 -1l0 -2" /><path d="M4 13a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1l0 -6" /><path d="M14 12l6 0" /><path d="M14 16l6 0" /><path d="M14 20l6 0" /></svg>';
 
             print "<tr>";
@@ -105,7 +119,7 @@ $(document).on('click', '.btn-tpl-delete', function() {
 	var name = $(this).data('name');
 	if (!confirm(<?php print json_encode(_("Delete template") . ' "'); ?> + name + '"?')) return;
 	$.ajax({
-		type: 'POST', url: '/route/ajax/csr-template-delete.php',
+		type: 'POST', url: '/route/ajax/csr/template-delete.php',
 		contentType: 'application/json',
 		data: JSON.stringify({ template_id: id }),
 		dataType: 'json',

@@ -6,11 +6,12 @@
  */
 
 ob_start();
-require('../../functions/autoload.php');
+require('../../../functions/autoload.php');
 ob_clean();
 header('Content-Type: application/json');
 
 $User->validate_session(false, false, false);
+$User->validate_user_permissions(3);
 
 $body  = json_decode(file_get_contents('php://input'), true);
 $ca_id = (int)($body['ca_id'] ?? 0);

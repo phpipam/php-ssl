@@ -106,7 +106,7 @@ $Modal->modal_print(_("Upload signed certificate"), $content, _("Import"), "", f
         var $btn = $(this).prop('disabled', true);
         $result.html('');
 
-        fetch('/route/ajax/csr-cert-upload.php', {
+        fetch('/route/ajax/csr/cert-upload.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ csr_id: <?php print (int)$csr_id; ?>, zone_id: parseInt(zoneId), pem: pem })

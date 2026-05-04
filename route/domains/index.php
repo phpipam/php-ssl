@@ -7,7 +7,7 @@ $User->validate_user_permissions (3, true);
 
 
 <div class="page-header">
-	<h2 class="page-title"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-database"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 6a8 3 0 1 0 16 0a8 3 0 1 0 -16 0" /><path d="M4 6v6a8 3 0 0 0 16 0v-6" /><path d="M4 12v6a8 3 0 0 0 16 0v-6" /></svg>
+	<h2 class="page-title"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-database <?php print $user->actions_disabled; ?>"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 6a8 3 0 1 0 16 0a8 3 0 1 0 -16 0" /><path d="M4 6v6a8 3 0 0 0 16 0v-6" /><path d="M4 12v6a8 3 0 0 0 16 0v-6" /></svg>
 		<?php print _("Domains"); ?></h2>
 	<hr>
 </div>
@@ -115,17 +115,17 @@ else {
 				print "	<td class='text-muted d-none d-lg-table-cell'>".htmlspecialchars($d->domain_controllers)."</td>";
 				// edit - local domains are non-editable
 				print "	<td class='text-center' style='padding:0.5rem 0.2rem;width:20px;border-left:1px solid var(--tblr-table-border-color);'>";
-				print "		<a href='/route/modals/domains/edit.php?id=".$d->id."&action=edit&tenant=".$tenants[$tenant_id]->href."' data-bs-toggle='modal' data-bs-target='#modal1'>";
+				print "		<a href='/route/modals/domains/edit.php?id=".$d->id."&action=edit&tenant=".$tenants[$tenant_id]->href."' data-bs-toggle='modal' data-bs-target='#modal1' class='".$user->actions_disabled."'>";
 				print "		<span class='badge text-info'>";
-				print '			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-edit"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" /><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415" /><path d="M16 5l3 3" /></svg>';
+				print '			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-edit"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" /><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415" /><path d="M16 5l3 3" /></svg> '._("Edit");
 				print "		</span>";
 				print "		</a>";
 				print "</td>";
 				// delete - local domains are non-deletable
 				print "	<td class='text-center' style='padding:0.5rem 0.1rem;width:10px;'>";
-				print "		<a href='/route/modals/domains/edit.php?id=".$d->id."&action=delete&tenant=".$tenants[$tenant_id]->href."' data-bs-toggle='modal' data-bs-target='#modal1'>";
+				print "		<a href='/route/modals/domains/edit.php?id=".$d->id."&action=delete&tenant=".$tenants[$tenant_id]->href."' data-bs-toggle='modal' data-bs-target='#modal1' class='".$user->actions_disabled."'>";
 				print "		<span class='badge text-red'>";
-				print '			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-trash"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>';
+				print '			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-trash"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg> '._("Delete");
 				print "</span>";
 				print "	</a>";
 				print "</td>";

@@ -179,7 +179,7 @@
         btn.disabled = true;
 
         try {
-            var url = '/route/ajax/passkey-challenge.php?action=auth';
+            var url = '/route/ajax/passkey/challenge.php?action=auth';
 
             var resp = await fetch(url);
             var data = await resp.json();
@@ -215,7 +215,7 @@
                     }
                 };
 
-            var auth = await fetch('/route/ajax/passkey-auth.php', {
+            var auth = await fetch('/route/ajax/passkey/auth.php', {
                 method:  'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body:    JSON.stringify({ assertion: encoded }),
