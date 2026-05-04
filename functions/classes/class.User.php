@@ -120,20 +120,26 @@ class User extends Common
 		// fetch
 		try {
 			if ($this->user->admin == "1") {
-				$users = $this->Database->getObjectsQuery("select * from users order by email asc");
+				$users = $this->Database->getObjectsQuery("select * from tenants as t,users as u where u.t_id = t.id order by email asc");
 			}
 			else {
-				$users = $this->Database->getObjectsQuery("select * from users where t_id = ? order by email asc", [$this->user->t_id]);
+				$users = $this->Database->getObjectsQuery("select * from tenants as t,users as u where u.t_id = t.id and t_id = ? order by email asc", [$this->user->t_id]);
 			}
 		}
 		catch (Exception $e) {
 			$this->errors[] = $e->getMessage();
 			$this->result_die();
 		}
+
+		// print "<pre>";
+		// print_r($users);
+
 		// reindex
 		if (sizeof($users) > 0) {
 			$users_new = [];
 			foreach ($users as $t) {
+				if ($t->admin=="1") { $t->permission = 4; }
+
 				$users_new[$t->{$index}] = $t;
 			}
 			$users = $users_new;
@@ -163,7 +169,23 @@ class User extends Common
 				$this->user = $user;
 				$this->set_user_permissions ();
 				$this->set_user_can_edit ();
+				$this->update_last_active();
 			}
+		}
+	}
+
+	/**
+	 * Updates last_active timestamp for the current user.
+	 * @method update_last_active
+	 * @return void
+	 */
+	private function update_last_active()
+	{
+		try {
+			$this->Database->runQuery("UPDATE users SET last_active = NOW() WHERE id = ?", [$this->user->id]);
+		}
+		catch (Exception $e) {
+			// non-critical, ignore
 		}
 	}
 
@@ -560,9 +582,11 @@ class User extends Common
 			case 1:
 				return "Read";
 			case 2:
-				return "Write";
+				return "Read / Write";
 			case 3:
-				return "Admin";
+				return "Read / Write / Admin";
+			case 4:
+				return "System Admin";
 			default:
 				return "No access";
 		}

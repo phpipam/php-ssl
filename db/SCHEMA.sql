@@ -368,6 +368,8 @@ CREATE TABLE `users` (
   `force_passkey` tinyint(1) NOT NULL DEFAULT 0,
   `lang_id` int(11) unsigned DEFAULT NULL,
   `test` varchar(50) DEFAULT NULL,
+  `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_active` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `u_tenants` (`t_id`),
   KEY `users_lang_id` (`lang_id`),

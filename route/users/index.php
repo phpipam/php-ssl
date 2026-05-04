@@ -118,12 +118,11 @@ else {
                     <div class="mt-2">
                       <span class="badge bg-info-lt" data-bs-toggle="tooltip" title="'._("Days before expiry to show warning").'">'.$u->days." "._("Days").'</span>
                       <span class="badge bg-info-lt" data-bs-toggle="tooltip" title="'._("Days after expiry to show warning").'">'.$u->days_expired." "._("Days").'</span>
-                    </div>
                     '.(!empty($_passkey_user_ids[(int)$u->id]) || !empty($u->force_passkey) ? '
-                    <div class="mt-2">
-                      '.(!empty($_passkey_user_ids[(int)$u->id]) ? '<span class="badge bg-blue-lt" data-bs-toggle="tooltip" title="'._("Passkey registered").'">'.$_pk_icon_success.' '._("Passkey").'</span>' : '').'
-                      '.(!empty($u->force_passkey) ? '<span class="badge bg-orange-lt" data-bs-toggle="tooltip" title="'._("Password login disabled").'">'.$_pk_icon_info.' '._("Passwordless only").'</span>' : '').'
-                    </div>' : '').'
+                      '.(!empty($_passkey_user_ids[(int)$u->id]) ? '<span class="badge bg-info-lt" data-bs-toggle="tooltip" title="'._("Passkey registered").'"> '._("Passkey").'</span>' : '').'
+                      '.(!empty($u->force_passkey) ? '<span class="badge bg-info-lt" data-bs-toggle="tooltip" title="'._("Password login disabled").'"> '._("Passwordless").'</span>' : '').'
+                    ' : '').'
+                    </div>
 
 					<div class="d-flex" style="margin-top:10px;">
                     <a href="/route/modals/users/edit.php?action=edit&tenant='.$u_tenant_href.'&id='.$u_id.'" data-bs-toggle="modal" data-bs-target="#modal1" class="card-btn '.$user->actions_disabled.'" style="padding:0.6rem">

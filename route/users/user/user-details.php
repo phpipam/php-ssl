@@ -55,6 +55,16 @@
 		</td>
 	</tr>
 
+	<tr>
+		<td class='text-secondary'><?php print _("Created"); ?></td>
+		<td class='text-secondary'><?php print !empty($view_user->create_date) ? htmlspecialchars($view_user->create_date) : '—'; ?></td>
+	</tr>
+
+	<tr>
+		<td class='text-secondary'><?php print _("Last active"); ?></td>
+		<td class='text-secondary'><?php print !empty($view_user->last_active) ? htmlspecialchars($view_user->last_active) : '—'; ?></td>
+	</tr>
+
 </table>
 
 <hr>
