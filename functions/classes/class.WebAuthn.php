@@ -29,14 +29,10 @@ class WebAuthn
     {
         global $webauthn_origin, $webauthn_rpid;
 
-        if (!empty($webauthn_origin) && !empty($webauthn_rpid)) {
-            return new self($webauthn_rpid, $rpName, $webauthn_origin);
-        }
-
         $host   = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? 'localhost';
-        $rpId   = preg_replace('/:\d+$/', '', $host);
         $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-        $origin = $scheme . '://' . $host;
+        $origin = !empty($webauthn_origin) ? $webauthn_origin : $scheme . '://' . $host;
+        $rpId   = !empty($webauthn_rpid)   ? $webauthn_rpid   : preg_replace('/:\d+$/', '', $host);
         return new self($rpId, $rpName, $origin);
     }
 

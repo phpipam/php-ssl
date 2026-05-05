@@ -177,7 +177,7 @@ if (empty($groups)) {
                          . " href='/route/modals/csrs/create.php?csr_id={$csr_id}'"
                          . " data-bs-toggle='modal' data-bs-target='#modal2'>"
                          . "{$renew_icon} " . _("Renew") . "</a>";
-                if (!empty($c->pkey_id)) {
+                if (!empty($c->has_pkey)) {
                     if ($user->admin === "1" || (int)$user->permission >= 3) {
                         $actions .= "<a class='btn btn-sm bg-info-lt text-info me-1' href='/route/ajax/csr/download.php?csr_id={$csr_id}&type=pkey'>{$dl_icon} .key</a>";
                     } else {

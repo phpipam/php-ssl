@@ -27,8 +27,14 @@ elseif (@$_params['app']=="changepass") {
 	include("changepass/index.php");
 }
 
-// profile
+// profile (with optional tab pre-selection)
 elseif (@$_params['app']=="profile" || !isset($_params['app'])) {
+	include("profile/index.php");
+}
+
+elseif (in_array(@$_params['app'], ['passkeys', 'notifications', 'activity'])) {
+	$_profile_tab_map = ['passkeys' => 'pf-passkeys', 'notifications' => 'pf-notifications', 'activity' => 'pf-logs'];
+	$_profile_default_tab = $_profile_tab_map[$_params['app']];
 	include("profile/index.php");
 }
 
