@@ -148,6 +148,23 @@ class TestSSL
         return (int)$this->Database->lastInsertId();
     }
 
+    public function retest(int $id, int $tenant_id, bool $is_admin): void
+    {
+        if ($is_admin) {
+            $this->Database->runQuery(
+                "UPDATE testssl SET status = 'Requested', requested = NOW(), started = NULL, completed = NULL, rating = NULL, json_result = NULL, error_message = NULL
+                  WHERE id = ? AND status IN ('Completed','Cancelled','Error')",
+                [$id]
+            );
+        } else {
+            $this->Database->runQuery(
+                "UPDATE testssl SET status = 'Requested', requested = NOW(), started = NULL, completed = NULL, rating = NULL, json_result = NULL, error_message = NULL
+                  WHERE id = ? AND tenant_id = ? AND status IN ('Completed','Cancelled','Error')",
+                [$id, $tenant_id]
+            );
+        }
+    }
+
     public function cancel(int $id, int $tenant_id, bool $is_admin): void
     {
         if ($is_admin) {

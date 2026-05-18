@@ -2479,3 +2479,9 @@ msgstr "testSSL-Scan abgeschlossen"
 
 msgid "View report"
 msgstr "Bericht anzeigen"
+
+msgid "Retest"
+msgstr "Erneut testen"
+
+msgid "Retest this scan?"
+msgstr "Diesen Scan erneut testen?"

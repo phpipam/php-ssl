@@ -32,13 +32,13 @@ $flask_icon = $url_items['testssl']['icon'];
 </div>
 
 <?php if (!$testssl_available): ?>
-<div class="alert alert-block alert-warning">
-    <div>
+<div class="alert alert-warning">
     <h4><?php print _("testssl.sh submodule not found"); ?></h4>
-    <p><?php print _("The testssl.sh submodule is missing. Run the following commands to pull it:"); ?>
-    <code>git submodule update --init --recursive</code>.
-    <br><?php print _("Scans will fail until the submodule is available on the server."); ?></p>
-</div>
+    <p><?php print _("The testssl.sh submodule is missing. Run the following commands to pull it:"); ?></p>
+    <pre>git submodule update --init --recursive
+# or if adding for the first time:
+git submodule add https://github.com/testssl/testssl.sh.git functions/testSSL</pre>
+    <p><?php print _("Scans will fail until the submodule is available on the server."); ?></p>
 </div>
 <?php endif; ?>
 
@@ -126,12 +126,15 @@ if (empty($groups)) {
                 $actions .= "<a class='btn btn-sm bg-blue-lt text-blue me-1' href='/{$tenant_href}/testssl/{$s->hash}/'>" . _("Report") . "</a>";
             }
             if ($s->status === 'Error') {
-                $actions .= "<a class='btn btn-sm bg-info-lt text-danger me-1' href='/{$tenant_href}/testssl/{$s->hash}/'>" . _("Details") . "</a>";
+                $actions .= "<a class='btn btn-sm bg-danger-lt text-danger me-1' href='/{$tenant_href}/testssl/{$s->hash}/'>" . _("Details") . "</a>";
+            }
+            if (in_array($s->status, ['Completed', 'Cancelled', 'Error'], true)) {
+                $actions .= "<button class='btn btn-sm bg-green-lt text-green me-1 btn-testssl-retest' data-id='{$s->id}'>" . _("Retest") . "</button>";
             }
             if ($s->status === 'Requested') {
                 $actions .= "<button class='btn btn-sm bg-warning-lt text-warning me-1 btn-testssl-cancel' data-id='{$s->id}'>" . _("Cancel") . "</button>";
             }
-            $actions .= "<button class='btn btn-sm bg-info-lt text-danger btn-testssl-delete' data-id='{$s->id}'>" . _("Delete") . "</button>";
+            $actions .= "<button class='btn btn-sm bg-danger-lt text-danger btn-testssl-delete' data-id='{$s->id}'>" . _("Delete") . "</button>";
 
             print "<tr>";
             print "<td>".'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="icon icon-tabler icons-tabler-filled icon-tabler-flask text-muted"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M15 2a1 1 0 0 1 0 2v4.826l3.932 10.814l.034 .077a1.7 1.7 0 0 1 -.002 1.193l-.07 .162a1.7 1.7 0 0 1 -1.213 .911l-.181 .017h-11l-.181 -.017a1.7 1.7 0 0 1 -1.285 -2.266l.039 -.09l3.927 -10.804v-4.823a1 1 0 1 1 0 -2h6zm-2 2h-2v4h2v-4z" /></svg> '."<strong>" . htmlspecialchars($s->hostname) . "</strong></td>";
@@ -154,6 +157,14 @@ if (empty($groups)) {
 </div>
 
 <script>
+$(document).on('click', '.btn-testssl-retest', function() {
+    var id = $(this).data('id');
+    if (!confirm(<?php print json_encode(_("Retest this scan?")); ?>)) return;
+    $.post('/route/ajax/testssl-action.php', { action: 'retest', id: id }, function(d) {
+        if (d.status === 'ok') location.reload();
+        else alert(d.message || <?php print json_encode(_("Error")); ?>);
+    }, 'json');
+});
 $(document).on('click', '.btn-testssl-cancel', function() {
     var id = $(this).data('id');
     if (!confirm(<?php print json_encode(_("Cancel this scan?")); ?>)) return;

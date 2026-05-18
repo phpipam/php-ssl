@@ -39,7 +39,7 @@ $TestSSL = new TestSSL($Database);
 
 try {
     $id = $TestSSL->create($hostname, $port, $tenant_id, (int)$user->id, $notify_email !== '' ? $notify_email : null);
-    $Result->show('success', _("Scan requested successfully. It will start on the next cron run."), true, true);
+    $Result->show('success', _("Scan requested successfully. It will start on the next cron run."), true);
 } catch (Exception $e) {
     $Result->show('danger', $e->getMessage(), true);
 }

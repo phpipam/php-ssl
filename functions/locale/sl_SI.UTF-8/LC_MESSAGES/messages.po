@@ -2514,3 +2514,9 @@ msgstr "Skeniranje testSSL zaključeno"
 
 msgid "View report"
 msgstr "Ogled poročila"
+
+msgid "Retest"
+msgstr "Ponovno testiraj"
+
+msgid "Retest this scan?"
+msgstr "Ponovno testiraj ta sken?"
