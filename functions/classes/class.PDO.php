@@ -266,7 +266,14 @@ abstract class DB
      */
     public function isConnected()
     {
-        return ($this->pdo !== null);
+        if ($this->pdo === null) { return false; }
+        try {
+            $this->pdo->query('SELECT 1');
+            return true;
+        } catch (\PDOException $e) {
+            $this->pdo = null;
+            return false;
+        }
     }
 
     /**
