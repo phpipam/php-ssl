@@ -17,5 +17,4 @@ A clear and concise description of what you want to happen.
 A clear and concise description of any alternative solutions or features you've considered.
 
 **Describe how the feature would benefit other users**
-Add how this feature would benefit other phpIPAM users (your feature may need to be generalised to be as useful as possible). Add any other context or screenshots about the feature request here.
-
+Add how this feature would benefit other php-ssl users. Your feature may need to be generalised to be as useful as possible. Add any other context or screenshots about the feature request here.
