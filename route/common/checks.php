@@ -2,7 +2,7 @@
 
 // Submodule presence checks — shown to all logged-in users
 $submodules = [
-    'Net_DNS2'  => ['path' => __DIR__ . '/../../functions/assets/Net_DNS2/Net/DNS2.php',     'url' => 'https://github.com/mikepultz/netdns2'],
+    'Net_DNS2'  => ['path' => __DIR__ . '/../../functions/assets/Net_DNS2/src/NetDNS2/Resolver.php',     'url' => 'https://github.com/mikepultz/netdns2'],
     'PHPMailer' => ['path' => __DIR__ . '/../../functions/assets/PHPMailer/src/PHPMailer.php','url' => 'https://github.com/PHPMailer/PHPMailer'],
     'testssl.sh' => ['path' => __DIR__ . '/../../functions/testSSL/testssl.sh',              'url' => 'https://github.com/testssl/testssl.sh'],
 ];
