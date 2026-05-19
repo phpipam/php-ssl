@@ -158,13 +158,12 @@ class User extends Common
 		if (isset($_SESSION['username'])) {
 			// fetch
 			try {
-				$user = $this->Database->getObjectQuery("select *,t.name as t_name,u.name as name from users as u, tenants as t where u.t_id = t.id and email = ?", [$_SESSION['username']]);
+				$user = $this->Database->getObjectQuery("select *,t.name as t_name,u.name as name,u.id as id,u.lang_id as lang_id from users as u, tenants as t where u.t_id = t.id and email = ?", [$_SESSION['username']]);
 			}
 			catch (Exception $e) {
 				$this->errors[] = $e->getMessage();
 				$this->result_die();
 			}
-			$user->admin = strval($user->admin);
 			// save
 			if ($user != null) {
 				$this->user = $user;
@@ -430,7 +429,7 @@ class User extends Common
 			}
 		}
 		// not admin
-		elseif ($require_admin && $this->user->admin != "1") {
+		elseif ($require_admin && $this->user->admin != 1) {
 			if ($is_popup && !$is_popup_result) {
 				global $Modal;
 				$Modal->modal_print("Error", "<div class='alert alert-danger'>" . _("Administrative privileges required") . ".</div>", "", false, "danger");
