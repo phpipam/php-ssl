@@ -18,10 +18,6 @@ $URL      = new URL ();
 $Database = new Database_PDO ();
 $SSL      = new SSL ($Database);
 
-# include Net_DNS2
-ini_set("include_path", dirname(__FILE__)."/../assets/Net_DNS2");
-require_once(dirname(__FILE__)."/../assets/Net_DNS2/Net/DNS2.php");
-
 # script can only be run from cli
 if(php_sapi_name()!="cli") {
 	$Common->errors[] = "This script can only be run from cli!";
@@ -130,12 +126,7 @@ try {
 
 		}
 	}
-} catch (Net_DNS2_Exception $e) {
-    // print error
-	$Common->errors[] = $e->getMessage();
-	$Common->result_die ();
 } catch (Exception $e) {
-    // print error
 	$Common->errors[] = $e->getMessage();
 	$Common->result_die ();
 }

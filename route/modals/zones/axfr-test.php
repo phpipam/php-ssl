@@ -14,20 +14,25 @@ $User->validate_tenant (true);
 # base64 > string, urldecode and strip tags, save to $dns_params
 parse_str($User->strip_input_tags (urldecode(base64_decode($_GET['form']))), $dns_params);
 
-// init class
-$AXFR = new AXFR ($Database);
-// set dns, tcp and tsig parameters
-$AXFR->set_nameservers (explode(",",$dns_params['dns']));					// set anmeservers to query
-$AXFR->set_tsig ($dns_params['tsig_name'], $dns_params['tsig']);			// set tsig parameters
-$AXFR->set_zone_name ($dns_params['aname']);								// set zone name to query
-$AXFR->set_valid_types (explode(",",$dns_params['record_types']));			// set valid dns record types
-$AXFR->set_regexes ($dns_params['regex_include'], $dns_params['regex_exclude']);	// set regexes
+try {
+	// init class
+	$AXFR = new AXFR ($Database);
+	// set dns, tcp and tsig parameters
+	$AXFR->set_nameservers (explode(",",$dns_params['dns']));
+	$AXFR->set_tsig ($dns_params['tsig_name'], $dns_params['tsig']);
+	$AXFR->set_zone_name ($dns_params['aname']);
+	$AXFR->set_valid_types (explode(",",$dns_params['record_types']));
+	$AXFR->set_regexes ($dns_params['regex_include'], $dns_params['regex_exclude']);
 
-// execute
-$AXFR->execute();
+	// execute
+	$AXFR->execute();
 
-// get result
-$results = $AXFR->get_records ();
+	// get result
+	$results = $AXFR->get_records ();
+} catch (Exception $e) {
+	$results = ['success' => false, 'error' => $e->getMessage(), 'values' => []];
+	$AXFR = null;
+}
 
 // bootstrap table
 print '<link href="https://unpkg.com/bootstrap-table@1.19.1/dist/bootstrap-table.min.css" rel="stylesheet">';
@@ -44,7 +49,7 @@ else {
 	$title = _("AXFR test");
 
 	// calculate differences [create, remove, new etc]
-	$AXFR->calculate_diffs ($dns_params['zone_id'], $dns_params['check_ip']);
+	if ($AXFR !== null) { $AXFR->calculate_diffs ($dns_params['zone_id'], $dns_params['check_ip']); }
 
 	// table
 	$content[] = "<table class='table table-hover align-top table-sm' data-toggle='table' data-mobile-responsive='true' data-check-on-init='true' data-classes='table table-hover table-sm' data-cookie='false' data-cookie-id-table='axfr' data-pagination='true' data-page-size='25' data-page-list='[25,50,250,500,All]' data-search='true' data-icons-prefix='fa' data-icon-size='xs' data-show-footer='false' data-smart-display='true' showpaginationswitch='true'>";

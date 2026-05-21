@@ -14,39 +14,44 @@ $User->validate_tenant (true);
 # fetch zone details
 $zone = $Zones->get_zone ($_params['tenant'], $_GET['zone_name']);
 
-// init class
-$AXFR = new AXFR ($Database);
-// set dns, tcp and tsig parameters
-$AXFR->set_nameservers (explode(",",$zone->dns));					// set anmeservers to query
-$AXFR->set_tsig ($zone->tsig_name, $zone->tsig);					// set tsig parameters
-$AXFR->set_zone_name ($zone->aname);								// set zone name to query
-$AXFR->set_valid_types (explode(",", $zone->record_types));			// set valid dns record types
-$AXFR->set_regexes ($zone->regex_include, $zone->regex_exclude);	// set regexes
+try {
+	// init class
+	$AXFR = new AXFR ($Database);
+	// set dns, tcp and tsig parameters
+	$AXFR->set_nameservers (explode(",",$zone->dns));
+	$AXFR->set_tsig ($zone->tsig_name, $zone->tsig);
+	$AXFR->set_zone_name ($zone->aname);
+	$AXFR->set_valid_types (explode(",", $zone->record_types));
+	$AXFR->set_regexes ($zone->regex_include, $zone->regex_exclude);
 
-// execute
-$AXFR->execute();
+	// execute
+	$AXFR->execute();
 
-// get result
-$results = $AXFR->get_records ();
+	// get result
+	$results = $AXFR->get_records ();
 
-// error ?
-if($results['success']==false) {
-	$content[] = "<div class='alert alert-danger'>".$results['error']."</div>";
-}
-else {
-	// calculate differences [create, remove, new etc]
-	$AXFR->calculate_diffs ($zone->id, $zone->check_ip);
-
-	// add records
-	$AXFR->create_new_records ();
-
-	// remove records not in DNS AXFR
-	if ($zone->delete_records=="1") {
-		$AXFR->delete_records ();
+	// error ?
+	if($results['success']==false) {
+		$content[] = "<div class='alert alert-danger'>".$results['error']."</div>";
 	}
 	else {
-		$AXFR->records['removed_records'] = [];
+		// calculate differences [create, remove, new etc]
+		$AXFR->calculate_diffs ($zone->id, $zone->check_ip);
+
+		// add records
+		$AXFR->create_new_records ();
+
+		// remove records not in DNS AXFR
+		if ($zone->delete_records=="1") {
+			$AXFR->delete_records ();
+		}
+		else {
+			$AXFR->records['removed_records'] = [];
+		}
 	}
+} catch (Exception $e) {
+	$content[] = "<div class='alert alert-danger'>".$e->getMessage()."</div>";
+	$AXFR = null;
 }
 
 # title
@@ -54,14 +59,13 @@ $title = _("AXFR zone sync");
 
 # content
 $content_text = [
-	"Discovered records" => "<span class='badge badge-outline text-light' style='width:100%'>".sizeof($AXFR->records['axfr_records'])."</span>",
-	"Existing records"   => "<span class='badge badge-outline text-info' style='width:100%'>".sizeof($AXFR->records['old_records'])."</span>",
-	"Removed records"    => "<span class='badge badge-outline text-danger' style='width:100%'>".sizeof($AXFR->records['removed_records'])."</span>",
-	"Created records"    => "<span class='badge badge-outline text-success' style='width:100%'>".sizeof($AXFR->records['new_records'])."</span>",
-
+	"Discovered records" => "<span class='badge badge-outline text-light' style='width:100%'>".($AXFR ? sizeof($AXFR->records['axfr_records']) : 0)."</span>",
+	"Existing records"   => "<span class='badge badge-outline text-info' style='width:100%'>".($AXFR ? sizeof($AXFR->records['old_records']) : 0)."</span>",
+	"Removed records"    => "<span class='badge badge-outline text-danger' style='width:100%'>".($AXFR ? sizeof($AXFR->records['removed_records']) : 0)."</span>",
+	"Created records"    => "<span class='badge badge-outline text-success' style='width:100%'>".($AXFR ? sizeof($AXFR->records['new_records']) : 0)."</span>",
 ];
 
-$content = [];
+$content = $content ?? [];
 $content[] = "<div class='text-secondary' style='margin-bottom:10px'>"._("Zone AXFR sync results").":</div>";
 foreach ($content_text as $title2=>$text)  {
 	$content[] = '<div class="row" style="margin-bottom:5px;">';
@@ -75,5 +79,6 @@ $Modal->modal_id = "#modal1";
 $Modal->modal_print ($title, implode("\n", $content), $btn_text, "", true);
 
 
-// Write log :: object, object_id, tenant_id, user_id, action, public, text
-$Log->write ("zones", $zone->id, $zone->t_id, $user->id, "sync", true, "Zone AXFR sync executed");
+if ($AXFR !== null) {
+	$Log->write ("zones", $zone->id, $zone->t_id, $user->id, "sync", true, "Zone AXFR sync executed");
+}

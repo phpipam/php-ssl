@@ -118,9 +118,13 @@ class AXFR
 		$this->Database = $Database;
 		// Results
 		$this->Result = new Result();
-		// include Net_DNS2
+		// include Net_DNS2 v1.x — v2.x is not compatible with PHP 7.4
+		$net_dns2 = dirname(__FILE__) . "/../assets/Net_DNS2/Net/DNS2.php";
+		if (!file_exists($net_dns2)) {
+			throw new Exception(_("Net_DNS2 v1.x is required for AXFR (v2.x is not compatible with PHP 7.4). Run: git -C functions/assets/Net_DNS2 checkout v1.5.5"));
+		}
 		ini_set("include_path", dirname(__FILE__) . "/../assets/Net_DNS2");
-		require_once(dirname(__FILE__) . "/../assets/Net_DNS2/Net/DNS2.php");
+		require_once($net_dns2);
 	}
 
 	/**
