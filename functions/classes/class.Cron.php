@@ -17,8 +17,7 @@ class Cron extends Common
 		"axfr_transfer"        => "axfr_transfer",
 		"remove_orphaned"      => "remove_orphaned",
 		"expired_certificates" => "expired_certificates",
-		"backup"               => "backup",
-		"testssl_scan"         => "testssl_scan"
+		"backup"               => "backup"
 	];
 
 	/**
