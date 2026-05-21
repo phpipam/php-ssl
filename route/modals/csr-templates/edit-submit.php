@@ -6,6 +6,7 @@
 
 require('../../../functions/autoload.php');
 $User->validate_session(false, true, true);
+$User->validate_csrf_token();
 
 $_POST_safe = $User->strip_input_tags($_POST);
 $tpl_id     = (int)($_POST_safe['id'] ?? 0);

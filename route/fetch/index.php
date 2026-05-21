@@ -59,7 +59,7 @@ $tenants = $Tenants->get_all ();
 						// select
 						$selected = @$_POST['agent_id']==$agent->id ? "selected" : "";
 						// print
-						print "<option value='".$agent->id."' $selected>$agent->name $suffix</option>";
+						print "<option value='".htmlspecialchars($agent->id, ENT_QUOTES, 'UTF-8')."' $selected>".htmlspecialchars($agent->name.' '.$suffix, ENT_QUOTES, 'UTF-8')."</option>";
 					}
 				}
 				?>

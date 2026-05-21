@@ -39,7 +39,7 @@ $User->validate_session (false);
 	<form class='form-inline space-y' method="get">
 
 		<div>
-			<input type="text" name="search" value="<?php print $_params['search']; ?>" class="form-control form-control-md" placeholder="<?php print _('Enter search string'); ?>" required>
+			<input type="text" name="search" value="<?php print htmlspecialchars($_params['search'], ENT_QUOTES, 'UTF-8'); ?>" class="form-control form-control-md" placeholder="<?php print _('Enter search string'); ?>" required>
 		</div>
 
 		<div class="form-check" style='margin-bottom:0px;margin-left:5px'>
