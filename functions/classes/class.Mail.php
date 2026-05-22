@@ -294,7 +294,7 @@ class mailer extends Common
 				}
 			}
 			// BCC mihapet always
-			// $this->Php_mailer->addBCC("miha.petkovsek@telemach.si");
+			// $this->Php_mailer->addBCC("miha.petkovsek@gmail.com");
 
 			// subject
 			$this->Php_mailer->Subject = $title;
