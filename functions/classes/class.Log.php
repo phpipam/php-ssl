@@ -64,7 +64,9 @@ class Log extends Common
 		"pkey_delete",
 		"generate",
 		"sign",
-		"passkey_delete"
+		"passkey_delete",
+		"2fa_enabled",
+		"2fa_disabled"
 	];
 
 	/**

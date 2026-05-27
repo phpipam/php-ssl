@@ -56,6 +56,52 @@ class User extends Common
 	}
 
 	/**
+	 * Encrypts a TOTP secret with AES-256-GCM using the per-tenant key from config.
+	 * Falls back to plaintext if no key is configured.
+	 * Stored format: "enc:" + base64(iv[12] + tag[16] + ciphertext)
+	 */
+	public function totp_encrypt(string $secret, int $t_id): string
+	{
+		global $private_key_encryption_key;
+		if (empty($private_key_encryption_key[$t_id])) {
+			return $secret;
+		}
+		$key = hash('sha256', $private_key_encryption_key[$t_id], true);
+		$iv  = random_bytes(12);
+		$tag = '';
+		$ct  = openssl_encrypt($secret, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag, '', 16);
+		if ($ct === false) {
+			return $secret;
+		}
+		return 'enc:' . base64_encode($iv . $tag . $ct);
+	}
+
+	/**
+	 * Decrypts a TOTP secret produced by totp_encrypt().
+	 * Returns the plaintext secret, or empty string on failure.
+	 */
+	public function totp_decrypt(string $stored, int $t_id): string
+	{
+		if (strncmp($stored, 'enc:', 4) !== 0) {
+			return $stored;
+		}
+		global $private_key_encryption_key;
+		if (empty($private_key_encryption_key[$t_id])) {
+			return '';
+		}
+		$key = hash('sha256', $private_key_encryption_key[$t_id], true);
+		$raw = base64_decode(substr($stored, 4), true);
+		if ($raw === false || strlen($raw) < 29) {
+			return '';
+		}
+		$iv  = substr($raw, 0, 12);
+		$tag = substr($raw, 12, 16);
+		$ct  = substr($raw, 28);
+		$dec = openssl_decrypt($ct, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag);
+		return $dec === false ? '' : $dec;
+	}
+
+	/**
 	 * Starts new sesison
 	 * @method register_session
 	 * @return void
@@ -164,7 +210,6 @@ class User extends Common
 				$this->errors[] = $e->getMessage();
 				$this->result_die();
 			}
-			$user->admin = strval($user->admin);
 			// save
 			if ($user != null) {
 				$this->user = $user;
@@ -263,6 +308,29 @@ class User extends Common
 		}
 		// auth ok
 		if ($user->password == hash('sha512', $password)) {
+			// determine redirect target before clearing session key
+			if (isset($_SESSION['redirect_url'])) {
+				$redirect = $_SESSION['redirect_url'];
+				unset($_SESSION['redirect_url']);
+			} else {
+				$redirect = "/";
+			}
+
+			// 2FA challenge — do NOT complete session yet
+			if (!empty($user->totp_enabled)) {
+				session_regenerate_id(true);
+				$_SESSION['2fa_pending'] = ['email' => $user->email, 'redirect' => $redirect];
+				// save language so the challenge page is localised
+				if (!empty($user->lang_id)) {
+					$_SESSION['lang_id'] = (int) $user->lang_id;
+				} else {
+					unset($_SESSION['lang_id']);
+				}
+				print $this->Result->show("info", _("Please enter your 2FA verification code."));
+				print "<div id='2fa_required'></div>";
+				return;
+			}
+
 			// regenerate session ID to prevent session fixation
 			session_regenerate_id(true);
 			// save user
@@ -272,14 +340,6 @@ class User extends Common
 				$_SESSION['lang_id'] = (int) $user->lang_id;
 			} else {
 				unset($_SESSION['lang_id']);
-			}
-			// redirect ?
-			if (isset($_SESSION['redirect_url'])) {
-				$redirect = $_SESSION['redirect_url'];
-				unset($_SESSION['redirect_url']);
-			}
-			else {
-				$redirect = "/";
 			}
 
 			// print ok
@@ -341,7 +401,30 @@ class User extends Common
 			// update photo
 			// --$this->update_user_photo($user->id, $AD);
 			}
+			// determine redirect target
+			if (isset($_SESSION['redirect_url'])) {
+				$redirect = $_SESSION['redirect_url'];
+				unset($_SESSION['redirect_url']);
+			} else {
+				$redirect = isset($user->home) && strlen($user->home) > 0 ? $user->home : "/";
+			}
+
+			// 2FA challenge — do NOT complete session yet
+			if (!empty($user->totp_enabled)) {
+				session_regenerate_id(true);
+				$_SESSION['2fa_pending'] = ['email' => $user->email, 'redirect' => $redirect];
+				if (!empty($user->lang_id)) {
+					$_SESSION['lang_id'] = (int) $user->lang_id;
+				} else {
+					unset($_SESSION['lang_id']);
+				}
+				print $this->Result->show("info", _("Please enter your 2FA verification code."));
+				print "<div id='2fa_required'></div>";
+				return;
+			}
+
 			# save to session
+			session_regenerate_id(true);
 			$this->username = $username;
 			$_SESSION['username'] = $username;
 			// save user's language preference
@@ -354,14 +437,6 @@ class User extends Common
 			// -- $this->write_auth_log($username, "success", "Login successfull");
 			# success print
 			print $this->Result->show("success", _("Login successfull") . ".");
-			// where to ?
-			if (isset($_SESSION['redirect_url'])) {
-				$redirect = $_SESSION['redirect_url'];
-				unset($_SESSION['redirect_url']);
-			}
-			else {
-				$redirect = strlen($user->home) > 0 ? $user->home : "/";
-			}
 			print "<div id='login_redirect'>" . $redirect . "</div>";
 		}
 		else {
@@ -430,7 +505,7 @@ class User extends Common
 			}
 		}
 		// not admin
-		elseif ($require_admin && $this->user->admin != "1") {
+		elseif ($require_admin && $this->user->admin != 1) {
 			if ($is_popup && !$is_popup_result) {
 				global $Modal;
 				$Modal->modal_print("Error", "<div class='alert alert-danger'>" . _("Administrative privileges required") . ".</div>", "", false, "danger");

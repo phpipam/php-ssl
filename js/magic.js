@@ -30,7 +30,7 @@ $(document).ready(function () {
         modal_html += '         <div class="progress-bar progress-bar-indeterminate"></div>'
         modal_html += '     </div>'
         modal_html += '</div>'
-        modal_html += '<div class="modal-footer"><button type="button" class="btn btn-sm btn-default btn-outline-secondary" data-bs-dismiss="modal">Close window</button></div>';
+        modal_html += '<div class="modal-footer"><button type="button" class="btn btn-sm btn-default btn-outline-secondary" onclick="$(&quot;#modal1&quot;).modal(&quot;hide&quot;);">Close window</button></div>';
 
         // set default content
         $(index + ' .modal-content').html(modal_html);
@@ -101,6 +101,11 @@ $(document).ready(function () {
         //post to check form
         $.post('/route/login/login_check.php', logindata, function (data) {
             $('div#loginCheck').html(data).fadeIn('fast');
+            // 2FA required — reload login page; index.php will show the challenge
+            if ($('#2fa_required').length > 0) {
+                window.location.reload();
+                return;
+            }
             //reload after 1 seconds if succeeded!
             if (data.search("alert alert-success") != -1) {
                 var url = $('#login_redirect').length > 0 ? $('#login_redirect').text() : "/";

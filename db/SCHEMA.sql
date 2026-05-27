@@ -500,6 +500,8 @@ CREATE TABLE `users` (
   `changePass` tinyint(1) NOT NULL DEFAULT 0,
   `disabled` tinyint(1) NOT NULL DEFAULT 0,
   `force_passkey` tinyint(1) NOT NULL DEFAULT 0,
+  `totp_secret` varchar(255) DEFAULT NULL,
+  `totp_enabled` tinyint(1) NOT NULL DEFAULT 0,
   `lang_id` int(11) unsigned DEFAULT NULL,
   `test` varchar(50) DEFAULT NULL,
   `create_date` datetime NOT NULL DEFAULT current_timestamp(),

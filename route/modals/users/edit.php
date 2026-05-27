@@ -183,6 +183,19 @@ else {
 		$content[] = "	</td>";
 		$content[] = "</tr>";
 
+		// disable 2FA — only on edit, only when enabled
+		if (!empty($edit_user->totp_enabled)) {
+			$content[] = "<tr>";
+			$content[] = "	<th>"._("2FA")."</th>";
+			$content[] = "	<td>";
+			$content[] = "		<label class='form-check'>";
+			$content[] = "			<input type='checkbox' class='form-check-input' name='disable_totp' value='1'>";
+			$content[] = "			<span class='form-check-label text-muted' style='font-size:11px'>"._("Disable and clear TOTP two-factor authentication for this user")."</span>";
+			$content[] = "		</label>";
+			$content[] = "	</td>";
+			$content[] = "</tr>";
+		}
+
 		// language — only on edit; query translations from DB
 		$all_langs = [];
 		try {

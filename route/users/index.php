@@ -129,6 +129,9 @@ if (empty($groups)) {
 			} else {
 				$login_html = "<span class='text-muted'>—</span>";
 			}
+			if (!empty($u->totp_enabled) && !$force_pk) {
+				$login_html .= " <span class='badge bg-green-lt text-green' data-bs-toggle='tooltip' title='" . _("2FA enabled") . "'>2FA</span>";
+			}
 
 			// Actions
 			$actions = "";

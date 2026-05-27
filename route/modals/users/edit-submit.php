@@ -111,6 +111,11 @@ if($_POST['action']!=="delete") {
 		}
 		# language preference (NULL = use tenant default)
 		$update['lang_id'] = (!empty($_POST['lang_id']) && is_numeric($_POST['lang_id'])) ? (int)$_POST['lang_id'] : null;
+		# disable 2FA — only when the user currently has it enabled
+		if (!empty($_POST['disable_totp']) && !empty($edit_user->totp_enabled)) {
+			$update['totp_enabled'] = 0;
+			$update['totp_secret']  = null;
+		}
 	}
 }
 
@@ -128,7 +133,7 @@ if($_POST['action']!=="add") {
 # edit: check for actual changes
 if($_POST['action']==="edit") {
 	$is_change = false;
-	foreach(['name', 'email', 'permission', 'days', 'days_expired', 'changePass', 'disabled', 'force_passkey', 'lang_id'] as $k) {
+	foreach(['name', 'email', 'permission', 'days', 'days_expired', 'changePass', 'disabled', 'force_passkey', 'lang_id', 'totp_enabled', 'totp_secret'] as $k) {
 		if(isset($update[$k]) && $edit_user->$k != $update[$k]) {
 			$is_change = true;
 			break;

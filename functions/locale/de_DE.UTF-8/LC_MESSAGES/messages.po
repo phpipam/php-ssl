@@ -2485,3 +2485,111 @@ msgstr "Erneut testen"
 
 msgid "Retest this scan?"
 msgstr "Diesen Scan erneut testen?"
+
+msgid "Two-Factor Authentication"
+msgstr "Zwei-Faktor-Authentifizierung"
+
+msgid "Enter the 6-digit code from your authenticator app."
+msgstr "Geben Sie den 6-stelligen Code aus Ihrer Authenticator-App ein."
+
+msgid "Verification code"
+msgstr "Bestätigungscode"
+
+msgid "6-digit code"
+msgstr "6-stelliger Code"
+
+msgid "Verify"
+msgstr "Überprüfen"
+
+msgid "Cancel and return to login"
+msgstr "Abbrechen und zur Anmeldung zurückkehren"
+
+msgid "Open your authenticator app (Google Authenticator, Authy, etc.) and enter the current code."
+msgstr "Öffnen Sie Ihre Authenticator-App (Google Authenticator, Authy, etc.) und geben Sie den aktuellen Code ein."
+
+msgid "Please enter your 2FA verification code."
+msgstr "Bitte geben Sie Ihren 2FA-Bestätigungscode ein."
+
+msgid "Please enter a 6-digit code."
+msgstr "Bitte geben Sie einen 6-stelligen Code ein."
+
+msgid "Too many failed attempts. Please log in again."
+msgstr "Zu viele fehlgeschlagene Versuche. Bitte melden Sie sich erneut an."
+
+msgid "Invalid 2FA state. Please log in again."
+msgstr "Ungültiger 2FA-Zustand. Bitte melden Sie sich erneut an."
+
+msgid "Could not read 2FA secret. Please contact an administrator."
+msgstr "2FA-Geheimnis konnte nicht gelesen werden. Bitte kontaktieren Sie einen Administrator."
+
+msgid "Invalid verification code."
+msgstr "Ungültiger Bestätigungscode."
+
+msgid "Two-factor authentication is enabled on your account."
+msgstr "Die Zwei-Faktor-Authentifizierung ist für Ihr Konto aktiviert."
+
+msgid "To disable two-factor authentication, click the button below. You will need to re-scan the QR code if you want to enable it again."
+msgstr "Um die Zwei-Faktor-Authentifizierung zu deaktivieren, klicken Sie auf die Schaltfläche unten. Sie müssen den QR-Code erneut scannen, wenn Sie sie wieder aktivieren möchten."
+
+msgid "Disable 2FA"
+msgstr "2FA deaktivieren"
+
+msgid "Two-factor authentication adds an extra layer of security. After enabling it, you will be asked for a code from your authenticator app each time you log in."
+msgstr "Die Zwei-Faktor-Authentifizierung fügt eine zusätzliche Sicherheitsebene hinzu. Nach der Aktivierung werden Sie bei jeder Anmeldung nach einem Code aus Ihrer Authenticator-App gefragt."
+
+msgid "Set up 2FA"
+msgstr "2FA einrichten"
+
+msgid "1. Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)."
+msgstr "1. Scannen Sie diesen QR-Code mit Ihrer Authenticator-App (Google Authenticator, Authy, etc.)."
+
+msgid "Can't scan? Enter this code manually:"
+msgstr "Können Sie nicht scannen? Geben Sie diesen Code manuell ein:"
+
+msgid "2. Enter the 6-digit code from your app to confirm setup."
+msgstr "2. Geben Sie den 6-stelligen Code aus Ihrer App ein, um die Einrichtung zu bestätigen."
+
+msgid "Confirm"
+msgstr "Bestätigen"
+
+msgid "Two-factor authentication has been enabled."
+msgstr "Die Zwei-Faktor-Authentifizierung wurde aktiviert."
+
+msgid "Two-factor authentication has been disabled."
+msgstr "Die Zwei-Faktor-Authentifizierung wurde deaktiviert."
+
+msgid "2FA"
+msgstr "2FA"
+
+msgid "On"
+msgstr "An"
+
+msgid "2FA enabled"
+msgstr "2FA aktiviert"
+
+msgid "Error starting 2FA setup."
+msgstr "Fehler beim Starten der 2FA-Einrichtung."
+
+msgid "No 2FA secret found. Please start setup again."
+msgstr "Kein 2FA-Geheimnis gefunden. Bitte starten Sie die Einrichtung erneut."
+
+msgid "Invalid verification code. Please try again."
+msgstr "Ungültiger Bestätigungscode. Bitte versuchen Sie es erneut."
+
+msgid "Error enabling 2FA."
+msgstr "Fehler beim Aktivieren von 2FA."
+
+msgid "Error disabling 2FA."
+msgstr "Fehler beim Deaktivieren von 2FA."
+
+msgid "Are you sure you want to disable two-factor authentication?"
+msgstr "Sind Sie sicher, dass Sie die Zwei-Faktor-Authentifizierung deaktivieren möchten?"
+
+msgid "Error saving 2FA secret."
+msgstr "Fehler beim Speichern des 2FA-Geheimnisses."
+
+msgid "Could not read 2FA secret."
+msgstr "2FA-Geheimnis konnte nicht gelesen werden."
+
+msgid "Disable and clear TOTP two-factor authentication for this user"
+msgstr "TOTP Zwei-Faktor-Authentifizierung für diesen Benutzer deaktivieren und löschen"

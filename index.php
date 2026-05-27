@@ -74,8 +74,12 @@ if(!isset($_SESSION['theme'])) { $_SESSION['theme'] = "dark"; }
 
 <body>
 	<?php
+	// 2FA pending — intercept every route until TOTP is verified
+	if (isset($_SESSION['2fa_pending']) && empty($_SESSION['username'])) {
+		include ("route/login/2fa_challenge.php");
+	}
 	// login and logout
-	if($_params['tenant']=="login" || $_params['tenant']=="logout") {
+	elseif($_params['tenant']=="login" || $_params['tenant']=="logout") {
 		include ("route/login/index.php");
 	}
 	// public testSSL report by hash — no auth required
