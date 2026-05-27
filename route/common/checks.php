@@ -14,7 +14,7 @@ foreach ($submodules as $name => $info) {
 }
 if (!empty($missing_submodules)) {
     print "<div class='alert alert-danger' role='alert' style='margin-top:10px;'>";
-    print "<div class='container-fluid d-flex align-items-start gap-2'>";
+    print "<div class='d-flex align-items-start gap-2'>";
     print "<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='icon text-danger flex-shrink-0 mt-1'><path stroke='none' d='M0 0h24v24H0z' fill='none'/><path d='M12 9v4'/><path d='M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z'/><path d='M12 16h.01'/></svg>";
     print "<div><strong>" . _("Missing git submodule(s):") . "</strong> ";
     $links = [];
@@ -47,7 +47,7 @@ if ($user->admin === "1") {
             $count = count($pending);
             $list  = implode(', ', $pending);
             print "<div class='alert alert-warning' role='alert' style='margin-top:10px;'>";
-            print "<div class='container-fluid d-flex align-items-center gap-2'>";
+            print "<div class='d-flex align-items-center gap-2'>";
             print "<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='icon text-warning  flex-shrink-0'><path stroke='none' d='M0 0h24v24H0z' fill='none'/><path d='M12 9v4'/><path d='M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z'/><path d='M12 16h.01'/></svg>";
             print "<span><strong>" . sprintf(_("%d unapplied database migration(s)"), $count) . ":</strong> <span class='text-muted'>" . htmlspecialchars($list) . "</span></span>";
             print "</div></div>";
