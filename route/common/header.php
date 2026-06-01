@@ -46,7 +46,7 @@
 			          <path d="M21 21l-6 -6"></path>
 			        </svg>
 			      </span>
-			      <input type="text" class="form-control" placeholder="Search…" name="search" aria-label="Search" value="<?php print htmlspecialchars($_params['search'], ENT_QUOTES, 'UTF-8'); ?>">
+			      <input type="text" class="form-control" placeholder="Search…" name="search" aria-label="Search" value="<?php print htmlspecialchars($_params['search'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
 			    </div>
 			  </form>
 			</div>

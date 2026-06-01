@@ -48,7 +48,7 @@ if(!isset($_SESSION['theme'])) { $_SESSION['theme'] = "dark"; }
 	<meta http-equiv="X-UA-Compatible" content="chrome=1">
 
 	<!-- title -->
-	<title><?php print $title; ?></title>
+	<title><?php print $title ?? ''; ?></title>
 
 	<!-- favicon -->
 	<link rel="icon" type="image/x-icon" href="/favicon.ico">

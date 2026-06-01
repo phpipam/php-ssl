@@ -90,7 +90,7 @@
                         $expanded = "false";
                         $show = "";
                         foreach ($items['submenu'] as $link=>$sm) {
-                            if($_params['app'] == $link) {
+                            if(($_params['app'] ?? null) == $link) {
                                 $expanded = "true";
                                 $show = "show";
                                 break;
@@ -111,7 +111,7 @@
                     print '<div class="dropdown-menu-column">';
                     foreach ($items['submenu'] as $link=>$sm) {
                         // active ?
-                        $active2 = $_params['app'] == $link ? "active" : "";
+                        $active2 = ($_params['app'] ?? null) == $link ? "active" : "";
                         // icon
                         if(isset($sm['icon'])) {
                             $icon = $sm['icon'];

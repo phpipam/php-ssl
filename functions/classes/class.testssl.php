@@ -227,19 +227,25 @@ class TestSSL
         $json_file = sys_get_temp_dir() . '/testssl_' . $scan->id . '_' . time() . '.json';
 
         // Build argument array — proc_open with array skips the shell entirely
+        // Outer `timeout` guards against hangs in checks that ignore --openssl-timeout
+        // (e.g. sub_early_data uses -ign_eof with the bundled OpenSSL 1.0.2 binary
+        // which predates the -timeout flag, so the per-connect timeouts do nothing there).
         $args = [
+            'timeout', '300',
             'bash',
             $this->testssl_path,
             '--jsonfile', $json_file,
             '--quiet',
             '--color', '0',
             '--warnings', 'off',
+            '--openssl-timeout', '10',
+            '--socket-timeout', '10',
             $scan->hostname . ':' . (int)$scan->port,
         ];
 
         $descriptors = [
             0 => ['pipe', 'r'],
-            1 => ['pipe', 'w'],
+            1 => ['file', '/dev/null', 'w'],
             2 => ['pipe', 'w'],
         ];
 
@@ -254,7 +260,6 @@ class TestSSL
 
         fclose($pipes[0]);
         $stderr = stream_get_contents($pipes[2]);
-        fclose($pipes[1]);
         fclose($pipes[2]);
         $exit_code = proc_close($proc);
 
