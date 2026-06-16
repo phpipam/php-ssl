@@ -130,7 +130,7 @@ else {
 	$content[] =  "<option value='$type' $selected>".$name."</option>";
 	}
 	$content[] = "</select>";
-	$content[] = "	<div class='text-muted small mt-1'>"._('Appends zone name to each host')."</div>";
+	$content[] = "	<span class='text-muted small mt-1'>"._('Appends zone name to each host')."</span>";
 	$content[] = "	</td>";
 	$content[] = "</tr>";
 	// description
