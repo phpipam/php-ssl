@@ -151,6 +151,7 @@ try {
 			elseif($status_int==1)	{ $textclass='red';  $danger_class = "red"; }
 			elseif($status_int==2)	{ $textclass='orange'; $danger_class = "orange";  }
 			elseif($status_int==3)	{ $textclass='green'; }
+			elseif($status_int==11)	{ $textclass='orange'; $danger_class = "orange"; }
 			else 					{ $textclass=''; }
 
 
