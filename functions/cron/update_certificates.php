@@ -175,6 +175,7 @@ try {
             	if     ($status_int == "1")  { $status = "Expired";         $color = "#E74C3C"; }
             	elseif ($status_int == "2")  { $status = "Expires soon";    $color = "#FF5733"; }
             	elseif ($status_int == "10") { $status = "Domain mismatch"; $color = "#FF5733"; }
+            	elseif ($status_int == "11") { $status = "Self-signed";     $color = "#FF5733"; }
             	else                         { $status = "Valid";            $color = "#1ABC9C"; }
 
             	// check if cert is ignored, if so skip to next item !
