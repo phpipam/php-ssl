@@ -129,8 +129,7 @@ else {
 	$selected = $zone->is_domain == $type || ($_GET['action']=="add" && $type=="1") ? "selected" : "";
 	$content[] =  "<option value='$type' $selected>".$name."</option>";
 	}
-	$content[] = "</select>";
-	$content[] = "	<span class='text-muted small mt-1'>"._('Appends zone name to each host')."</span>";
+	$content[] = "</select> <span class='text-muted small'>"._('Appends zone name to each host')."</span>";
 	$content[] = "	</td>";
 	$content[] = "</tr>";
 	// description
