@@ -26,7 +26,32 @@ function ca_tree_sort(array $cas): array {
             // parent_ca_id is set but the parent CA is not known — incomplete chain
             $orphaned[] = $ca;
         } else {
-            $roots[] = $ca;
+            // parent_ca_id is null/0 — check whether this is truly self-signed (root)
+            // or an intermediate whose issuer was simply never served in any chain
+            $is_root = true;
+            if (!empty($ca->certificate)) {
+                $parsed = @openssl_x509_parse($ca->certificate);
+                if ($parsed) {
+                    $aki_raw = trim($parsed['extensions']['authorityKeyIdentifier'] ?? '');
+                    $aki = '';
+                    foreach (explode("\n", $aki_raw) as $line) {
+                        if (stripos($line, 'keyid:') !== false) {
+                            $aki = trim(str_replace('keyid:', '', $line));
+                            break;
+                        }
+                    }
+                    $ski = trim($ca->ski ?? $parsed['extensions']['subjectKeyIdentifier'] ?? '');
+                    // Non-empty AKI that differs from own SKI means a parent exists outside our DB
+                    if ($aki !== '' && $ski !== '' && strcasecmp($aki, $ski) !== 0) {
+                        $is_root = false;
+                    }
+                }
+            }
+            if ($is_root) {
+                $roots[] = $ca;
+            } else {
+                $orphaned[] = $ca;
+            }
         }
     }
     $result = [];
