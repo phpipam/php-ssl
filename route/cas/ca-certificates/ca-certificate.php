@@ -55,12 +55,29 @@ if (empty($ca->certificate)) {
 	return;
 }
 
+// Build the trust chain above this CA by walking parent_ca_id upward in the DB.
+// The chain PEM is assembled parent-first (certificate-chain-steps.php reverses it).
+$_ca_chain_pem = '';
+$_walk_id = (int)($ca->parent_ca_id ?? 0);
+$_visited  = [(int)$ca->id => true]; // guard against circular references
+while ($_walk_id > 0) {
+	if (isset($_visited[$_walk_id])) break; // cycle detected
+	$_visited[$_walk_id] = true;
+	$_ancestor = $Database->getObjectQuery(
+		"SELECT id, certificate, parent_ca_id FROM cas WHERE id = ? AND t_id = ?",
+		[$_walk_id, (int)$ca->t_id]
+	);
+	if (!$_ancestor || empty($_ancestor->certificate)) break;
+	$_ca_chain_pem .= trim($_ancestor->certificate) . "\n";
+	$_walk_id = (int)($_ancestor->parent_ca_id ?? 0);
+}
+
 // Build compatibility object for sub-pages that expect $certificate
 $certificate = (object)[
 	'id'          => $ca->id,
 	'certificate' => $ca->certificate,
 	'pkey_id'     => $ca->pkey_id ?? null,
-	'chain'       => null,
+	'chain'       => $_ca_chain_pem !== '' ? $_ca_chain_pem : null,
 	'is_manual'   => '0',
 	'created'     => $ca->created,
 	't_id'        => $ca->t_id,
@@ -252,6 +269,23 @@ if (!empty($ca->ski)) {
 	</div>
 	<div class="card-content">
 		<?php include(dirname(__FILE__) . '/../../certificates/certificate/certificate-extensions.php'); ?>
+	</div>
+</div>
+</div>
+
+<!-- Certificate Chain -->
+<div class="col-12" style="margin-bottom: 15px;">
+<div class="card">
+	<div class="card-header">
+		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-link"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 15l6 -6" /><path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464" /><path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463" /></svg>
+		<?php print _("Certificate Chain"); ?>
+	</div>
+	<div class="card-content">
+	<?php if (empty($certificate->chain)): ?>
+		<div class="alert alert-info" style="margin:10px"><?php print _("No parent CA discovered — this is a root or has an incomplete chain."); ?></div>
+	<?php else: ?>
+		<?php include(dirname(__FILE__) . '/../../certificates/certificate/certificate-chain-steps.php'); ?>
+	<?php endif; ?>
 	</div>
 </div>
 </div>

@@ -10,8 +10,8 @@ if (isset($_params['app']) && $_params['app'] !== '') {
 $all_tenants = $Tenants->get_all();
 
 $where  = $user->admin != "1" ? " WHERE ca.t_id = " . (int)$user->t_id : "";
-$select = "SELECT ca.id, ca.t_id, ca.name, ca.subject, ca.expires, ca.created, ca.parent_ca_id,
-           ca.ignore_updates, ca.ignore_expiry, ca.serial,
+$select = "SELECT ca.id, ca.t_id, ca.name, ca.subject, ca.certificate, ca.expires, ca.created, ca.parent_ca_id,
+           ca.ignore_updates, ca.ignore_expiry, ca.serial, ca.ski,
            pca.name AS parent_ca_name,
            (pk.id IS NOT NULL AND pk.private_key_enc IS NOT NULL AND pk.private_key_enc != '') AS has_pkey,
            (SELECT COUNT(*) FROM certificates c WHERE c.aki = ca.ski AND c.t_id = ca.t_id) AS cert_count

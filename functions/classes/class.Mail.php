@@ -172,8 +172,8 @@ class mailer extends Common
 		require_once(dirname(__FILE__) . '/../assets/PHPMailer/src/PHPMailer.php');
 		require_once(dirname(__FILE__) . '/../assets/PHPMailer/src/SMTP.php');
 		require_once(dirname(__FILE__) . '/../assets/PHPMailer/src/Exception.php');
-		// initialize object
-		$this->Php_mailer = new PHPMailer\PHPMailer\PHPMailer();
+		// initialize object — pass true to enable exceptions on SMTP/send failure
+		$this->Php_mailer = new PHPMailer\PHPMailer\PHPMailer(true);
 
 		$this->Php_mailer->CharSet = "UTF-8"; //set utf8
 		$this->Php_mailer->SMTPDebug = 0; //default no debugging
@@ -267,7 +267,7 @@ class mailer extends Common
 	 * @param  array $bcc
 	 * @param  string $content
 	 * @param  bool $print_success
-	 * @return [type]
+	 * @return bool  true on success, false on failure
 	 */
 	public function send($title = "", $to = array(), $cc = array(), $bcc = array(), $content = "", $print_success = true)
 	{
@@ -293,8 +293,10 @@ class mailer extends Common
 					$this->Php_mailer->addBCC($t);
 				}
 			}
-			// BCC mihapet always
-			// $this->Php_mailer->addBCC("miha.petkovsek@gmail.com");
+			// Global BCC from config
+			if (!empty($this->settings->bcc)) {
+				$this->Php_mailer->addBCC($this->settings->bcc);
+			}
 
 			// subject
 			$this->Php_mailer->Subject = $title;
@@ -302,16 +304,29 @@ class mailer extends Common
 			//send
 			$this->Php_mailer->send();
 		}
-		catch (phpmailerException $e) {
-			print $this->Result->show("danger", "Mailer Error: " . $e->errorMessage());
+		catch (PHPMailer\PHPMailer\Exception $e) {
+			$msg = "Mailer Error: " . $e->getMessage();
+			if (php_sapi_name() === 'cli') {
+				fwrite(STDERR, $msg . PHP_EOL);
+			} else {
+				print $this->Result->show("danger", $msg);
+			}
+			return false;
 		}
 		catch (Exception $e) {
-			print $this->Result->show("danger", "Mailer Error: " . $e->errorMessage());
+			$msg = "Mailer Error: " . $e->getMessage();
+			if (php_sapi_name() === 'cli') {
+				fwrite(STDERR, $msg . PHP_EOL);
+			} else {
+				print $this->Result->show("danger", $msg);
+			}
+			return false;
 		}
 
 		// ok
 		if ($print_success)
 			print $this->Result->show("success", "Obvestilo poslano.");
+		return true;
 	}
 
 	/**

@@ -26,7 +26,32 @@ function ca_tree_sort(array $cas): array {
             // parent_ca_id is set but the parent CA is not known — incomplete chain
             $orphaned[] = $ca;
         } else {
-            $roots[] = $ca;
+            // parent_ca_id is null/0 — check whether this is truly self-signed (root)
+            // or an intermediate whose issuer was simply never served in any chain
+            $is_root = true;
+            if (!empty($ca->certificate)) {
+                $parsed = @openssl_x509_parse($ca->certificate);
+                if ($parsed) {
+                    $aki_raw = trim($parsed['extensions']['authorityKeyIdentifier'] ?? '');
+                    $aki = '';
+                    foreach (explode("\n", $aki_raw) as $line) {
+                        if (stripos($line, 'keyid:') !== false) {
+                            $aki = trim(str_replace('keyid:', '', $line));
+                            break;
+                        }
+                    }
+                    $ski = trim($ca->ski ?? $parsed['extensions']['subjectKeyIdentifier'] ?? '');
+                    // Non-empty AKI that differs from own SKI means a parent exists outside our DB
+                    if ($aki !== '' && $ski !== '' && strcasecmp($aki, $ski) !== 0) {
+                        $is_root = false;
+                    }
+                }
+            }
+            if ($is_root) {
+                $roots[] = $ca;
+            } else {
+                $orphaned[] = $ca;
+            }
         }
     }
     $result = [];
@@ -181,7 +206,40 @@ if (empty($groups)) {
 			print "<tr data-ca-id='{$ca_id}' data-ignore-updates='{$ign_u}' data-ignore-expiry='{$ign_e}'>";
 			print "  <td style='white-space:nowrap'>{$indent}{$angle_icon_show}{$ca_icon} {$name_html}</td>";
 			print "  <td class='d-none d-lg-table-cell text-muted small'>" . htmlspecialchars($ca->subject ?? '') . "</td>";
-			$parent_html = $ca->parent_ca_name ? "<span class='text-muted small'>" . htmlspecialchars($ca->parent_ca_name) . "</span>" : "<span class='text-muted'>—</span>";
+			if ($ca->parent_ca_name) {
+				// Parent is captured in the DB — link it
+				$parent_html = "<span class='text-muted small'>" . htmlspecialchars($ca->parent_ca_name) . "</span>";
+			} elseif (!empty($ca->certificate)) {
+				// Parent not captured — derive issuer name from the cert PEM
+				$_pca_parsed = @openssl_x509_parse($ca->certificate);
+				if ($_pca_parsed) {
+					$_issuer_cn  = $_pca_parsed['issuer']['CN'] ?? '';
+					$_issuer_o   = $_pca_parsed['issuer']['O']  ?? '';
+					$_issuer_lbl = $_issuer_cn ?: $_issuer_o;
+					// Determine if this is a root (self-signed: AKI matches own SKI)
+					$_aki_raw = trim($_pca_parsed['extensions']['authorityKeyIdentifier'] ?? '');
+					$_aki = '';
+					foreach (explode("\n", $_aki_raw) as $_line) {
+						if (stripos($_line, 'keyid:') !== false) {
+							$_aki = trim(str_replace('keyid:', '', $_line));
+							break;
+						}
+					}
+					$_ski = trim($ca->ski ?? $_pca_parsed['extensions']['subjectKeyIdentifier'] ?? '');
+					$_is_root = $_aki === '' || ($_ski !== '' && strcasecmp($_aki, $_ski) === 0);
+					if ($_is_root) {
+						$parent_html = "<span class='badge bg-secondary-lt text-muted' data-tippy-content='" . _("Self-signed root") . "'>" . _("Root") . "</span>";
+					} elseif ($_issuer_lbl !== '') {
+						$parent_html = "<span class='text-muted small fst-italic' data-tippy-content='" . _("Parent not yet captured") . "'>" . htmlspecialchars($_issuer_lbl) . "</span>";
+					} else {
+						$parent_html = "<span class='text-muted'>—</span>";
+					}
+				} else {
+					$parent_html = "<span class='text-muted'>—</span>";
+				}
+			} else {
+				$parent_html = "<span class='text-muted'>—</span>";
+			}
 			print "  <td class='d-none d-md-table-cell'>{$parent_html}</td>";
 			print "  <td>{$exp_html}</td>";
 			print "  <td>{$key_html}</td>";
