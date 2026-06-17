@@ -172,8 +172,8 @@ class mailer extends Common
 		require_once(dirname(__FILE__) . '/../assets/PHPMailer/src/PHPMailer.php');
 		require_once(dirname(__FILE__) . '/../assets/PHPMailer/src/SMTP.php');
 		require_once(dirname(__FILE__) . '/../assets/PHPMailer/src/Exception.php');
-		// initialize object
-		$this->Php_mailer = new PHPMailer\PHPMailer\PHPMailer();
+		// initialize object — pass true to enable exceptions on SMTP/send failure
+		$this->Php_mailer = new PHPMailer\PHPMailer\PHPMailer(true);
 
 		$this->Php_mailer->CharSet = "UTF-8"; //set utf8
 		$this->Php_mailer->SMTPDebug = 0; //default no debugging
@@ -304,8 +304,8 @@ class mailer extends Common
 			//send
 			$this->Php_mailer->send();
 		}
-		catch (phpmailerException $e) {
-			$msg = "Mailer Error: " . $e->errorMessage();
+		catch (PHPMailer\PHPMailer\Exception $e) {
+			$msg = "Mailer Error: " . $e->getMessage();
 			if (php_sapi_name() === 'cli') {
 				fwrite(STDERR, $msg . PHP_EOL);
 			} else {
