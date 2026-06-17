@@ -271,7 +271,7 @@ try {
 				if (!empty($email_to_tenant_recipents)) {
 					$sent = $Mail->send ("Telemach php-ssl :: changed certificates [".$tenant->name."]", $email_to_tenant_recipents, [], [], implode("\n", $content[$email_to_tenant_recipents[0]]), false);
 					if ($sent) {
-						$Log->write ("users", NULL, $tenant->id, null, "notification", true, "Certificate change notification email sent to all tenant admins for certificate change", json_encode($email_to_tenant_recipents), json_encode(["title"=>"Telemach php-ssl :: changed certificates [".$tenant->name."]", "data"=>$log_content_rows]), false);
+						$Log->write ("users", NULL, $tenant->id, null, "notification", true, "Certificate change notification email sent to tenant recipients", json_encode($email_to_tenant_recipents), json_encode(["title"=>"Telemach php-ssl :: changed certificates [".$tenant->name."]", "data"=>$log_content_rows]), false);
 					} else {
 						$Log->write ("users", NULL, $tenant->id, null, "notification", true, "Certificate change notification email FAILED for tenant recipients", json_encode($email_to_tenant_recipents), null, false);
 					}
