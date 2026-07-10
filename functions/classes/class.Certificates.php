@@ -111,11 +111,14 @@ class Certificates extends Common
 		$pz_clause = $impersonating ? "and z.private_zone_uid is null" : "and (z.private_zone_uid is null or z.private_zone_uid = ".(int)$this->user->id.")";
 		// fetch
 		try {
+			// keep rows with a current host, plus host-less rows only for manually imported certs
+			// (a host-less non-manual cert is just a superseded/replaced scan result, not a real orphan)
+			$orphan_clause = "and (h.id is not null or c.is_manual = 1)";
 			if ($this->user->admin == "1") {
-				$certs = $this->Database->getObjectsQuery("select *,c.id as id,z.name as zone_name,z.private_zone_uid as private_zone_uid from certificates as c JOIN zones as z ON c.z_id = z.id JOIN tenants as t ON z.t_id = t.id JOIN hosts as h ON h.c_id = c.id and c.expires < ? and c.expires > ? $pz_clause order by expires asc", [$from_date, $expired_from_date]);
+				$certs = $this->Database->getObjectsQuery("select *,c.id as id,z.name as zone_name,z.private_zone_uid as private_zone_uid from certificates as c JOIN zones as z ON c.z_id = z.id JOIN tenants as t ON z.t_id = t.id LEFT JOIN hosts as h ON h.c_id = c.id where c.expires < ? and c.expires > ? $pz_clause $orphan_clause order by expires asc", [$from_date, $expired_from_date]);
 			}
 			else {
-				$certs = $this->Database->getObjectsQuery("select *,c.id as id,z.name as zone_name,z.private_zone_uid as private_zone_uid from certificates as c JOIN zones as z ON c.z_id = z.id JOIN tenants as t ON z.t_id = t.id JOIN hosts as h ON h.c_id = c.id and t.id = ? and c.expires < ? and c.expires > ? $pz_clause order by expires asc", [$this->user->t_id, $from_date, $expired_from_date]);
+				$certs = $this->Database->getObjectsQuery("select *,c.id as id,z.name as zone_name,z.private_zone_uid as private_zone_uid from certificates as c JOIN zones as z ON c.z_id = z.id JOIN tenants as t ON z.t_id = t.id LEFT JOIN hosts as h ON h.c_id = c.id where t.id = ? and c.expires < ? and c.expires > ? $pz_clause $orphan_clause order by expires asc", [$this->user->t_id, $from_date, $expired_from_date]);
 			}
 		}
 		catch (Exception $e) {
@@ -130,7 +133,10 @@ class Certificates extends Common
 					$certs_new[$t->id] = $t;
 					$certs_new[$t->id]->hosts = [];
 				}
-				$certs_new[$t->id]->hosts[] = (object)['hostname' => $t->hostname, 'port' => $t->port];
+				// LEFT JOIN: certs with no assigned host (e.g. manually imported) yield a null hostname
+				if ($t->hostname !== null) {
+					$certs_new[$t->id]->hosts[] = (object)['hostname' => $t->hostname, 'port' => $t->port];
+				}
 			}
 			$certs = $certs_new;
 		}
@@ -309,7 +315,7 @@ class Certificates extends Common
 	 * @param  array|bool $cert_parsed Parsed certificate array or false
 	 * @param  bool $validate_domain Whether to validate domain against certificate
 	 * @param  string $domain Domain to validate
-	 * @return int Status code: 0=unknown, 1=expired, 2=expires soon, 3=valid, 10=domain mismatch, 11=self-signed
+	 * @return int Status code: 0=unknown, 1=expired, 2=expires soon, 3=valid, 10=domain mismatch
 	 */
 	public function get_status_int($cert_parsed = false, $validate_domain = false, $domain = "")
 	{
@@ -327,10 +333,6 @@ class Certificates extends Common
 			if ($this->validate_cert_domain_validity($domain, $cert_parsed) === false) {
 				return 10;
 			}
-		}
-		// check if certificate is self-signed (subject matches issuer)
-		if ($this->is_self_signed($cert_parsed)) {
-			return 11;
 		}
 
 		// result
@@ -361,7 +363,6 @@ class Certificates extends Common
 			case 2:  return 'orange';
 			case 3:  return 'green';
 			case 10: return 'red';
-			case 11: return 'orange';
 			default: return 'secondary';
 		}
 	}
@@ -382,9 +383,6 @@ class Certificates extends Common
 		// return
 		if ($status_int == 10) {
 			return "<span class='badge bg-red-lt $status_class' data-bs-toggle='tooltip' data-bs-placement='left' title='" . _("Domain mismatch") . "'> <span class='$span_hidden'>" . _("Domain mismatch") . "</span></span> ";
-		}
-		if ($status_int == 11) {
-			return "<span class='badge bg-orange-lt $status_class' data-bs-toggle='tooltip' data-bs-placement='left' title='" . _("Self-signed") . "'> <span class='$span_hidden'>" . _("Self-signed") . "</span></span> ";
 		}
 		if ($status_int == 0) {
 			return "<span class='badge bg-light-lt $status_class bg-light text-muted' data-bs-toggle='tooltip' data-bs-placement='left' title='" . _("Unknown") . "'> <span class='$span_hidden'>" . _("Unknown") . "</span></span> ";
@@ -466,24 +464,6 @@ class Certificates extends Common
 
 		// false
 		return false;
-	}
-
-	/**
-	 * Check if certificate is self-signed (subject and issuer are identical)
-	 * @method is_self_signed
-	 * @param  array|bool $cert_parsed
-	 * @return bool
-	 */
-	private function is_self_signed($cert_parsed = false)
-	{
-		if (empty($cert_parsed['subject']) || empty($cert_parsed['issuer'])) {
-			return false;
-		}
-		// Strip custom keys added by route files (e.g. CN_all) before comparing
-		$standard_keys = ['C', 'ST', 'L', 'O', 'OU', 'CN', 'emailAddress', 'serialNumber'];
-		$subject = array_intersect_key($cert_parsed['subject'], array_flip($standard_keys));
-		$issuer  = array_intersect_key($cert_parsed['issuer'],  array_flip($standard_keys));
-		return $subject === $issuer;
 	}
 
 	/**
@@ -664,7 +644,7 @@ class Certificates extends Common
 
 		// fetch from cas table — only rows with at least one notification flag set
 		try {
-			if ($this->user->admin == "1") {
+			if (!isset($this->user) || $this->user === null || $this->user->admin == "1") {
 				$ignored = $this->Database->getObjectsQuery(
 					"SELECT * FROM cas WHERE ski IS NOT NULL AND (ignore_updates = 1 OR ignore_expiry = 1)"
 				);

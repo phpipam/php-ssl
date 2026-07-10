@@ -97,6 +97,8 @@ else {
 		print "	<td class='text-muted align-top d-none d-lg-table-cell'><span  class='w-100 badge text-$danger_class'>".$cert_parsed['custom_validDays']."</span><br>".date("d. M H:i", strtotime($cert_parsed['custom_validTo']))."</td>";
 		print "<td class='align-top'>";
 		print "	<a href='/".$t->href."/certificates/".$t->zone_name."/".$cert_parsed['serialNumber']."/' style='color:var(--tblr-info)'>".$url_items["certificates"]['icon']." ".$cert_parsed['serialNumberHex']."</a>";
+		if(isset($t->is_manual) && $t->is_manual == "1")
+		print " <span class='badge bg-azure-lt text-azure' title='"._("Manually imported certificate")."'><svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='icon'><path stroke='none' d='M0 0h24v24H0z' fill='none'/><path d='M12 3l8 4.5v9l-8 4.5l-8 -4.5v-9z' /><path d='M12 12l8 -4.5' /><path d='M12 12v9' /><path d='M12 12l-8 -4.5' /></svg> "._("Manual")."</span>";
 		if($user->admin=="1")
 		print "	<br><a href='/".$user->href."/tenants/".$tenants[$t->t_id]->href."/' style='color:var(--tblr-body-color)'>".$tenants[$t->t_id]->name."</a>";
 		print "</td>";
@@ -105,6 +107,10 @@ else {
 		print "	<td class='align-top'>";
 		$hosts      = $t->hosts;
 		$host_count = count($hosts);
+		if ($host_count == 0) {
+			print "<span class='text-muted'>"._("Not assigned to a host")."</span>";
+		}
+		else {
 		$first      = $hosts[0];
 		print "<a href='/".$t->href."/zones/".$t->zone_name."/".$first->hostname."/' style='color:var(--tblr-secondary)' target='_blank'>".$first->hostname."</a>";
 		if ($host_count > 1) {
@@ -117,6 +123,7 @@ else {
 				print "<a href='/".$t->href."/zones/".$t->zone_name."/".$h->hostname."/' style='color:var(--tblr-secondary)' target='_blank'>".$h->hostname."</a><br>";
 			}
 			print "</div>";
+		}
 		}
 		print "</td>";
 		print "</tr>";
