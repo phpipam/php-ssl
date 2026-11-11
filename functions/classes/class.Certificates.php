@@ -93,9 +93,10 @@ class Certificates extends Common
 	 * @method get_expired
 	 * @param  int $days
 	 * @param  int $expired_days
+	 * @param  bool $exclude_muted
 	 * @return array
 	 */
-	public function get_expired($days = 30, $expired_days = 7)
+	public function get_expired($days = 30, $expired_days = 7, $exclude_muted = false)
 	{
 		// default to 30 and 7 if not set !
 		if (!is_numeric($days))
@@ -109,13 +110,15 @@ class Certificates extends Common
 		// private zone filter
 		$impersonating = isset($_SESSION['impersonate_original']);
 		$pz_clause = $impersonating ? "and z.private_zone_uid is null" : "and (z.private_zone_uid is null or z.private_zone_uid = ".(int)$this->user->id.")";
+		// mute filter
+		$mute_clause = $exclude_muted ? "and h.mute = 0" : "";
 		// fetch
 		try {
 			if ($this->user->admin == "1") {
-				$certs = $this->Database->getObjectsQuery("select *,c.id as id,z.name as zone_name,z.private_zone_uid as private_zone_uid from certificates as c JOIN zones as z ON c.z_id = z.id JOIN tenants as t ON z.t_id = t.id JOIN hosts as h ON h.c_id = c.id and c.expires < ? and c.expires > ? $pz_clause order by expires asc", [$from_date, $expired_from_date]);
+				$certs = $this->Database->getObjectsQuery("select *,c.id as id,z.name as zone_name,z.private_zone_uid as private_zone_uid from certificates as c JOIN zones as z ON c.z_id = z.id JOIN tenants as t ON z.t_id = t.id JOIN hosts as h ON h.c_id = c.id and c.expires < ? and c.expires > ? $pz_clause $mute_clause order by expires asc", [$from_date, $expired_from_date]);
 			}
 			else {
-				$certs = $this->Database->getObjectsQuery("select *,c.id as id,z.name as zone_name,z.private_zone_uid as private_zone_uid from certificates as c JOIN zones as z ON c.z_id = z.id JOIN tenants as t ON z.t_id = t.id JOIN hosts as h ON h.c_id = c.id and t.id = ? and c.expires < ? and c.expires > ? $pz_clause order by expires asc", [$this->user->t_id, $from_date, $expired_from_date]);
+				$certs = $this->Database->getObjectsQuery("select *,c.id as id,z.name as zone_name,z.private_zone_uid as private_zone_uid from certificates as c JOIN zones as z ON c.z_id = z.id JOIN tenants as t ON z.t_id = t.id JOIN hosts as h ON h.c_id = c.id and t.id = ? and c.expires < ? and c.expires > ? $pz_clause $mute_clause order by expires asc", [$this->user->t_id, $from_date, $expired_from_date]);
 			}
 		}
 		catch (Exception $e) {

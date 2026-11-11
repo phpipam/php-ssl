@@ -38,8 +38,8 @@ try {
     // get config for $expired_days and $expired_after_days
     include(dirname(__FILE__)."/../../config.php");
 
-    // fetch all certificates that will expire
-    $expired_certificates = $Certificates->get_expired ($expired_days, $expired_after_days);
+    // fetch all certificates that will expire (exclude muted hosts)
+    $expired_certificates = $Certificates->get_expired ($expired_days, $expired_after_days, true);
 
     // load ignored issuers for this tenant
     $Certificates->get_all_ignored_issuers ($tenant_id);
