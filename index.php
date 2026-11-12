@@ -31,7 +31,7 @@ if(!isset($_SESSION['theme'])) { $_SESSION['theme'] = "dark"; }
 ?>
 
 <!doctype html>
-<html lang="en" data-bs-theme-base="gray" data-theme="<?php print $_SESSION['theme']; ?>" data-bs-theme="<?php print $_SESSION['theme']; ?>" style="color-scheme: gray;">
+<html lang="en" data-bs-theme-base="slate" data-theme="<?php print $_SESSION['theme']; ?>" data-bs-theme="<?php print $_SESSION['theme']; ?>" style="color-scheme: <?php print $_SESSION['theme']; ?>;">
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -58,7 +58,8 @@ if(!isset($_SESSION['theme'])) { $_SESSION['theme'] = "dark"; }
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
 	<!-- css -->
-	<link href="/css/tabler.1.4.0.min.css" rel="stylesheet">
+	<link href="/css/tabler.1.7.1.min.css" rel="stylesheet">
+	<link href="/css/tabler-themes.1.7.1.min.css" rel="stylesheet">
 	<link href="/css/bootstrap-table.1.26.0.min.css" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="/css/style.css">
 
@@ -66,7 +67,7 @@ if(!isset($_SESSION['theme'])) { $_SESSION['theme'] = "dark"; }
     <script src="/js/jquery-3.6.0.min.js"></script>
     <script src="/js/popper.2.11.8.js"></script>
     <script src="/js/tippy.js"></script>
-	<script src="/js/tabler.1.4.0.min.js"></script>
+	<script src="/js/tabler.1.7.1.min.js"></script>
 	<script src="/js/bootstrap-table.1.26.0.min.js"></script>
 	<script src="/js/magic.js"></script>
 

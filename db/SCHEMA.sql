@@ -629,6 +629,51 @@ CREATE TABLE `nmap_scans` (
   KEY `idx_zone_id`       (`zone_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+
+# Dump of table phpversions
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `phpversions`;
+
+CREATE TABLE `phpversions` (
+  `id`              INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `t_id`            INT(11) UNSIGNED NOT NULL,
+  `hostname`        VARCHAR(255) NOT NULL,
+  `port`            INT(5)       NOT NULL,
+  `scheme`          ENUM('http','https') NOT NULL DEFAULT 'https',
+  `ip`              VARCHAR(45)  DEFAULT NULL,
+  `input`           ENUM('hosts','csv') NOT NULL DEFAULT 'hosts',
+  `result`          ENUM('php','no php','unreachable') NOT NULL,
+  `php_version`     VARCHAR(32)  DEFAULT NULL,
+  `branch_status`   VARCHAR(16)  DEFAULT NULL,
+  `supported_until` DATE         DEFAULT NULL,
+  `patch_status`    VARCHAR(16)  DEFAULT NULL,
+  `fixed`           VARCHAR(32)  DEFAULT NULL,
+  `source`          VARCHAR(16)  DEFAULT NULL,
+  `x_powered_by`    VARCHAR(255) DEFAULT NULL,
+  `server`          VARCHAR(255) DEFAULT NULL,
+  `service`         VARCHAR(255) DEFAULT NULL COMMENT 'nmap -sV product/version on this port',
+  `http_title`      VARCHAR(255) DEFAULT NULL,
+  `os`              VARCHAR(255) DEFAULT NULL COMMENT 'nmap -O best match, or service OS hint',
+  `os_accuracy`     TINYINT(3) UNSIGNED DEFAULT NULL,
+  `os_source`       VARCHAR(16)  DEFAULT NULL COMMENT 'nmap-os | service | smb | rdp',
+  `device_type`     VARCHAR(64)  DEFAULT NULL,
+  `os_cpe`          VARCHAR(255) DEFAULT NULL,
+  `ssh_banner`      VARCHAR(255) DEFAULT NULL,
+  `windows_info`    VARCHAR(255) DEFAULT NULL COMMENT 'smb-os-discovery / rdp-ntlm-info',
+  `open_ports`      TEXT         DEFAULT NULL COMMENT 'JSON: all open ports and services on this IP',
+  `http_code`       SMALLINT(3)  DEFAULT NULL,
+  `error`           VARCHAR(255) DEFAULT NULL,
+  `created`         DATETIME     NOT NULL,
+  `last_scan`       DATETIME     NOT NULL,
+  `last_change`     DATETIME     DEFAULT NULL,
+  `last_fingerprint` DATETIME    DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_tenant_host_port` (`t_id`, `hostname`, `port`),
+  KEY `idx_patch_status` (`t_id`, `patch_status`),
+  CONSTRAINT `phpversions_tenant` FOREIGN KEY (`t_id`) REFERENCES `tenants` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
