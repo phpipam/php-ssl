@@ -2647,9 +2647,6 @@ msgstr "IP predpona"
 msgid "IPv4 CIDR, minimum /16 (e.g. 10.0.0.0/24)"
 msgstr "IPv4 CIDR, najmanj /16 (npr. 10.0.0.0/24)"
 
-msgid "Ports"
-msgstr "Vrata"
-
 msgid "Comma-separated SSL ports to scan (e.g. 443,8443,8080)"
 msgstr "SSL vrata za pregled, ločena z vejico (npr. 443,8443,8080)"
 
@@ -2658,9 +2655,6 @@ msgstr "PTR iskanje"
 
 msgid "Resolve PTR records and add hostnames too"
 msgstr "Razreši PTR zapise in dodaj tudi gostitelja po imenu"
-
-msgid "Request scan"
-msgstr "Zahtevaj pregled"
 
 msgid "Scan requested. Results will be added to this zone after the next cron run."
 msgstr "Pregled zahtevan. Rezultati bodo dodani v cono po naslednjem zagonu crona."
@@ -2686,9 +2680,6 @@ msgstr "Najdenih"
 msgid "Added"
 msgstr "Dodanih"
 
-msgid "Notify email"
-msgstr "E-mail za obvestilo"
-
 msgid "Optional — leave blank to skip"
 msgstr "Neobvezno — pustite prazno za preskočitev"
 
@@ -2704,11 +2695,44 @@ msgstr "Odpri cono"
 msgid "Invalid notification email address."
 msgstr "Neveljaven e-poštni naslov za obvestilo."
 
-msgid "Port group"
-msgstr "Skupina vrat"
-
 msgid "Port group defines which SSL ports to discover and monitor."
 msgstr "Skupina vrat določa, katera SSL vrata naj se odkrijejo in nadzirajo."
 
 msgid "Invalid port group."
 msgstr "Neveljavna skupina vrat."
+
+msgid "Show PEM"
+msgstr "Prikaži PEM"
+
+msgid "Copied!"
+msgstr "Kopirano!"
+
+msgid "Certificate Signing Request"
+msgstr "Zahtevek za podpis certifikata"
+
+msgid "No PEM data available."
+msgstr "PEM podatki niso na voljo."
+
+msgid "CA not found."
+msgstr "CA ni najden."
+
+msgid "Certificate not found."
+msgstr "Certifikat ni najden."
+
+msgid "Invalid request."
+msgstr "Neveljavna zahteva."
+
+msgid "Insufficient permissions"
+msgstr "Nezadostne pravice"
+
+msgid "No certificate yet"
+msgstr "Certifikat še ni na voljo"
+
+msgid "Show"
+msgstr "Prikaži"
+
+msgid "Chain"
+msgstr "Veriga"
+
+msgid "No chain stored"
+msgstr "Veriga ni shranjena"

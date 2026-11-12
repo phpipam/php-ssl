@@ -1,4 +1,5 @@
 <?php
+require_once(dirname(__DIR__, 2) . '/common/download-dropdown.php');
 
 // Fetch pkey record for this certificate (may be null)
 $_pkey = $certificate->pkey_id
@@ -37,20 +38,21 @@ print "</tr>";
         <br>
         <div style="margin-bottom:6px; display:flex; flex-wrap:wrap; gap:4px;">
 
-            <a class="btn btn-outline text-info bg-info-lt btn-sm"
-               href="/route/modals/certificates/download.php?certificate=<?php print base64_encode($certificate->certificate); ?>"
-               data-bs-toggle="modal" data-bs-target="#modal1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
-                <?php print _("Download certificate"); ?>
-            </a>
+            <?php
+            $_cid      = (int)$certificate->id;
+            $_has_chain = !empty($certificate->chain);
+            $_no_chain = ['label' => _("Chain"), 'href' => '#', 'disabled' => true, 'muted' => true, 'title' => _("No chain stored")];
 
-            <?php if (!empty($certificate->chain)): ?>
-            <a class="btn btn-outline text-info bg-info-lt btn-sm"
-               href="/route/ajax/chain-download.php?cert_id=<?php print (int)$certificate->id; ?>">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
-                <?php print _("Download chain"); ?>
-            </a>
-            <?php endif; ?>
+            print download_dropdown([
+                ['label' => _("Certificate"), 'href' => "/route/modals/pem/view.php?cert_id={$_cid}", 'modal' => true],
+                $_has_chain ? ['label' => _("Chain"), 'href' => "/route/modals/pem/view.php?cert_id={$_cid}&part=chain", 'modal' => true] : $_no_chain,
+            ], _("Show"), 'show');
+
+            print download_dropdown([
+                ['label' => _("Certificate"), 'href' => "/route/modals/certificates/download.php?certificate=" . base64_encode($certificate->certificate), 'modal' => true],
+                $_has_chain ? ['label' => _("Chain"), 'href' => "/route/ajax/chain-download.php?cert_id={$_cid}"] : $_no_chain,
+            ]);
+            ?>
 
             <?php if ($_has_private_key): ?>
             <a class="btn btn-outline text-info bg-info-lt btn-sm <?php print $user->actions_disabled; ?>"

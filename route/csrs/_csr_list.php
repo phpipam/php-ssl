@@ -1,5 +1,6 @@
 <?php
 $User->validate_session();
+require_once(dirname(__DIR__) . '/common/download-dropdown.php');
 
 $all_tenants = $Tenants->get_all();
 
@@ -84,7 +85,6 @@ $page_desc    = $is_local
 $sign_icon  = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 12l2 2l4 -4" /><path d="M11 3a8 8 0 1 0 0 16a8 8 0 0 0 0 -16" /><path d="M21 21l-1.5 -1.5" /></svg>';
 $renew_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" /><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" /></svg>';
 $key_icon   = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M16.555 3.843l3.602 3.602a2.877 2.877 0 0 1 0 4.069l-2.643 2.643a2.877 2.877 0 0 1 -4.069 0l-.301 -.301l-6.558 6.558a2 2 0 0 1 -1.239 .578l-.175 .008h-1.172a1 1 0 0 1 -.993 -.883l-.007 -.117v-1.172a2 2 0 0 1 .467 -1.284l.119 -.13l.414 -.414h2v-2h2v-2l2.144 -2.144l-.301 -.301a2.877 2.877 0 0 1 0 -4.069l2.643 -2.643a2.877 2.877 0 0 1 4.069 0z" /><circle cx="15" cy="9" r="1" fill="currentColor" stroke="none" /></svg>';
-$dl_icon    = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>';
 $del_icon   = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>';
 $ul_icon    = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 9l5 -5l5 5" /><path d="M12 4l0 12" /></svg>';
 
@@ -177,19 +177,6 @@ if (empty($groups)) {
                          . " href='/route/modals/csrs/create.php?csr_id={$csr_id}'"
                          . " data-bs-toggle='modal' data-bs-target='#modal2'>"
                          . "{$renew_icon} " . _("Renew") . "</a>";
-                if (!empty($c->has_pkey)) {
-                    if ($user->admin == "1" || (int)$user->permission >= 3) {
-                        $actions .= "<a class='btn btn-sm bg-info-lt text-info me-1' href='/route/ajax/csr/download.php?csr_id={$csr_id}&type=pkey'>{$dl_icon} .key</a>";
-                    } else {
-                        $actions .= "<a class='btn btn-sm bg-danger-lt text-danger me-1 disabled' tabindex='-1' title='" . _("Insufficient permissions") . "'>{$dl_icon} .key</a>";
-                    }
-                }
-            }
-
-            $actions .= "<a class='btn btn-sm bg-info-lt text-info me-1' href='/route/ajax/csr/download.php?csr_id={$csr_id}&type=csr'>{$dl_icon} .csr</a>";
-
-            if (!empty($c->cert_id)) {
-                $actions .= "<a class='btn btn-sm bg-info-lt text-info me-1' href='/route/ajax/cert-download.php?cert_id={$c->cert_id}'>{$dl_icon} .crt</a>";
             }
 
             if ($c->status !== 'signed' && $c->status !== 'rejected') {
@@ -198,6 +185,21 @@ if (empty($groups)) {
                           . " data-bs-toggle='modal' data-bs-target='#modal1'>"
                           . "{$ul_icon} " . _(".crt") . "</a>";
             }
+
+            $dl_items = [
+                ['label' => _("Show PEM"), 'href' => "/route/modals/pem/view.php?csr_id={$csr_id}", 'modal' => true, 'icon' => 'show'],
+                ['divider' => true],
+                !empty($c->cert_id)
+                    ? ['label' => ".crt", 'href' => "/route/ajax/cert-download.php?cert_id={$c->cert_id}"]
+                    : ['label' => ".crt", 'href' => '#', 'disabled' => true, 'muted' => true, 'title' => _("No certificate yet")],
+                ['label' => ".csr", 'href' => "/route/ajax/csr/download.php?csr_id={$csr_id}&type=csr"],
+            ];
+            if (!empty($c->has_pkey)) {
+                $dl_items[] = ($user->admin == "1" || (int)$user->permission >= 3)
+                    ? ['label' => ".key", 'href' => "/route/ajax/csr/download.php?csr_id={$csr_id}&type=pkey"]
+                    : ['label' => ".key", 'href' => '#', 'disabled' => true, 'title' => _("Insufficient permissions")];
+            }
+            $actions .= download_dropdown($dl_items);
 
             $actions .= "<button type='button' class='btn btn-sm bg-danger-lt text-danger btn-csr-delete' data-csr-id='{$csr_id}' data-cn='{$cn_esc}'>{$del_icon}</button>";
 
