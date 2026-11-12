@@ -4,7 +4,7 @@
 ob_start();
 
 # check for config file
-if (!file_exists(dirname(__FILE__) . "/config.php") && $_SERVER['REQUEST_URI']!="/install/")
+if (!file_exists(__DIR__ . "/../config.php") && $_SERVER['REQUEST_URI']!="/install/")
 {
 	// html
 	$title   = "Config file missing";
@@ -18,7 +18,7 @@ if (!file_exists(dirname(__FILE__) . "/config.php") && $_SERVER['REQUEST_URI']!=
 else
 {
 	# autoload classes
-	require ("functions/autoload.php");
+	require (__DIR__ . "/../functions/autoload.php");
 }
 
 # no cache headers
@@ -77,47 +77,47 @@ if(!isset($_SESSION['theme'])) { $_SESSION['theme'] = "dark"; }
 	<?php
 	// 2FA pending — intercept every route until TOTP is verified
 	if (isset($_SESSION['2fa_pending']) && empty($_SESSION['username'])) {
-		include ("route/login/2fa_challenge.php");
+		include (__DIR__ . "/../route/login/2fa_challenge.php");
 	}
 	// login and logout
 	elseif($_params['tenant']=="login" || $_params['tenant']=="logout") {
-		include ("route/login/index.php");
+		include (__DIR__ . "/../route/login/index.php");
 	}
 	// public testSSL report by hash — no auth required
 	elseif ($_params['tenant']=="report") {
-		include ("route/report/index.php");
+		include (__DIR__ . "/../route/report/index.php");
 	}
 	// generic errors
 	elseif ($_params['tenant']=="error" && $_params['route']=="generic") {
-		include ("route/error/generic.php");
+		include (__DIR__ . "/../route/error/generic.php");
 	}
 	// installation
 	elseif ($_params['tenant']=="install") {
-		include ("route/install/index.php");
+		include (__DIR__ . "/../route/install/index.php");
 	}
 	// disabled account — render without header/sidebar
 	elseif (isset($user) && !empty($user->disabled)) {
-		include ("route/disabled/index.php");
+		include (__DIR__ . "/../route/disabled/index.php");
 	}
 	// force password change — render without header/sidebar
 	elseif (isset($user) && !empty($user->changePass)) {
-		include ("route/user/changepass/index.php");
+		include (__DIR__ . "/../route/user/changepass/index.php");
 	}
 	// default
 	else {
 		// header
-		include ("route/common/header.php");
+		include (__DIR__ . "/../route/common/header.php");
 	?>
 
 	<!-- content -->
 	<div class="container-fluid">
 	  <div class="row">
 	  	<aside class="navbar navbar-vertical navbar-expand-lg">
-	    	<?php include ("route/common/left-menu.php"); ?>
+	    	<?php include (__DIR__ . "/../route/common/left-menu.php"); ?>
 		</aside>
 	    <div class='page-wrapper'>
-	    	<?php include ("route/common/checks.php"); ?>
-	    	<?php include ("route/content.php"); ?>
+	    	<?php include (__DIR__ . "/../route/common/checks.php"); ?>
+	    	<?php include (__DIR__ . "/../route/content.php"); ?>
 	    </main>
 	  </div>
 	</div>

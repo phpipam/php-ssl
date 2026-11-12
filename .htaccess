@@ -1,14 +1,13 @@
+# Fallback for Apache hosts whose DocumentRoot still points at the application
+# root instead of public/. Every request is mapped into public/, so nothing
+# outside it (config.php, db/, functions/, route/ …) is served directly.
+# Preferred setup: DocumentRoot /path/to/php-ssl/public (then this file is unused).
+
 <IfModule mod_rewrite.c>
-
-# Enable rewrite engine
 RewriteEngine on
-# Passthroughs
-RewriteRule ^(css|js|route|test)/.*$ - [L,QSA]
+RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
 
-# Rewrites
-RewriteRule ^index\.php$ - [L]
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^ index.php [L]
-
+<IfModule !mod_rewrite.c>
+Require all denied
 </IfModule>

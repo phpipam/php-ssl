@@ -1,0 +1,19 @@
+<IfModule mod_rewrite.c>
+
+# Enable rewrite engine
+RewriteEngine on
+
+# Static assets
+RewriteRule ^(css|js)/ - [L]
+
+# Endpoints under /route/ (route/ lives outside the web root) → dispatcher
+RewriteRule ^route/ route.php [L,QSA]
+
+# Front controllers
+RewriteRule ^(index|route)\.php$ - [L]
+
+# Everything else that is not a real file → index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [L]
+
+</IfModule>

@@ -1,0 +1,39 @@
+<?php
+
+/**
+ *
+ * Cronjobs to be executed
+ *
+ * Manual trigger:
+ * 	php cron/cron.php <tenant_id> <script>
+ * 	ex: php cron/cron.php 2 update_certificates
+ *
+ * Scripts:
+ * 	- expired_certificates
+ *  - update_certificates
+ *  - axfr_transfer
+ *  - remove_orphaned
+ *
+ */
+
+# autoload classes
+require (__DIR__ . "/../functions/autoload.php");
+
+# script can only be run from cli
+if(php_sapi_name()!="cli") {
+	$Cron->errors[] = "This script can only be run from cli!";
+	$Cron->result_die ();
+}
+# fetch all cronjobs
+$Cron->fetch_cronjobs ();
+
+# set date
+$date = date("Y-m-d H:i:s");
+//$date = ("2026-02-11 10:10:00");
+
+# check agent status
+$Agent = new Agent ();
+$Agent->test_agents ($Database, "google.com", 443, $date);
+
+# exceute them
+$Cron->execute_cronjobs ($date, $argv);

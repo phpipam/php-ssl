@@ -31,16 +31,6 @@ $installed = false;   // set true after running the web installer
 $debugging = false;   // set true to display PHP errors on-screen
 ```
 
-### Base path
-
-Only needed when the application is **not** at the web root:
-
-```php
-define('BASE', '/php-ssl');   // the URL prefix, no trailing slash
-```
-
-Also update `RewriteBase` in `.htaccess` to match. Note: CSS/JS paths are hardcoded as absolute paths (`/css/`, `/js/`), so the web server must be configured to serve them regardless of where the app lives.
-
 ### Certificate expiry thresholds
 
 ```php

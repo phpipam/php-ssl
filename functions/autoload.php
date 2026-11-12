@@ -115,29 +115,29 @@ include (dirname(__FILE__)."/../config.php");
 include (dirname(__FILE__)."/../version.php");
 
 # include classes
-include ("classes/class.PDO.php");
-include ("classes/class.Result.php");
-include ("classes/class.Validate.php");
-include ("classes/class.Common.php");
-include ("classes/class.URL.php");
-include ("classes/class.Config.php");
-include ("classes/class.SSL.php");
-include ("classes/class.Cron.php");
-include ("classes/class.Tenants.php");
-include ("classes/class.Zones.php");
-include ("classes/class.Certificates.php");
-include ("classes/class.User.php");
-include ("classes/class.Modal.php");
-include ("classes/class.Mail.php");
-include ("classes/class.Thread.php");
-include ("classes/class.AXFR.php");
-include ("classes/class.Agent.php");
-include ("classes/class.Log.php");
-include ("classes/class.ADsync.php");
-include ("classes/class.Migration.php");
-include ("classes/class.WebAuthn.php");
-include ("classes/class.testssl.php");
-include ("classes/class.Nmap.php");
+include (__DIR__ . "/classes/class.PDO.php");
+include (__DIR__ . "/classes/class.Result.php");
+include (__DIR__ . "/classes/class.Validate.php");
+include (__DIR__ . "/classes/class.Common.php");
+include (__DIR__ . "/classes/class.URL.php");
+include (__DIR__ . "/classes/class.Config.php");
+include (__DIR__ . "/classes/class.SSL.php");
+include (__DIR__ . "/classes/class.Cron.php");
+include (__DIR__ . "/classes/class.Tenants.php");
+include (__DIR__ . "/classes/class.Zones.php");
+include (__DIR__ . "/classes/class.Certificates.php");
+include (__DIR__ . "/classes/class.User.php");
+include (__DIR__ . "/classes/class.Modal.php");
+include (__DIR__ . "/classes/class.Mail.php");
+include (__DIR__ . "/classes/class.Thread.php");
+include (__DIR__ . "/classes/class.AXFR.php");
+include (__DIR__ . "/classes/class.Agent.php");
+include (__DIR__ . "/classes/class.Log.php");
+include (__DIR__ . "/classes/class.ADsync.php");
+include (__DIR__ . "/classes/class.Migration.php");
+include (__DIR__ . "/classes/class.WebAuthn.php");
+include (__DIR__ . "/classes/class.testssl.php");
+include (__DIR__ . "/classes/class.Nmap.php");
 
 # testssl submodule availability flag
 $testssl_available = file_exists(dirname(__FILE__)."/testSSL/testssl.sh");
@@ -208,7 +208,7 @@ else
 		$_params = $URL->get_params ();
 
 		# menu
-		include ("config.menu.php");
+		include (__DIR__ . "/config.menu.php");
 	}
 	catch (Exception $e) {
 		// SQL error ?

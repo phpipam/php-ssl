@@ -57,12 +57,18 @@ GRANT ALL ON `php-ssl`.* TO 'phpssladmin'@'localhost';
 
 ---
 
-## 4. Run the web installer
+## 4. Configure your web server
+
+Point the document root at the `public/` directory of the checkout (e.g. `/var/www/html/php-ssl/public`) and set up the rewrites. See [Web Server Configuration](../operations/apache-nginx.md).
+
+---
+
+## 5. Run the web installer
 
 Open the installer in your browser:
 
 ```
-http://<your-server>/php-ssl/install/
+https://<your-server>/install/
 ```
 
 The installer will:
@@ -80,7 +86,7 @@ $installed = true;
 
 ---
 
-## 5. Seed the cron schedule (if not done by installer)
+## 6. Seed the cron schedule (if not done by installer)
 
 The installer seeds default cron schedules for tenant 1. If you need to re-add them manually:
 
@@ -96,21 +102,15 @@ VALUES
 
 ---
 
-## 6. Configure the system crontab
+## 7. Configure the system crontab
 
 Add a single crontab entry to drive all scheduled jobs:
 
 ```cron
-*/5 * * * * /usr/bin/php /var/www/html/php-ssl/cron.php
+*/5 * * * * /usr/bin/php /var/www/html/php-ssl/cron/cron.php
 ```
 
 This runs every 5 minutes. The application checks its internal per-tenant schedules (stored in the `cron` DB table) to decide which scripts to actually execute. See [Crontab Setup](../operations/crontab-setup.md) for details.
-
----
-
-## 7. Configure your web server
-
-See [Web Server Configuration](../operations/apache-nginx.md).
 
 ---
 

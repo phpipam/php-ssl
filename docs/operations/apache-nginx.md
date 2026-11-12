@@ -1,23 +1,43 @@
 # Web Server Configuration
 
-php-ssl is a standard PHP application with no build step. Deploy it to a directory served by Apache or nginx and configure URL rewriting so all requests pass through `index.php`.
+php-ssl is a standard PHP application with no build step. **The web server's document root must be the `public/` directory** of the checkout. Everything else — `config.php`, `functions/`, `route/`, `db/` (including backups in `db/bkp/`), `cron/` — stays outside the web root and cannot be requested by URL.
+
+```
+/var/www/html/php-ssl/
+├── public/          ← document root
+│   ├── index.php    ← front controller for all pages
+│   ├── route.php    ← dispatcher for /route/ajax/*, /route/modals/*, /route/login/login_check.php
+│   ├── .htaccess    ← Apache rewrite rules
+│   ├── css/  js/  favicon.*
+├── cron/cron.php    ← cron entry point (CLI only)
+├── route/  functions/  db/  config.php  …   ← not web-accessible
+```
+
+Two rewrites are required:
+
+| Request | Handled by |
+|---|---|
+| `/route/…` (AJAX endpoints, modals, login check) | `public/route.php` — only `route/ajax/*`, `route/modals/*` and `route/login/login_check.php` are executed; anything else returns 404 |
+| anything that is not an existing file in `public/` | `public/index.php` |
+
+The application must be served at the **root of a (virtual) host**. Running under a sub-path such as `https://example.com/php-ssl/` is not supported, because asset and endpoint URLs (`/css/`, `/js/`, `/route/…`) are absolute.
 
 ---
 
 ## Apache
 
-### Virtual host example (app at web root)
+`mod_rewrite` is required. The rewrite rules ship in `public/.htaccess`.
 
 ```apache
 <VirtualHost *:443>
     ServerName php-ssl.example.com
-    DocumentRoot /var/www/html/php-ssl
+    DocumentRoot /var/www/html/php-ssl/public
 
     SSLEngine on
     SSLCertificateFile    /etc/ssl/certs/php-ssl.crt
     SSLCertificateKeyFile /etc/ssl/private/php-ssl.key
 
-    <Directory /var/www/html/php-ssl>
+    <Directory /var/www/html/php-ssl/public>
         Options -Indexes +FollowSymLinks
         AllowOverride All
         Require all granted
@@ -25,36 +45,13 @@ php-ssl is a standard PHP application with no build step. Deploy it to a directo
 </VirtualHost>
 ```
 
-The repository includes an `.htaccess` file that enables `mod_rewrite` and routes all requests to `index.php`. Ensure `AllowOverride All` is set, or copy the rewrite rules directly into your virtual host config.
+If you cannot use `AllowOverride`, copy the rules from `public/.htaccess` into the `<Directory>` block.
 
-### Running at a sub-path
-
-If the app is **not** at the web root (e.g. `https://example.com/php-ssl/`):
-
-1. Set the `BASE` constant in `config.php`:
-
-    ```php
-    define('BASE', '/php-ssl');
-    ```
-
-2. Update `RewriteBase` in `.htaccess`:
-
-    ```apache
-    RewriteBase /php-ssl
-    ```
-
-3. Configure the web server to serve the CSS/JS assets from their absolute paths. The templates hardcode `/css/` and `/js/` (not relative to `BASE`), so the server must map those paths:
-
-    ```apache
-    Alias /css /var/www/html/php-ssl/css
-    Alias /js  /var/www/html/php-ssl/js
-    ```
+**Fallback:** if the document root cannot be changed (e.g. shared hosting), the `.htaccess` in the application root maps every request into `public/`, so files outside it are still not served. Pointing `DocumentRoot` at `public/` is preferred.
 
 ---
 
 ## nginx
-
-### Server block example (app at web root)
 
 ```nginx
 server {
@@ -64,69 +61,42 @@ server {
     ssl_certificate     /etc/ssl/certs/php-ssl.crt;
     ssl_certificate_key /etc/ssl/private/php-ssl.key;
 
-    root  /var/www/html/php-ssl;
+    root  /var/www/html/php-ssl/public;
     index index.php;
 
-    location / {
-        try_files $uri $uri/ /index.php?$query_string;
+    # AJAX / modal endpoints — route/ lives outside the web root
+    location ^~ /route/ {
+        rewrite ^ /route.php last;
     }
 
-    location ~ \.php$ {
+    location / {
+        try_files $uri /index.php$is_args$args;
+    }
+
+    # Only the two front controllers are executed
+    location ~ ^/(index|route)\.php$ {
         fastcgi_pass  unix:/run/php/php8.3-fpm.sock;
-        fastcgi_index index.php;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         include       fastcgi_params;
     }
+    location ~ \.php$ {
+        return 404;
+    }
 
-    # Deny direct access to sensitive files
     location ~ /\.(ht|git) {
         deny all;
     }
 }
 ```
 
-### Running at a sub-path with nginx
-
-```nginx
-location /php-ssl/ {
-    alias /var/www/html/php-ssl/;
-    try_files $uri $uri/ /php-ssl/index.php?$query_string;
-
-    location ~ \.php$ {
-        fastcgi_pass  unix:/run/php/php8.3-fpm.sock;
-        fastcgi_param SCRIPT_FILENAME /var/www/html/php-ssl$fastcgi_script_name;
-        include       fastcgi_params;
-    }
-}
-
-# Serve hardcoded absolute asset paths
-location /css/ { alias /var/www/html/php-ssl/css/; }
-location /js/  { alias /var/www/html/php-ssl/js/; }
-```
-
-Set `define('BASE', '/php-ssl');` in `config.php`.
+`public/route.php` reads the original path from `REQUEST_URI`, which the standard `fastcgi_params` file passes as `$request_uri` (unchanged by the internal rewrite).
 
 ---
 
 ## Security recommendations
 
 - Serve over HTTPS only; redirect HTTP to HTTPS.
-- Deny direct browser access to `config.php`, `functions/`, `db/`, and `cron.php`:
-
-    **Apache:**
-    ```apache
-    <FilesMatch "^(config\.php|cron\.php)$">
-        Require all denied
-    </FilesMatch>
-    <DirectoryMatch "/(functions|db)/">
-        Require all denied
-    </DirectoryMatch>
-    ```
-
-    **nginx:**
-    ```nginx
-    location ~ ^/(config\.php|cron\.php)$ { deny all; }
-    location ~ ^/(functions|db)/          { deny all; }
-    ```
-
+- Never point the document root at the application root — that would expose `config.php`, database backups in `db/bkp/` and the `.git` directory.
+- Do not add PHP files to `public/` other than `index.php` and `route.php`. New endpoints belong in `route/ajax/` or `route/modals/`.
+- If PHP `open_basedir` is set, it must include the application directory (the parent of `public/`), not just `public/`.
 - The `install/` route is disabled by setting `$installed = true` in `config.php`. Consider also blocking it at the web server level after installation.

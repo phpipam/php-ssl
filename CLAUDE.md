@@ -13,8 +13,10 @@ Key features: certificate monitoring, CA management, CSR generation/signing, tes
 **Configuration:**
 ```bash
 cp config.dist.php config.php
-# Edit config.php with DB credentials, mail settings, BASE path
+# Edit config.php with DB credentials and mail settings
 ```
+
+**Web server:** the document root must be `public/` (served at the root of a vhost). See `docs/operations/apache-nginx.md`.
 
 **Database:**
 ```bash
@@ -29,27 +31,47 @@ git submodule update --init --recursive
 
 **Cron:**
 ```
-*/5 * * * * /usr/bin/php /var/www/html/php-ssl/cron.php
+*/5 * * * * /usr/bin/php /var/www/html/php-ssl/cron/cron.php
 ```
 
 **Run cron script manually:**
 ```bash
-php cron.php <tenant_id> <script_name>
-# e.g.: php cron.php 1 update_certificates
+php cron/cron.php <tenant_id> <script_name>
+# e.g.: php cron/cron.php 1 update_certificates
 ```
+
+The root-level `cron.php` is a deprecated shim that only requires `cron/cron.php` (kept for existing crontabs).
 
 **PHP required:** 8.0 or later (server currently runs PHP 8.3)
 
 **PHP extensions required:** `curl`, `gettext`, `openssl`, `pcntl`, `PDO`, `pdo_mysql`, `session`
 
-There is no build system — this is a traditional PHP app deployed directly to a web root.
+There is no build system — this is a traditional PHP app deployed directly; only `public/` is the web root.
 
 ## Architecture
+
+### Directory Layout
+
+```
+public/       ← web document root (only web-accessible directory)
+  index.php     front controller for pages
+  route.php     dispatcher for /route/ajax/*, /route/modals/*, /route/login/login_check.php
+  .htaccess     rewrite rules (/route/* → route.php, everything else → index.php)
+  css/ js/ favicon*
+cron/cron.php ← cron entry point (CLI only)
+route/        ← page templates, AJAX endpoints, modals (NOT web-accessible)
+functions/    ← autoload, classes, cron job scripts, locale, submodules
+db/           ← SCHEMA.sql, migrations, backups (db/bkp)
+phpversions/  ← CLI tool
+config.php, version.php
+```
+
+Code under `public/` must reference the rest of the app via `__DIR__ . '/../...'`. Never add PHP files to `public/` other than the two front controllers.
 
 ### Request Flow
 
 ```
-HTTP Request → index.php
+HTTP Request → public/index.php
   → functions/autoload.php   (instantiates all classes)
   → Session/user validation
   → route/content.php        (URL routing)
@@ -57,7 +79,14 @@ HTTP Request → index.php
   → HTML response using Tabler UI
 ```
 
-Special top-level slugs handled before tenant routing in `index.php`: `login`, `install`, `report` (public testSSL report at `/report/<hash>/`).
+```
+HTTP Request /route/(ajax|modals)/… → public/route.php
+  → allowlist + realpath check (anything else → 404)
+  → chdir() to the endpoint's directory, then require it
+  → endpoint requires functions/autoload.php itself (relative path, e.g. '../../functions/autoload.php')
+```
+
+Special top-level slugs handled before tenant routing in `public/index.php`: `login`, `install`, `report` (public testSSL report at `/report/<hash>/`).
 
 ### URL Structure
 
@@ -97,11 +126,11 @@ Each top-level feature has a directory matching its name.
 
 **Special routes (no auth):** `login`, `install`, `report` (public testSSL report — standalone HTML page at `/report/<hash>/`)
 
-AJAX endpoints (return JSON via `$Result`) live under `route/ajax/`. Some have subdirectories: `route/ajax/ca/`, `route/ajax/csr/`, `route/ajax/passkey/`. Modal dialogs (return HTML fragments) live under `route/modals/{feature}/`. The standard modal pattern is:
+AJAX endpoints (return JSON via `$Result`) live under `route/ajax/`. Some have subdirectories: `route/ajax/ca/`, `route/ajax/csr/`, `route/ajax/passkey/`. Modal dialogs (return HTML fragments) live under `route/modals/{feature}/`. These are the **only** files reachable by URL (via `public/route.php`), together with `route/login/login_check.php`; an endpoint placed anywhere else under `route/` will 404. File names must match `[a-z0-9/_-]+\.php`. The standard modal pattern is:
 - `route/modals/{feature}/edit.php` — renders the form HTML
 - `route/modals/{feature}/edit-submit.php` — processes POST and returns JSON result
 
-Modals are loaded asynchronously: `data-bs-toggle="modal"` with an `href` triggers `$('.modal-content').load(href)` in `js/magic.js`.
+Modals are loaded asynchronously: `data-bs-toggle="modal"` with an `href` triggers `$('.modal-content').load(href)` in `public/js/magic.js`.
 
 **Shared page components** live in `route/common/`:
 - `checks.php` — system health alerts shown on every page (unapplied migrations, missing git submodules)
@@ -115,10 +144,10 @@ Modals are loaded asynchronously: `data-bs-toggle="modal"` with an `href` trigge
 - `axfr_transfer.php` — performs DNS AXFR zone transfers, auto-adds/removes hosts
 - `expired_certificates.php` — identifies expiring certs, sends notifications
 - `remove_orphaned.php` — cleans up orphaned certificate records
-- `testssl_scan.php` — picks up `Requested` testssl scans and runs testssl.sh; **always executed on every cron.php run for all tenants** (not scheduled via `cron` DB table)
+- `testssl_scan.php` — picks up `Requested` testssl scans and runs testssl.sh; **always executed on every `cron/cron.php` run for all tenants** (not scheduled via `cron` DB table)
 - `backup.php` — backup operations
 
-Cron schedules are stored per-tenant in the `cron` DB table (not just the system crontab). The system crontab only triggers `cron.php` every 5 minutes; `Cron` class checks DB schedules to decide which scripts to run. Exception: `testssl_scan` always runs — it is injected directly in `Cron::execute_cronjobs()` outside the schedule loop.
+Cron schedules are stored per-tenant in the `cron` DB table (not just the system crontab). The system crontab only triggers `cron/cron.php` every 5 minutes; `Cron` class checks DB schedules to decide which scripts to run. Exception: `testssl_scan` always runs — it is injected directly in `Cron::execute_cronjobs()` outside the schedule loop.
 
 ### Multi-Tenancy
 
@@ -185,9 +214,9 @@ All domain classes inherit shared utilities from `Common` (permalink generation,
 
 ### Frontend
 
-Tabler 1.7.1 (Bootstrap-based admin UI) + jQuery 3.6.0 + Bootstrap-table 1.26.0. All JS/CSS libraries are bundled locally in `js/` and `css/`. Custom JS is in `js/magic.js`. Dark/light theme toggle is built in (stored in `$_SESSION['theme']`).
+Tabler 1.7.1 (Bootstrap-based admin UI) + jQuery 3.6.0 + Bootstrap-table 1.26.0. All JS/CSS libraries are bundled locally in `public/js/` and `public/css/`. Custom JS is in `public/js/magic.js`. Dark/light theme toggle is built in (stored in `$_SESSION['theme']`).
 
-**CSS/JS paths** are hardcoded as absolute paths (`/css/`, `/js/`) in `index.php` — they are not relative to `BASE`. If the app is not at the web root, the web server must be configured to serve these paths from the expected absolute locations.
+**CSS/JS paths** and all `/route/...` URLs are hardcoded as absolute paths (`/css/`, `/js/`) — the app must be served at the root of a host (no subdirectory installs).
 
 **Two modal sizes** are available globally:
 - `#modal1` — standard width (default when no `data-bs-target` is set)
@@ -254,7 +283,6 @@ Key settings beyond DB credentials:
 - `$expired_days` — days before expiry to warn (default 20)
 - `$expired_after_days` — days post-expiry to still report (default 7)
 - `$log_object` — whether to store full object JSON in `logs.json_object_old/new` (default `true`; required for private zone log filtering of deleted records)
-- `BASE` constant — set if app is not at web root (also update `RewriteBase` in `.htaccess`)
 - `$mail_settings` / `$mail_sender_settings` — SMTP configuration
 
 ## Coding Conventions

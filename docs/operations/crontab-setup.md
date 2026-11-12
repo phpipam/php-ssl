@@ -2,8 +2,8 @@
 
 php-ssl uses a two-level scheduling system:
 
-1. **System crontab** — triggers `cron.php` every 5 minutes
-2. **In-app schedules** — per-tenant cron schedules stored in the `cron` DB table, checked by `cron.php` on each run
+1. **System crontab** — triggers `cron/cron.php` every 5 minutes
+2. **In-app schedules** — per-tenant cron schedules stored in the `cron` DB table, checked by `cron/cron.php` on each run
 
 ---
 
@@ -12,7 +12,7 @@ php-ssl uses a two-level scheduling system:
 Add one entry to the system crontab (as the web server user or a dedicated service account):
 
 ```cron
-*/5 * * * * /usr/bin/php /var/www/html/php-ssl/cron.php
+*/5 * * * * /usr/bin/php /var/www/html/php-ssl/cron/cron.php
 ```
 
 This is the only system-level entry needed. All scheduling granularity beyond "every 5 minutes" is handled by the in-app schedules.
@@ -33,7 +33,7 @@ Default schedules seeded at install time for tenant 1:
 | `axfr_transfer` | Daily at 03:00 | Perform DNS zone transfers (AXFR) |
 | `backup` | Daily at 01:15 | Create a database backup |
 
-**Note:** `testssl_scan` is not in this table. It runs on every `cron.php` invocation regardless of schedule, picks up any scans with status `Requested`, and executes testssl.sh.
+**Note:** `testssl_scan` is not in this table. It runs on every `cron/cron.php` invocation regardless of schedule, picks up any scans with status `Requested`, and executes testssl.sh.
 
 ### Force flag
 
@@ -46,17 +46,17 @@ Each schedule row has a `force` column. Setting it to `1` causes the script to r
 Run any cron script directly from the command line:
 
 ```bash
-php cron.php <tenant_id> <script_name>
+php cron/cron.php <tenant_id> <script_name>
 ```
 
 Examples:
 
 ```bash
-php cron.php 1 update_certificates
-php cron.php 1 expired_certificates
-php cron.php 1 axfr_transfer
-php cron.php 1 remove_orphaned
-php cron.php 1 backup
+php cron/cron.php 1 update_certificates
+php cron/cron.php 1 expired_certificates
+php cron/cron.php 1 axfr_transfer
+php cron/cron.php 1 remove_orphaned
+php cron/cron.php 1 backup
 ```
 
 All cron scripts are CLI-only and will exit with an error if called from a web request.

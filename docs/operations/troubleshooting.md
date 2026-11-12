@@ -81,7 +81,7 @@ Common causes:
 
 1. Confirm the system crontab entry exists: `crontab -l`
 2. Check the cron log: `grep CRON /var/log/syslog`
-3. Run manually to see output: `php /var/www/html/php-ssl/cron.php`
+3. Run manually to see output: `php /var/www/html/php-ssl/cron/cron.php`
 4. Confirm the in-app schedule exists under **Scanning → Cron** for your tenant
 
 ---
@@ -113,7 +113,7 @@ mysql -u phpssladmin -p php-ssl -e "DESCRIBE <table>;"
 ### Scans stay in "Requested" state
 
 - Confirm `functions/testSSL/testssl.sh` exists (submodule initialised)
-- Confirm `cron.php` is running — testssl scans are picked up on every cron run
+- Confirm `cron/cron.php` is running — testssl scans are picked up on every cron run
 - Check for errors in the scan record via the testssl detail page
 
 ### testssl.sh fails on FreeBSD
@@ -134,7 +134,7 @@ Add to `/etc/fstab` and run `mount /dev/fd`.
 
 1. Verify SMTP settings in `config.php` (or the tenant's config overrides)
 2. Check that the tenant has at least one recipient configured under **Tenants → Edit**
-3. Run `update_certificates` manually and check for mail-related PHP errors: `php cron.php 1 update_certificates`
+3. Run `update_certificates` manually and check for mail-related PHP errors: `php cron/cron.php 1 update_certificates`
 4. Confirm the host is not muted (mute icon in the zone host list)
 
 ---

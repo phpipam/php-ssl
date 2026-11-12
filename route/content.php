@@ -12,7 +12,7 @@ $User->validate_session ();
 # check
 if(!array_key_exists($_params['route'], $url_items)) {
 	$Common->save_error("Invalid route");
-	include ("error/500.php");
+	include (__DIR__ . "/error/500.php");
 	die();
 }
 
@@ -22,7 +22,7 @@ if(file_exists(dirname(__FILE__)."/".$_params['route']."/index.php")) {
 	print "<nav class='container-fluid pt-2 pb-0'>";
 	$Common->print_breadcrumbs();
 	print "</nav>";
-	include ($_params['route']."/index.php");
+	include (__DIR__ . "/" . $_params['route'] . "/index.php");
 	// set url
 	$_SESSION['url'] = "/".$_params['tenant']."/".$_params['route']."/";
 	// app ?
@@ -34,6 +34,6 @@ if(file_exists(dirname(__FILE__)."/".$_params['route']."/index.php")) {
 }
 else {
 	$Common->save_error("Invalid route");
-	include ("error/404.php");
+	include (__DIR__ . "/error/404.php");
 	die();
 }

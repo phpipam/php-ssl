@@ -67,12 +67,16 @@ git clone --recursive https://github.com/phpipam/php-ssl.git php-ssl
 Copy and edit the config file:
 ```
 cp config.dist.php config.php
-# Edit config.php: set DB credentials, mail settings, and BASE path
+# Edit config.php: set DB credentials and mail settings
 ```
+
+Point the web server's **document root at the `public/` directory** (e.g. `/var/www/html/php-ssl/public`)
+and configure the rewrites — see [Web Server Configuration](docs/operations/apache-nginx.md). Only `public/`
+is web-accessible; application code, configuration and database backups stay outside the web root.
 
 Open the web installer in your browser and follow the steps:
 ```
-http://<your-server>/php-ssl/install/
+https://<your-server>/install/
 ```
 
 The installer will create the database, application user, and import the schema automatically.
@@ -83,17 +87,20 @@ Once installation is complete, set `$installed = true` in `config.php` to disabl
 Add the following to your crontab for automated certificate scanning and notifications:
 ```cron
 # php-ssl cronjobs
-*/5 * * * * /usr/bin/php /var/www/html/php-ssl/cron.php
+*/5 * * * * /usr/bin/php /var/www/html/php-ssl/cron/cron.php
 ```
 
+> Upgrading an existing installation? The cron entry point moved from `cron.php` to `cron/cron.php` and the
+> web root moved to `public/` — see [Upgrading](docs/getting-started/upgrading.md).
+
 Cron job schedules are managed per-tenant in the application UI (Scanning → Cron). The system
-crontab entry only triggers `cron.php` every 5 minutes; the application checks its internal
+crontab entry only triggers `cron/cron.php` every 5 minutes; the application checks its internal
 schedules to decide which scripts to run.
 
 To run a cron script manually:
 ```
-php cron.php <tenant_id> <script_name>
-# e.g.: php cron.php 1 update_certificates
+php cron/cron.php <tenant_id> <script_name>
+# e.g.: php cron/cron.php 1 update_certificates
 ```
 
 Available cron scripts: `update_certificates`, `axfr_transfer`, `expired_certificates`,

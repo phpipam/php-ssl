@@ -1,12 +1,30 @@
 # Architecture Overview
 
+## Directory layout
+
+```
+public/              ← web document root (the only web-accessible directory)
+├── index.php        ← front controller for pages
+├── route.php        ← dispatcher for /route/ajax/*, /route/modals/*, /route/login/login_check.php
+├── .htaccess        ← Apache rewrites (/route/* → route.php, everything else → index.php)
+└── css/  js/  favicon.*
+cron/cron.php        ← cron entry point (CLI only)
+route/               ← page templates, AJAX endpoints, modals (not web-accessible)
+functions/           ← autoload, classes, cron job scripts, locale, submodules
+db/                  ← SCHEMA.sql, migrations, backups
+phpversions/         ← CLI tool
+config.php, version.php
+```
+
+Code in `public/` reaches the rest of the application via `__DIR__ . '/../…'`. Only `index.php` and `route.php` belong in `public/`.
+
 ## Request flow
 
 ```
 Browser request
     │
     ▼
-index.php
+public/index.php
     ├── Loads config.php
     ├── require functions/autoload.php
     │       ├── Instantiates all classes (Database_PDO, URL, User, SSL, …)
@@ -24,7 +42,23 @@ index.php
                     └── route/{route}/index.php
 ```
 
-The HTML shell (head, nav, sidebar) is rendered in `index.php`. The `<main>` content area is populated by the included route file. Modal dialogs and AJAX data endpoints are loaded asynchronously by the browser.
+The HTML shell (head, nav, sidebar) is rendered in `public/index.php`. The `<main>` content area is populated by the included route file. Modal dialogs and AJAX data endpoints are loaded asynchronously by the browser.
+
+### Endpoint requests (`/route/…`)
+
+```
+Browser request /route/ajax/… | /route/modals/… | /route/login/login_check.php
+    │
+    ▼
+public/route.php
+    ├── Allowlist check: (ajax|modals)/[a-z0-9/_-]+\.php or login/login_check.php
+    ├── realpath() must stay inside route/  — otherwise 404
+    ├── chdir() to the endpoint's directory
+    └── require the endpoint
+            └── endpoint requires functions/autoload.php itself (relative path)
+```
+
+Files elsewhere under `route/` (page templates, shared includes) cannot be requested directly — they return 404.
 
 ---
 
@@ -108,7 +142,7 @@ route/
 
 ### Modal pattern
 
-Modals are loaded asynchronously. A link with `data-bs-toggle="modal"` and an `href` triggers `$('.modal-content').load(href)` in `js/magic.js`. Two modal sizes are available:
+Modals are loaded asynchronously. A link with `data-bs-toggle="modal"` and an `href` triggers `$('.modal-content').load(href)` in `public/js/magic.js`. Two modal sizes are available:
 
 - `#modal1` — standard width (default)
 - `#modal2` — extra-large (`modal-xl`); trigger with `data-bs-target="#modal2"`
@@ -125,6 +159,6 @@ Modals are loaded asynchronously. A link with `data-bs-toggle="modal"` and an `h
 | Bootstrap Table | 1.26.0 | Server-side paginated tables |
 | Tippy.js | — | Tooltips |
 
-All libraries are bundled locally in `js/` and `css/` — no CDN dependency.
+All libraries are bundled locally in `public/js/` and `public/css/` — no CDN dependency.
 
-Custom JavaScript lives in `js/magic.js`. The dark/light theme toggle is stored in `$_SESSION['theme']`.
+Custom JavaScript lives in `public/js/magic.js`. The dark/light theme toggle is stored in `$_SESSION['theme']`.

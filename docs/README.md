@@ -17,7 +17,7 @@ This directory contains the full documentation for **php-ssl**, a PHP 8.0+ SSL/T
 
 ### Operations
 - [Crontab Setup](operations/crontab-setup.md) — System crontab, in-app scheduling, manual runs
-- [Web Server](operations/apache-nginx.md) — Apache and nginx configuration, BASE path, rewrites
+- [Web Server](operations/apache-nginx.md) — Apache and nginx configuration, `public/` document root, rewrites
 - [Notifications](operations/notifications.md) — How recipient lists are built, delivery matrix, audit log
 - [Troubleshooting](operations/troubleshooting.md) — Common problems and solutions
 

@@ -4,6 +4,16 @@ php-ssl uses numbered SQL migration files to evolve the database schema incremen
 
 ---
 
+## Upgrading to the `public/` directory layout
+
+Web-facing files moved into `public/` and the cron entry point moved to `cron/cron.php`. When you pull this change on an existing installation:
+
+1. **Change the web server document root** to `<app>/public` and add the `/route/` rewrite — see [Web Server Configuration](../operations/apache-nginx.md). nginx installations stop working until this is done. Apache installations keep working through the fallback `.htaccess` in the application root, but should still be switched.
+2. **Update the crontab** to `/usr/bin/php <app>/cron/cron.php`. The old `cron.php` in the application root is a deprecated shim that forwards to the new location, so existing crontabs keep working in the meantime.
+3. If PHP `open_basedir` is set, make sure it covers the application directory, not just `public/`.
+
+---
+
 ## Migration files
 
 Migrations live in `db/migrations/` and are named `NNNN_description.sql`, for example:
@@ -81,4 +91,4 @@ git submodule update --recursive
 php db/migrate.php
 ```
 
-If `cron.php` is running, migrations are safe to apply while it runs — each migration is a discrete SQL statement and the cron scripts are tenant-scoped.
+If `cron/cron.php` is running, migrations are safe to apply while it runs — each migration is a discrete SQL statement and the cron scripts are tenant-scoped.
