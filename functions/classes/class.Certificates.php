@@ -93,9 +93,10 @@ class Certificates extends Common
 	 * @method get_expired
 	 * @param  int $days
 	 * @param  int $expired_days
+	 * @param  bool $exclude_muted
 	 * @return array
 	 */
-	public function get_expired($days = 30, $expired_days = 7)
+	public function get_expired($days = 30, $expired_days = 7, $exclude_muted = false)
 	{
 		// default to 30 and 7 if not set !
 		if (!is_numeric($days))
@@ -109,6 +110,8 @@ class Certificates extends Common
 		// private zone filter
 		$impersonating = isset($_SESSION['impersonate_original']);
 		$pz_clause = $impersonating ? "and z.private_zone_uid is null" : "and (z.private_zone_uid is null or z.private_zone_uid = ".(int)$this->user->id.")";
+		// mute filter
+		$mute_clause = $exclude_muted ? "and h.mute = 0" : "";
 		// fetch
 		try {
 			// keep rows with a current host, plus host-less rows only for manually imported certs

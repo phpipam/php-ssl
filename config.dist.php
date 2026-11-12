@@ -83,7 +83,7 @@ $backup_retention_period = 30;
  */
 $mail_settings          = new StdClass ();
 $mail_settings->mtype   = "smtp";
-$mail_settings->msecure = "tls";
+$mail_settings->msecure = "tls";    // choices are: none, ssl, tls
 $mail_settings->mauth   = "no";
 $mail_settings->mserver = "127.0.0.1";
 $mail_settings->mport   = 25;

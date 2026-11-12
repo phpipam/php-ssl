@@ -315,6 +315,25 @@ UNLOCK TABLES;
 
 
 
+# Dump of table ignored_issuers
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `ignored_issuers`;
+
+CREATE TABLE `ignored_issuers` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `t_id` int(11) unsigned NOT NULL,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `ski` varchar(255) NOT NULL DEFAULT '',
+  `update` tinyint(1) NOT NULL DEFAULT 0,
+  `expired` tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `ignored_issuers_tenant` (`t_id`),
+  CONSTRAINT `ignored_issuers_tenant` FOREIGN KEY (`t_id`) REFERENCES `tenants` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
 # Dump of table logs
 # ------------------------------------------------------------
 
@@ -352,6 +371,42 @@ CREATE TABLE `migrations` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `filename` (`filename`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+# All migrations are already integrated into this schema; mark them as applied.
+LOCK TABLES `migrations` WRITE;
+/*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
+
+INSERT INTO `migrations` (`filename`)
+VALUES
+  ('0001_add_changepass_to_users.sql'),
+  ('0002_add_test_to_users.sql'),
+  ('0003_add_force_to_cron.sql'),
+  ('0004_add_version_to_agents.sql'),
+  ('0005_add_t_id_to_domains.sql'),
+  ('0006_add_private_zone_uid_to_zones.sql'),
+  ('0007_add_is_manual_to_certificates.sql'),
+  ('0008_add_disabled_to_users.sql'),
+  ('0009_add_translations.sql'),
+  ('0010_add_lang_id_to_users_tenants.sql'),
+  ('0011_add_german_translation.sql'),
+  ('0012_add_passkeys.sql'),
+  ('0013_pkey_private_key.sql'),
+  ('0014_add_cas_table.sql'),
+  ('0015_add_parent_ca_id_to_cas.sql'),
+  ('0016_add_source_to_csrs.sql'),
+  ('0017_add_user_dates.sql'),
+  ('0018_add_update_expired_to_ignored_issuers.sql'),
+  ('0023_add_testssl_table.sql'),
+  ('0024_add_notify_email_to_testssl.sql'),
+  ('0025_cas_tenant_fk.sql'),
+  ('0026_add_totp_2fa.sql'),
+  ('0027_nmap_scans.sql'),
+  ('0028_nmap_scans_notify_email.sql'),
+  ('0029_nmap_scans_pg_id.sql'),
+  ('0030_logs_mediumtext.sql');
+
+/*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 
