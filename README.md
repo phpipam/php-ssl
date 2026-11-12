@@ -31,19 +31,19 @@ for certificate changes and upcoming expirations.
 
 <table>
   <tr>
-    <td><img src="css/images/Dashboard.png"></td>
-    <td><img src="css/images/Tenants.png"></td>
-    <td><img src="css/images/Zones.png"></td>
+    <td><img src="public/css/images/Dashboard.png"></td>
+    <td><img src="public/css/images/Tenants.png"></td>
+    <td><img src="public/css/images/Zones.png"></td>
   </tr>
   <tr>
-    <td><img src="css/images/Certificates.png"></td>
-    <td><img src="css/images/Certificate_details.png"></td>
-    <td><img src="css/images/Certificate_details_2.png"></td>
+    <td><img src="public/css/images/Certificates.png"></td>
+    <td><img src="public/css/images/Certificate_details.png"></td>
+    <td><img src="public/css/images/Certificate_details_2.png"></td>
   </tr>
   <tr>
-    <td><img src="css/images/AXFR.png"></td>
-    <td><img src="css/images/AXFR-test.png"></td>
-    <td><img src="css/images/Agents.png"></td>
+    <td><img src="public/css/images/AXFR.png"></td>
+    <td><img src="public/css/images/AXFR-test.png"></td>
+    <td><img src="public/css/images/Agents.png"></td>
   </tr>
 </table>
 
