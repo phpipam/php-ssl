@@ -307,9 +307,19 @@ class TestSSL
 
     private function send_completion_email(object $scan): void
     {
-        global $mail_sender_settings;
-
         if (empty($scan->notify_email)) { return; }
+
+        // render mail in the recipient's language
+        with_locale(
+            recipient_lang_id($scan->notify_email, $scan->tenant_id ?? null, $this->Database),
+            $this->Database,
+            fn() => $this->send_completion_email_localized($scan)
+        );
+    }
+
+    private function send_completion_email_localized(object $scan): void
+    {
+        global $mail_sender_settings;
 
         $Mail = new mailer();
 
@@ -347,10 +357,10 @@ class TestSSL
             $rows[] = $Mail->font_norm . "<a href='" . $auth_link . "' style='color:#003551;'>" . _("View report") . "</a></font><br>";
         }
         $rows[] = $Mail->font_norm . "<a href='" . $pub_link . "' style='color:#003551;'>" . _("Public link") . "</a></font><br>";
-        $rows[] = "<br>" . $Mail->font_norm . "Visit <a href='" . ($mail_sender_settings->www ?? '') . "' style='color:#003551;'>" . ($mail_sender_settings->www ?? '') . "</a></font>";
+        $rows[] = "<br>" . $Mail->font_norm . _("Visit") . " <a href='" . ($mail_sender_settings->www ?? '') . "' style='color:#003551;'>" . ($mail_sender_settings->www ?? '') . "</a></font>";
 
         $Mail->send(
-            "Telemach php-ssl :: testSSL scan completed",
+            "Telemach php-ssl :: " . _("testSSL scan completed"),
             [$scan->notify_email],
             [],
             [],

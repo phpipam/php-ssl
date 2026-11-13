@@ -54,27 +54,53 @@ function init_locale ($user, $Database)
 		} catch (Exception $e) { /* non-fatal */ }
 	}
 
-	// 4. No preference, or English (id=1): explicitly reset the textdomain.
-	// Without this, a PHP-FPM worker that previously served a non-English
-	// user still has e.g. textdomain("messages_2") active, so English users
-	// in the same worker process would receive translated (wrong) strings.
-	// Setting a domain with no .mo file causes gettext to return the original
-	// msgid strings, which are in English — the correct behaviour.
-	if ($lang_id === null || $lang_id === 1) {
-		bindtextdomain ("messages_1", dirname(__FILE__) . "/../functions/locale");
-		textdomain ("messages_1");
-		return;
+	// 4. English fallback (null) is handled by apply_locale()
+	apply_locale ($lang_id, $Database);
+}
+
+/**
+ * Switch the active gettext language to the given translations.id.
+ *
+ * null, 1 (English), an unknown/disabled id or an English locale all select
+ * the English fallback, so _() returns the msgid as-is. Can be called any
+ * number of times per process (e.g. once per email recipient in cron).
+ *
+ * @param int|null $lang_id  translations.id
+ * @param object   $Database Database_PDO instance
+ * @return void
+ */
+function apply_locale ($lang_id, $Database)
+{
+	static $locale_codes = [];
+
+	$lang_id = is_numeric($lang_id) ? (int) $lang_id : null;
+	$locale  = null;
+
+	// Fetch locale_code from DB (cached per process)
+	if ($lang_id !== null && $lang_id !== 1) {
+		if (!array_key_exists($lang_id, $locale_codes)) {
+			try {
+				$tr = $Database->getObjectQuery ("SELECT locale_code FROM translations WHERE id = ? AND enabled = 1", [$lang_id]);
+				$locale_codes[$lang_id] = ($tr && !empty($tr->locale_code)) ? $tr->locale_code : null;
+			} catch (Exception $e) {
+				$locale_codes[$lang_id] = null;
+			}
+		}
+		$locale = $locale_codes[$lang_id];
 	}
 
-	// Fetch locale_code from DB
-	try {
-		$tr = $Database->getObjectQuery ("SELECT locale_code FROM translations WHERE id = ? AND enabled = 1", [$lang_id]);
-	} catch (Exception $e) { return; }
-	if (!$tr || empty($tr->locale_code)) { return; }
-
-	$locale = $tr->locale_code;
-	// Skip English locale — no .mo file needed
-	if (strpos($locale, 'en_') === 0) { return; }
+	// No preference, English, or unknown language: explicitly reset the textdomain.
+	// Without this, a PHP-FPM worker (or a cron run) that previously used a
+	// non-English locale still has e.g. textdomain("messages_2") active, so
+	// English output in the same process would contain translated (wrong) strings.
+	// Setting a domain with no .mo file causes gettext to return the original
+	// msgid strings, which are in English — the correct behaviour.
+	if ($locale === null || strpos($locale, 'en_') === 0) {
+		bindtextdomain ("messages_1", dirname(__FILE__) . "/../functions/locale");
+		textdomain ("messages_1");
+		$GLOBALS['active_lang_id'] = null;
+		return;
+	}
 
 	// Initialise gettext
 	putenv ("LANG={$locale}");
@@ -89,6 +115,89 @@ function init_locale ($user, $Database)
 	bindtextdomain ($domain, dirname(__FILE__) . "/../functions/locale");
 	bind_textdomain_codeset ($domain, "UTF-8");
 	textdomain ($domain);
+	$GLOBALS['active_lang_id'] = $lang_id;
+}
+
+/**
+ * Resolve the language an email to $email should be written in.
+ *
+ * Resolution order:
+ *  1. users.lang_id of the user with this email (a user of tenant $t_id wins
+ *     over a user with the same email in another tenant)
+ *  2. tenants.lang_id of tenant $t_id (also used for addresses that are not users)
+ *  3. null — English
+ *
+ * @param string   $email
+ * @param int|null $t_id     tenant the notification belongs to
+ * @param object   $Database Database_PDO instance
+ * @return int|null translations.id
+ */
+function recipient_lang_id ($email, $t_id, $Database)
+{
+	static $cache = [];
+
+	$email = strtolower(trim((string) $email));
+	$t_id  = is_numeric($t_id) ? (int) $t_id : 0;
+	$key   = $t_id . "|" . $email;
+	if (array_key_exists($key, $cache)) { return $cache[$key]; }
+
+	$lang_id = null;
+	// 1. user preference
+	if ($email !== "") {
+		try {
+			$row = $Database->getObjectQuery ("SELECT lang_id FROM users WHERE LOWER(email) = ? AND lang_id IS NOT NULL ORDER BY (t_id = ?) DESC, id ASC LIMIT 1", [$email, $t_id]);
+			if ($row && !empty($row->lang_id)) { $lang_id = (int) $row->lang_id; }
+		} catch (Exception $e) { /* non-fatal */ }
+	}
+	// 2. tenant default
+	if ($lang_id === null && $t_id > 0) {
+		try {
+			$row = $Database->getObjectQuery ("SELECT lang_id FROM tenants WHERE id = ?", [$t_id]);
+			if ($row && !empty($row->lang_id)) { $lang_id = (int) $row->lang_id; }
+		} catch (Exception $e) { /* non-fatal */ }
+	}
+
+	return $cache[$key] = $lang_id;
+}
+
+/**
+ * Group email addresses by the language they should receive mail in.
+ *
+ * @param array    $emails
+ * @param int|null $t_id
+ * @param object   $Database
+ * @return array   [ lang_key => ['lang_id' => int|null, 'emails' => [..]] ]
+ */
+function group_recipients_by_lang (array $emails, $t_id, $Database)
+{
+	$groups = [];
+	foreach ($emails as $email) {
+		$lang_id = recipient_lang_id ($email, $t_id, $Database);
+		$k = $lang_id === null ? "default" : "lang_".$lang_id;
+		if (!isset($groups[$k])) { $groups[$k] = ['lang_id' => $lang_id, 'emails' => []]; }
+		$groups[$k]['emails'][] = $email;
+	}
+	return $groups;
+}
+
+/**
+ * Run $fn with gettext switched to $lang_id, then restore the previously
+ * active language (e.g. the logged-in user's UI language).
+ *
+ * @param int|null $lang_id
+ * @param object   $Database
+ * @param callable $fn
+ * @return mixed   whatever $fn returns
+ */
+function with_locale ($lang_id, $Database, callable $fn)
+{
+	$previous = $GLOBALS['active_lang_id'] ?? null;
+	apply_locale ($lang_id, $Database);
+	try {
+		return $fn();
+	} finally {
+		apply_locale ($previous, $Database);
+	}
 }
 
 /**

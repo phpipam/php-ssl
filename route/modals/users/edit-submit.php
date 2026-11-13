@@ -157,35 +157,37 @@ try {
 		$log_data = $update; unset($log_data['password']);
 		$Log->write("users", $new_user_id, $tenant->id, $user->id, $_POST['action'], false, "User ".$update['email']." created", null, json_encode(["users"=>["0"=>$log_data]]));
 
-		# send welcome email with login details
+		# send welcome email with login details, in the new user's language
 		global $mail_sender_settings;
 		try {
-			$Mail    = new mailer();
-			$td_style = "border-left:1px solid #ddd;vertical-align:top;padding:4px 10px;";
-			$td_label = "vertical-align:top;padding:4px 10px;white-space:nowrap;color:#666;";
-			$login_url = "https://" . $mail_sender_settings->url;
+			with_locale (recipient_lang_id ($update['email'], $tenant->id, $Database), $Database, function () use ($update, $plain_password, $tenant, $Database, $mail_sender_settings) {
+				$Mail    = new mailer();
+				$td_style = "border-left:1px solid #ddd;vertical-align:top;padding:4px 10px;";
+				$td_label = "vertical-align:top;padding:4px 10px;white-space:nowrap;color:#666;";
+				$login_url = "https://" . $mail_sender_settings->url;
 
-			$rows = [
-				$Mail->font_title . _("Your php-ssl account has been created") . "</font><br><br>",
-				"<table border='0' cellpadding='3' cellspacing='0'>",
-				"<tr><td style='$td_label'>" . $Mail->font_norm . _("Name")     . "</font></td><td style='$td_style'>" . $Mail->font_bold . htmlspecialchars($update['name'],          ENT_QUOTES, 'UTF-8') . "</font></td></tr>",
-				"<tr><td style='$td_label'>" . $Mail->font_norm . _("Login")    . "</font></td><td style='$td_style'>" . $Mail->font_bold . htmlspecialchars($update['email'],         ENT_QUOTES, 'UTF-8') . "</font></td></tr>",
-				"<tr><td style='$td_label'>" . $Mail->font_norm . _("Password") . "</font></td><td style='$td_style'>" . $Mail->font_bold . htmlspecialchars($plain_password,         ENT_QUOTES, 'UTF-8') . "</font></td></tr>",
-				"<tr><td style='$td_label'>" . $Mail->font_norm . _("Tenant")   . "</font></td><td style='$td_style'>" . $Mail->font_norm . htmlspecialchars($tenant->name,           ENT_QUOTES, 'UTF-8') . "</font></td></tr>",
-				"<tr><td style='$td_label'>" . $Mail->font_norm . _("URL")      . "</font></td><td style='$td_style'>" . $Mail->font_norm . "<a href='" . $login_url . "' style='color:#003551;'>" . $login_url . "</a></font></td></tr>",
-				"</table>",
-				"<br>" . $Mail->font_norm . _("You will be asked to change your password on first login.") . "</font>",
-				"<br><br>" . $Mail->font_norm . "Visit <a href='" . $mail_sender_settings->www . "' style='color:#003551;'>" . $mail_sender_settings->www . "</a></font>",
-			];
+				$rows = [
+					$Mail->font_title . _("Your php-ssl account has been created") . "</font><br><br>",
+					"<table border='0' cellpadding='3' cellspacing='0'>",
+					"<tr><td style='$td_label'>" . $Mail->font_norm . _("Name")     . "</font></td><td style='$td_style'>" . $Mail->font_bold . htmlspecialchars($update['name'],          ENT_QUOTES, 'UTF-8') . "</font></td></tr>",
+					"<tr><td style='$td_label'>" . $Mail->font_norm . _("Login")    . "</font></td><td style='$td_style'>" . $Mail->font_bold . htmlspecialchars($update['email'],         ENT_QUOTES, 'UTF-8') . "</font></td></tr>",
+					"<tr><td style='$td_label'>" . $Mail->font_norm . _("Password") . "</font></td><td style='$td_style'>" . $Mail->font_bold . htmlspecialchars($plain_password,         ENT_QUOTES, 'UTF-8') . "</font></td></tr>",
+					"<tr><td style='$td_label'>" . $Mail->font_norm . _("Tenant")   . "</font></td><td style='$td_style'>" . $Mail->font_norm . htmlspecialchars($tenant->name,           ENT_QUOTES, 'UTF-8') . "</font></td></tr>",
+					"<tr><td style='$td_label'>" . $Mail->font_norm . _("URL")      . "</font></td><td style='$td_style'>" . $Mail->font_norm . "<a href='" . $login_url . "' style='color:#003551;'>" . $login_url . "</a></font></td></tr>",
+					"</table>",
+					"<br>" . $Mail->font_norm . _("You will be asked to change your password on first login.") . "</font>",
+					"<br><br>" . $Mail->font_norm . _("Visit") . " <a href='" . $mail_sender_settings->www . "' style='color:#003551;'>" . $mail_sender_settings->www . "</a></font>",
+				];
 
-			# CC: tenant admins (permission=3), excluding the new user itself
-		$tenant_admins = $Database->getObjectsQuery(
-			"SELECT email FROM users WHERE t_id = ? AND permission = 3 AND email != ?",
-			[$tenant->id, $update['email']]
-		);
-		$cc = array_column(array_map('get_object_vars', $tenant_admins ?: []), 'email');
+				# CC: tenant admins (permission=3), excluding the new user itself
+				$tenant_admins = $Database->getObjectsQuery(
+					"SELECT email FROM users WHERE t_id = ? AND permission = 3 AND email != ?",
+					[$tenant->id, $update['email']]
+				);
+				$cc = array_column(array_map('get_object_vars', $tenant_admins ?: []), 'email');
 
-		$Mail->send("Telemach php-ssl :: " . _("new user account"), [$update['email']], $cc, [], implode("\n", $rows), false);
+				$Mail->send("Telemach php-ssl :: " . _("new user account"), [$update['email']], $cc, [], implode("\n", $rows), false);
+			});
 		} catch (Exception $e) {
 			// mail failure is non-fatal — user is already created
 		}

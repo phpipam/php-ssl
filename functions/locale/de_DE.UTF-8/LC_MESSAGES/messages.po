@@ -2909,3 +2909,59 @@ msgstr "Farbige Punkte"
 
 msgid "Color-blind friendly"
 msgstr "Farbenblind-freundlich"
+
+# Email notifications (rendered in recipient's language)
+
+msgid "changed certificates"
+msgstr "geänderte Zertifikate"
+
+msgid "certificate expiration"
+msgstr "Zertifikatsablauf"
+
+msgid "DNS changed hosts"
+msgstr "geänderte DNS-Hosts"
+
+msgid "Expired certificates"
+msgstr "Abgelaufene Zertifikate"
+
+msgid "Certificates that will expire soon"
+msgstr "Zertifikate, die bald ablaufen"
+
+msgid "New DNS records"
+msgstr "Neue DNS-Einträge"
+
+msgid "Removed DNS records"
+msgstr "Entfernte DNS-Einträge"
+
+msgid "%s for zone %s"
+msgstr "%s für Zone %s"
+
+msgid "Visit"
+msgstr "Besuchen Sie"
+
+msgid "This email was automatically generated. Do not reply."
+msgstr "Diese E-Mail wurde automatisch erstellt. Bitte nicht antworten."
+
+msgid "Notification sent."
+msgstr "Benachrichtigung gesendet."
+
+msgid "Started"
+msgstr "Gestartet"
+
+msgid "Prefix"
+msgstr "Präfix"
+
+msgid "URL"
+msgstr "URL"
+
+msgid "New certificate issued"
+msgstr "Neues Zertifikat ausgestellt"
+
+msgid "A new TLS certificate for <b>%s</b> has been successfully issued and is ready for use."
+msgstr "Ein neues TLS-Zertifikat für <b>%s</b> wurde erfolgreich ausgestellt und ist einsatzbereit."
+
+msgid "Common Name"
+msgstr "Allgemeiner Name (CN)"
+
+msgid "Issued on"
+msgstr "Ausgestellt am"

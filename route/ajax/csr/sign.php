@@ -204,65 +204,68 @@ try {
 $mail_error = null;
 if (!empty($notify_email) && filter_var($notify_email, FILTER_VALIDATE_EMAIL)) {
     try {
-        $Mail = new Mail_send();
+        // render mail in the recipient's language
+        with_locale(recipient_lang_id($notify_email, $t_id, $Database), $Database, function () use ($Database, $csr, $ca, $expires, $serial_str, $cert_pem, $t_id, $notify_email) {
+            $Mail = new Mail_send();
 
-        $cn_safe      = htmlspecialchars($csr->cn);
-        $ca_safe      = htmlspecialchars($ca->name);
-        $issued_on    = date('Y-m-d H:i:s');
-        $valid_until  = $expires;
-        $serial_disp  = htmlspecialchars($serial_str);
-        $pem_escaped  = htmlspecialchars($cert_pem);
+            $cn_safe      = htmlspecialchars($csr->cn);
+            $ca_safe      = htmlspecialchars($ca->name);
+            $issued_on    = date('Y-m-d H:i:s');
+            $valid_until  = $expires;
+            $serial_disp  = htmlspecialchars($serial_str);
+            $pem_escaped  = htmlspecialchars($cert_pem);
 
-        $body = [];
-        $body[] = "<table border='0' cellpadding='0' cellspacing='0' width='100%' style='max-width:680px;margin:0 auto'>";
-        $body[] = "<tr><td style='padding:20px 0 10px 0'>{$Mail->font_title}" . _("New certificate issued") . "</font></td></tr>";
-        $body[] = "<tr><td style='padding:0 0 20px 0'>{$Mail->font_norm}";
-        $body[] = sprintf(_("A new TLS certificate for <b>%s</b> has been successfully issued and is ready for use."), $cn_safe);
-        $body[] = "</font></td></tr>";
+            $body = [];
+            $body[] = "<table border='0' cellpadding='0' cellspacing='0' width='100%' style='max-width:680px;margin:0 auto'>";
+            $body[] = "<tr><td style='padding:20px 0 10px 0'>{$Mail->font_title}" . _("New certificate issued") . "</font></td></tr>";
+            $body[] = "<tr><td style='padding:0 0 20px 0'>{$Mail->font_norm}";
+            $body[] = sprintf(_("A new TLS certificate for <b>%s</b> has been successfully issued and is ready for use."), $cn_safe);
+            $body[] = "</font></td></tr>";
 
-        // Details table
-        $th = "style='text-align:left;padding:4px 12px 4px 0;white-space:nowrap;vertical-align:top;border-bottom:1px solid #eee'";
-        $td = "style='padding:4px 0 4px 12px;vertical-align:top;border-bottom:1px solid #eee'";
-        $body[] = "<tr><td>";
-        $body[] = "<table border='0' cellpadding='0' cellspacing='0' style='margin-bottom:20px'>";
-        $body[] = "<tr><th {$th}>{$Mail->font_norm}" . _("Common Name")    . "</font></th><td {$td}>{$Mail->font_bold}{$cn_safe}</font></td></tr>";
-        $body[] = "<tr><th {$th}>{$Mail->font_norm}" . _("Issued by")      . "</font></th><td {$td}>{$Mail->font_norm}{$ca_safe}</font></td></tr>";
-        $body[] = "<tr><th {$th}>{$Mail->font_norm}" . _("Serial")         . "</font></th><td {$td}>{$Mail->font_norm}{$serial_disp}</font></td></tr>";
-        $body[] = "<tr><th {$th}>{$Mail->font_norm}" . _("Issued on")      . "</font></th><td {$td}>{$Mail->font_norm}{$issued_on}</font></td></tr>";
-        $body[] = "<tr><th {$th}>{$Mail->font_norm}" . _("Valid until")    . "</font></th><td {$td}>{$Mail->font_norm}{$valid_until}</font></td></tr>";
-        $body[] = "</table>";
-        $body[] = "</td></tr>";
+            // Details table
+            $th = "style='text-align:left;padding:4px 12px 4px 0;white-space:nowrap;vertical-align:top;border-bottom:1px solid #eee'";
+            $td = "style='padding:4px 0 4px 12px;vertical-align:top;border-bottom:1px solid #eee'";
+            $body[] = "<tr><td>";
+            $body[] = "<table border='0' cellpadding='0' cellspacing='0' style='margin-bottom:20px'>";
+            $body[] = "<tr><th {$th}>{$Mail->font_norm}" . _("Common Name")    . "</font></th><td {$td}>{$Mail->font_bold}{$cn_safe}</font></td></tr>";
+            $body[] = "<tr><th {$th}>{$Mail->font_norm}" . _("Issued by")      . "</font></th><td {$td}>{$Mail->font_norm}{$ca_safe}</font></td></tr>";
+            $body[] = "<tr><th {$th}>{$Mail->font_norm}" . _("Serial")         . "</font></th><td {$td}>{$Mail->font_norm}{$serial_disp}</font></td></tr>";
+            $body[] = "<tr><th {$th}>{$Mail->font_norm}" . _("Issued on")      . "</font></th><td {$td}>{$Mail->font_norm}{$issued_on}</font></td></tr>";
+            $body[] = "<tr><th {$th}>{$Mail->font_norm}" . _("Valid until")    . "</font></th><td {$td}>{$Mail->font_norm}{$valid_until}</font></td></tr>";
+            $body[] = "</table>";
+            $body[] = "</td></tr>";
 
-        // Inline PEM
-        $body[] = "<tr><td style='padding:0 0 6px 0'>{$Mail->font_norm}<b>" . _("Certificate (PEM)") . ":</b></font></td></tr>";
-        $body[] = "<tr><td style='padding:0 0 20px 0'>";
-        $body[] = "<pre style='background:#f5f5f5;border:1px solid #ddd;padding:10px;font-size:11px;font-family:monospace;word-break:break-all;white-space:pre-wrap'>{$pem_escaped}</pre>";
-        $body[] = "</td></tr>";
-        $body[] = "</table>";
+            // Inline PEM
+            $body[] = "<tr><td style='padding:0 0 6px 0'>{$Mail->font_norm}<b>" . _("Certificate (PEM)") . ":</b></font></td></tr>";
+            $body[] = "<tr><td style='padding:0 0 20px 0'>";
+            $body[] = "<pre style='background:#f5f5f5;border:1px solid #ddd;padding:10px;font-size:11px;font-family:monospace;word-break:break-all;white-space:pre-wrap'>{$pem_escaped}</pre>";
+            $body[] = "</td></tr>";
+            $body[] = "</table>";
 
-        $message = $Mail->generate_message($Mail->set_body($body));
+            $message = $Mail->generate_message($Mail->set_body($body));
 
-        // Attach certificate as file
-        $safe_cn  = preg_replace('/[^a-zA-Z0-9_\-\.]/', '_', $csr->cn);
-        $filename = "{$safe_cn}.crt";
-        $Mail->Php_mailer->addStringAttachment($cert_pem, $filename, 'base64', 'application/x-pem-file');
+            // Attach certificate as file
+            $safe_cn  = preg_replace('/[^a-zA-Z0-9_\-\.]/', '_', $csr->cn);
+            $filename = "{$safe_cn}.crt";
+            $Mail->Php_mailer->addStringAttachment($cert_pem, $filename, 'base64', 'application/x-pem-file');
 
-        // CC all tenant recipients
-        $tenant = $Database->getObject("tenants", $t_id);
-        $cc_recipients = [];
-        if ($tenant && !empty($tenant->recipients)) {
-            $cc_recipients = array_values(array_filter(
-                array_map('trim', explode(";", str_replace(",", ";", $tenant->recipients))),
-                function($e) { return filter_var($e, FILTER_VALIDATE_EMAIL) !== false; }
-            ));
-            // Don't CC the primary recipient if already in To
-            $cc_recipients = array_values(array_filter($cc_recipients, function($e) use ($notify_email) {
-                return strtolower($e) !== strtolower($notify_email);
-            }));
-        }
+            // CC all tenant recipients
+            $tenant = $Database->getObject("tenants", $t_id);
+            $cc_recipients = [];
+            if ($tenant && !empty($tenant->recipients)) {
+                $cc_recipients = array_values(array_filter(
+                    array_map('trim', explode(";", str_replace(",", ";", $tenant->recipients))),
+                    function($e) { return filter_var($e, FILTER_VALIDATE_EMAIL) !== false; }
+                ));
+                // Don't CC the primary recipient if already in To
+                $cc_recipients = array_values(array_filter($cc_recipients, function($e) use ($notify_email) {
+                    return strtolower($e) !== strtolower($notify_email);
+                }));
+            }
 
-        $subject = _("New certificate issued") . ": " . $csr->cn;
-        $Mail->send($subject, [$notify_email], $cc_recipients, [], $message, false);
+            $subject = _("New certificate issued") . ": " . $csr->cn;
+            $Mail->send($subject, [$notify_email], $cc_recipients, [], $message, false);
+        });
     } catch (Exception $e) {
         $mail_error = $e->getMessage();
     }
