@@ -78,7 +78,7 @@ $_html_attributes = isset($Layout) ? $Layout->html_attributes($_view === "app") 
 	<link href="/css/tabler.1.7.5.min.css" rel="stylesheet">
 	<link href="/css/tabler-themes.1.7.5.min.css" rel="stylesheet">
 	<link href="/css/bootstrap-table.1.26.0.min.css" rel="stylesheet">
-	<link rel="stylesheet" type="text/css" href="/css/style.css">
+	<link rel="stylesheet" type="text/css" href="/css/style.css?version=<?php print filemtime(__DIR__ . "/css/style.css"); ?>">
 
 	<!-- color scheme "auto": follow OS preference before first paint -->
 	<script>
@@ -96,7 +96,7 @@ $_html_attributes = isset($Layout) ? $Layout->html_attributes($_view === "app") 
     <script src="/js/tippy.js"></script>
 	<script src="/js/tabler.1.7.5.min.js"></script>
 	<script src="/js/bootstrap-table.1.26.0.min.js"></script>
-	<script src="/js/magic.js"></script>
+	<script src="/js/magic.js?version=<?php print filemtime(__DIR__ . "/js/magic.js"); ?>"></script>
 
 </head>
 

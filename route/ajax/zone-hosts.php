@@ -117,9 +117,6 @@ try {
 	// init Certificates class
 	$Certificates = new Certificates ($Database);
 
-	// get user days setting
-	$expire_days = isset($user->days) ? $user->days : (isset($expired_days) ? $expired_days : 30);
-
 	// fetch latest testssl result per hostname for this batch
 	$TestSSL_obj      = new TestSSL($Database);
 	$_batch_hostnames = array_map(fn($h) => $h->hostname, $hosts ?: []);
@@ -136,12 +133,10 @@ try {
 			// get status
 			$status = $Certificates->get_status ($cert_parsed, true, true, $h->hostname);
 
-			// text class
-			if($status['code']==0)		{ $textclass='secondary'; $danger_class = "secondary"; }
-			elseif($status['code']==1)	{ $textclass='red'; $danger_class = "red"; }
-			elseif($status['code']==2)	{ $textclass='orange'; $danger_class = "orange"; }
-			elseif($status['code']==3)	{ $textclass='green'; $danger_class = ""; }
-			else 						{ $textclass=''; $danger_class = ""; }
+			// status color (expired / expires soon / valid / domain mismatch / self-signed)
+			$status_color = $Certificates->get_status_color($status['code']);
+			// serial link color — valid certificates keep the default link color
+			$danger_class = $status['code']==3 ? "" : $status_color;
 
 			// dates
 			$h->last_check_formatted = $h->last_check===NULL||$h->ignore==1 ? "/" : date("Y-m-d H:i", strtotime($h->last_check));
@@ -161,22 +156,8 @@ try {
 
 			// days valid
 			$h->days_valid = isset($cert_parsed['custom_validDays']) ? $cert_parsed['custom_validDays'] : "/";
-			if(is_numeric($h->days_valid)) {
-				if($h->days_valid < 0) {
-					$days_class = "red";
-				}
-				elseif($h->days_valid <= $expire_days) {
-					$days_class = "orange";
-				}
-				else {
-					$days_class = "green";
-				}
-				$h->status_badge = "<span class='badge bg-$days_class'></span>";
-			}
-			else {
-				$days_class = "secondary";
-				$h->status_badge = "<span class='badge'></span>";
-			}
+			// status badge — reflects certificate status, not only days until expiry
+			$h->status_badge = $status['code']==0 ? "<span class='badge'></span>" : "<span class='badge bg-$status_color'></span>";
 
 			// valid to
 			$h->valid_to = isset($cert_parsed['custom_validTo']) ? $cert_parsed['custom_validTo'] : "/";

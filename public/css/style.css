@@ -51,6 +51,8 @@ html[data-bs-navbar-theme] body .page > .navbar .logo-dark  { display: inline-bl
 /* page body — wraps all page content (everything except sidebar / header / top menu) */
 .page-wrapper > .page-body {
 	display: block;
+	margin-top: 0 !important;
+    padding: 0px;
 	margin-left: 10px;
 	margin-right: 10px;
 }
