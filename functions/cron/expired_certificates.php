@@ -187,7 +187,7 @@ try {
                     $table_rows = [
                         "<tr>",
                         "  <td style='border-bottom:1px solid #ddd;vertical-align:top;padding:2px 5px;white-space:nowrap;padding-left: 5px;'>".$Mail->font_bold.$cert_parsed['subject']['CN']."</font></td>",
-                        "  <td style='border-bottom:1px solid #ddd;vertical-align:top;padding:2px 5px;'><strong><a href='https://".$mail_sender_settings->url."/".$tenant->href."/certificates/".$cert_parsed['serialNumber']."/'>".$Mail->font_bold.$cert_parsed['serialNumberHex']."</strong></font></a><br>".$Mail->font_norm.$cert_parsed['issuer']['O']."</font></td>",
+                        "  <td style='border-bottom:1px solid #ddd;vertical-align:top;padding:2px 5px;'><strong><a href='https://".$mail_sender_settings->url."/".$tenant->href."/certificates/".rawurlencode($c->zone_name)."/".$cert_parsed['serialNumber']."/'>".$Mail->font_bold.$cert_parsed['serialNumberHex']."</strong></font></a><br>".$Mail->font_norm.$cert_parsed['issuer']['O']."</font></td>",
                         "  <td style='border-bottom:1px solid #ddd;vertical-align:top;padding:2px 5px;white-space:nowrap;padding-left: 5px;'>".$Mail->font_norm.$zone_name."</font></td>",
                         "  <td style='border-bottom:1px solid #ddd;vertical-align:top;padding:2px 5px;white-space:nowrap;padding-left: 5px;'>".$Mail->font_norm.str_replace(" ", "<br>", $cert_parsed['custom_validTo'])."</font></td>",
                         "  <td style='border-bottom:1px solid #ddd;vertical-align:top;padding:2px 5px;'>".$Mail->font_norm."<div style='color:$color;border-radius:4px;margin-top:5px;padding:2px 6px;border:1px solid $color;background:$color_bg;text-align: center;white-space:nowrap;'>".$cert_parsed['custom_validDays']." "._("days")."</div></font></td>",
@@ -202,7 +202,7 @@ try {
                         "<tr><td style='$td_style'>".$Mail->font_norm._("Zone").": ".$zone_name."</font></td></tr>",
                         "<tr><td style='$td_style'>".$Mail->font_norm._("Status").": <span style='color:$color;padding:0px;margin:0px;'>".$status." (".$cert_parsed['custom_validDays']." "._("days").")</span> </font></td></tr>",
                         "<tr><td style='$td_style'>".$Mail->font_norm._("Issuer").": ".$cert_parsed['issuer']['O']."</font></td></tr>",
-                        "<tr><td style='$td_style'>".$Mail->font_norm._("Serial").": <a href='https://".$mail_sender_settings->url."/".$tenant->href."/certificates/".$cert_parsed['serialNumber']."/' style='text-decoration:none;color:#333'>".$cert_parsed['serialNumberHex']."</a></font></td></tr>",
+                        "<tr><td style='$td_style'>".$Mail->font_norm._("Serial").": <a href='https://".$mail_sender_settings->url."/".$tenant->href."/certificates/".rawurlencode($c->zone_name)."/".$cert_parsed['serialNumber']."/' style='text-decoration:none;color:#333'>".$cert_parsed['serialNumberHex']."</a></font></td></tr>",
                         "<tr><td style='$td_style'>".$Mail->font_norm._("Expires").": ".$cert_parsed['custom_validTo']."</font></td></tr>",
                         "<tr><td style='$td_style'>".$Mail->font_norm._("Hosts").":<br><span style='padding:2px;padding-left:15px;'>".implode("</span><br><span style='padding:2px;padding-left:15px;'>", $all_hosts)."</span></font></td></tr>",
                     ];
