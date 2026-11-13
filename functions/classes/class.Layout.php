@@ -183,6 +183,17 @@ class Layout
 	}
 
 	/**
+	 * Is the sidebar selected and folded (always or until hovered)?
+	 * The folded sidebar shows only the logo, so the top header shows the app title.
+	 * @method is_sidebar_folded
+	 * @return bool
+	 */
+	public function is_sidebar_folded(): bool
+	{
+		return !$this->is_horizontal() && $this->get('sidebar') !== 'default';
+	}
+
+	/**
 	 * Color-blind friendly status indicators selected?
 	 * (icons instead of colored dots + color-blind safe palette)
 	 * @method is_accessible_status

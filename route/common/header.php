@@ -17,6 +17,14 @@
 	    </a>
 	  </div>
 	  <!-- END NAVBAR LOGO -->
+	<?php } elseif (isset($Layout) && $Layout->is_sidebar_folded()) { ?>
+	  <!-- BEGIN NAVBAR TITLE (folded sidebar shows only the logo; below lg the sidebar is a full top bar with its own title) -->
+	  <div class="navbar-brand navbar-brand-autodark d-none d-lg-flex pe-0 pe-md-3">
+	    <a href="/<?php print htmlspecialchars($user->href); ?>/dashboard/" class="d-flex align-items-center gap-2 text-reset text-decoration-none">
+	      php-ssl-scan
+	    </a>
+	  </div>
+	  <!-- END NAVBAR TITLE -->
 	<?php } ?>
 
 	  <div class="navbar-nav flex-row order-md-last ms-auto">
