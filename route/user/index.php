@@ -1,10 +1,10 @@
 <?php
 
 
-// change theme ?
+// change theme ? (header light/dark toggle — sets the layout color scheme)
 if (@$_params['app']=="theme") {
 	if($_params['id1']=="light" || $_params['id1']=="dark") {
-		$_SESSION['theme'] = $_params['id1'];
+		$Layout->set('scheme', $_params['id1']);
 
 		if(isset($_SESSION['url'])) {
 			header('Location: '.$_SESSION['url']);
@@ -32,8 +32,8 @@ elseif (@$_params['app']=="profile" || !isset($_params['app'])) {
 	include("profile/index.php");
 }
 
-elseif (in_array(@$_params['app'], ['passkeys', 'notifications', 'activity', '2fa'])) {
-	$_profile_tab_map = ['passkeys' => 'pf-passkeys', 'notifications' => 'pf-notifications', 'activity' => 'pf-logs', '2fa' => 'pf-2fa'];
+elseif (in_array(@$_params['app'], ['passkeys', 'notifications', 'activity', '2fa', 'layout'])) {
+	$_profile_tab_map = ['passkeys' => 'pf-passkeys', 'notifications' => 'pf-notifications', 'activity' => 'pf-logs', '2fa' => 'pf-2fa', 'layout' => 'pf-layout'];
 	$_profile_default_tab = $_profile_tab_map[$_params['app']];
 	include("profile/index.php");
 }
@@ -88,6 +88,7 @@ elseif (@$_params['app']=="impersonate") {
 		}
 		// store original and switch
 		$_SESSION['impersonate_original'] = $_SESSION['username'];
+		unset($_SESSION['layout_impersonate']);
 		$_SESSION['username'] = $target->email;
 		$Log->write("users", $target->id, $target->t_id, $user->id, "impersonate", false, "Admin ".$_SESSION['impersonate_original']." impersonating ".$target->email);
 		header('Location: /');

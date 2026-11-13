@@ -403,7 +403,8 @@ VALUES
   ('0027_nmap_scans.sql'),
   ('0028_nmap_scans_notify_email.sql'),
   ('0029_nmap_scans_pg_id.sql'),
-  ('0030_logs_mediumtext.sql');
+  ('0030_logs_mediumtext.sql'),
+  ('0031_users_layout.sql');
 
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -558,6 +559,7 @@ CREATE TABLE `users` (
   `totp_secret` varchar(255) DEFAULT NULL,
   `totp_enabled` tinyint(1) NOT NULL DEFAULT 0,
   `lang_id` int(11) unsigned DEFAULT NULL,
+  `layout` text DEFAULT NULL,
   `test` varchar(50) DEFAULT NULL,
   `create_date` datetime NOT NULL DEFAULT current_timestamp(),
   `last_active` datetime DEFAULT NULL,

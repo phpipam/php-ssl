@@ -1,18 +1,25 @@
-<header class="navbar navbar-expand d-print-none">
+<?php $_horizontal = isset($Layout) && $Layout->is_horizontal(); ?>
+<header class="navbar <?php print $_horizontal ? "navbar-expand-md" : "navbar-expand"; ?> d-print-none">
 	<div class="container-fluid">
 
-
-
-	<div class="collapse navbar-collapse" id="navbar-menu"></div>
-
-
-	  <!-- BEGIN NAVBAR TOGGLER -->
-	  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
+	<?php if ($_horizontal) { ?>
+	  <!-- BEGIN NAVBAR TOGGLER (top menu, small screens) -->
+	  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="<?php print _("Toggle navigation"); ?>">
 	    <span class="navbar-toggler-icon"></span>
 	  </button>
 	  <!-- END NAVBAR TOGGLER -->
 
-	  <div class="navbar-nav  flex-row order-md-last">
+	  <!-- BEGIN NAVBAR LOGO -->
+	  <div class="navbar-brand navbar-brand-autodark pe-0 pe-md-3">
+	    <a href="/<?php print htmlspecialchars($user->href); ?>/dashboard/" class="d-flex align-items-center gap-2 text-reset text-decoration-none">
+	      <?php include(__DIR__ . "/logo.php"); ?>
+	      php-ssl-scan
+	    </a>
+	  </div>
+	  <!-- END NAVBAR LOGO -->
+	<?php } ?>
+
+	  <div class="navbar-nav flex-row order-md-last ms-auto">
 
 	    <div class="nav-item d-none d-lg-flex me-3">
 	      <div class="btn-list d-none d-md-flex">

@@ -31,10 +31,60 @@ body {
     display: none;
 }
 
-#sidebar-menu .page-title {
-	color: white;
+/* sidebar section titles — keep previous look while the sidebar is expanded
+   (folded sidebar uses Tabler's own nav-section-title styling) */
+html:not([data-bs-sidebar]) #sidebar-menu .nav-section-title {
 	color: var(--tblr-navbar-brand-color);
-	padding: 20px 10px 5px 8px
+	padding: 20px 10px 5px 8px;
+	margin-top: 0;
+	font-size: var(--tblr-font-size-h2);
+	font-weight: var(--tblr-font-weight-headings);
+	line-height: var(--tblr-line-height-h2);
+	text-transform: none;
+	letter-spacing: normal;
+}
+
+/* layout: dark / colored navbars always use the white logo tile */
+html[data-bs-navbar-theme] body .page > .navbar .logo-light { display: none !important; }
+html[data-bs-navbar-theme] body .page > .navbar .logo-dark  { display: inline-block !important; }
+
+/* page body — wraps all page content (everything except sidebar / header / top menu) */
+.page-wrapper > .page-body {
+	display: block;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+/* layout: container width "default" limits page content, "fluid" uses full width */
+html[data-bs-layout=default] .page-wrapper > .page-body {
+	max-width: 1320px;
+	width: calc(100% - 20px);
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/* layout: sticky + floating navbar keeps its floating top margin while scrolling */
+html[data-bs-navbar=sticky][data-bs-navbar-style=floating] .page > .navbar:not(.navbar-vertical) {
+	top: var(--tblr-navbar-margin, .5rem);
+}
+
+/* layout: folded sidebar shows only the logo */
+@media (min-width: 992px) {
+	html[data-bs-sidebar=folded] .navbar-vertical .navbar-brand,
+	html[data-bs-sidebar=folded-hover] .navbar-vertical:not(:hover):not(:has(:focus-visible)) .navbar-brand {
+		justify-content: center !important;
+		padding-left: 0 !important;
+		padding-right: 0 !important;
+	}
+	html[data-bs-sidebar=folded] .navbar-vertical .navbar-brand-text,
+	html[data-bs-sidebar=folded-hover] .navbar-vertical:not(:hover):not(:has(:focus-visible)) .navbar-brand-text {
+		display: none;
+	}
+}
+
+/* layout: horizontal top menu — icons in section dropdowns */
+#navbar-menu .dropdown-item .icon {
+	margin-inline-end: .5rem;
 }
 
 

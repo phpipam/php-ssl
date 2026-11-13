@@ -138,6 +138,7 @@ include (__DIR__ . "/classes/class.Migration.php");
 include (__DIR__ . "/classes/class.WebAuthn.php");
 include (__DIR__ . "/classes/class.testssl.php");
 include (__DIR__ . "/classes/class.Nmap.php");
+include (__DIR__ . "/classes/class.Layout.php");
 
 # testssl submodule availability flag
 $testssl_available = file_exists(dirname(__FILE__)."/testSSL/testssl.sh");
@@ -191,6 +192,7 @@ else
 		$Certificates = new Certificates ($Database, $User->get_current_user());
 		$Log 		  = new Log ($Database);
 		$Migration    = new Migrations ($Database);
+		$Layout       = new Layout ($Database, $User->get_current_user());
 
 		# save user to local var
 		$user = $User->get_current_user();

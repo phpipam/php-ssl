@@ -4,7 +4,7 @@
 </div>
 
 
-<div class="page-body">
+<div>
 <div class="row dashboard">
 
 	<!-- stats -->

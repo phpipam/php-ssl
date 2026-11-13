@@ -16,14 +16,14 @@ else {
 	<hr>
 </div>
 
-<div>
-
 <?php
 
 print '<div class="btn-group" role="group">';
 print '<a href="/" onClick="history.go(-1); return false;" class="btn btn-sm btn-outline-secondary"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-left"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 6l-6 6l6 6" /></svg> ' . _("Back") . '</a>';
 print '</div><br><br>';
 
+print "<div class='card'>";
+print "<div class='card-body'>";
 print "<p class='text-secondary'>"._('Validates the live database structure against db/SCHEMA.sql. Checks for missing tables, missing or wrong columns, missing indexes and missing foreign key constraints.')."</p>";
 
 
@@ -32,9 +32,11 @@ $validation = $Common->validate_database($Database);
 
 if ($validation['error'] !== null) {
 	$Result->show("danger", htmlspecialchars($validation['error']), false, false, false, false);
+	print "</div></div>";
 }
 elseif ($validation['ok']) {
 	$Result->show("success", _("Database structure verified. No issues found."), false, false, false, false);
+	print "</div></div>";
 }
 else {
 	$issues = $validation['issues'];
@@ -57,8 +59,9 @@ else {
 
 	$Result->show("warning", $cnt . " issue(s) found in database structure.", false, false, false, false);
 
-	print "<div class='card' style='margin-bottom:20px;padding:0px'>";
-	print "<table class='table table-hover align-top'>";
+	print "</div>";
+	print "<div class='table-responsive'>";
+	print "<table class='table table-hover align-top card-table'>";
 	print "<thead><tr>";
 	print "<th>"._("Type")."</th>";
 	print "<th>"._("Table")."</th>";
@@ -81,16 +84,17 @@ else {
 	# CSRF token for the fix request
 	$csrf = $User->create_csrf_token();
 
+	print "<div class='card-body'>";
 	print "<div id='fix-db-result'></div>";
 	print "<button id='fix-db-btn' class='btn btn-sm btn-success' data-csrf='" . htmlspecialchars($csrf, ENT_QUOTES) . "'>";
 	print '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-tools"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 21h4l13 -13a1.5 1.5 0 0 0 -4 -4l-13 13v4" /><path d="M14.5 5.5l4 4" /><path d="M12 8l-5 -5l-4 4l5 5" /><path d="M7 8l-1.5 1.5" /><path d="M16 12l5 5l-4 4l-5 -5" /><path d="M16 17l1.5 1.5" /></svg> ';
 	print _("Fix all issues");
 	print "</button>";
+	print "</div>";
+	print "</div>";
 }
 
 ?>
-
-</div>
 
 <script>
 $(document).on("click", "#fix-db-btn", function () {

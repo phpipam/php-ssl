@@ -60,8 +60,14 @@ function _tab_active(string $tab, string $active): string {
 
 					<a href="<?php print $_base_url; ?>notifications/"
 					   class="list-group-item list-group-item-action d-flex align-items-center gap-2<?php print _tab_active('pf-notifications', $_active_tab); ?>">
-						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler"><path stroke="none" d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" /><path d="M9 17v1a3 3 0 0 0 6 0v-1" /></svg>
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" /><path d="M9 17v1a3 3 0 0 0 6 0v-1" /></svg>
 						<?php print _("Notifications"); ?>
+					</a>
+
+					<a href="<?php print $_base_url; ?>layout/"
+					   class="list-group-item list-group-item-action d-flex align-items-center gap-2<?php print _tab_active('pf-layout', $_active_tab); ?>">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z" /><path d="M4 9h16" /><path d="M9 9v11" /></svg>
+						<?php print _("Layout"); ?>
 					</a>
 
 					<a href="<?php print $_base_url; ?>activity/"
@@ -102,6 +108,10 @@ function _tab_active(string $tab, string $active): string {
 						<?php include(dirname(__FILE__)."/../../users/user/user-notifications.php"); ?>
 					</div>
 					<?php endif; ?>
+				</div>
+
+				<div class="tab-pane<?php print _tab_active('pf-layout', $_active_tab) ? ' active show' : ''; ?>" id="pf-layout">
+					<?php if ($_active_tab === 'pf-layout') include("layout.php"); ?>
 				</div>
 
 				<div class="tab-pane<?php print _tab_active('pf-logs', $_active_tab) ? ' active show' : ''; ?>" id="pf-logs">

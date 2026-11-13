@@ -2742,3 +2742,190 @@ msgstr "Veriga"
 
 msgid "No chain stored"
 msgstr "Veriga ni shranjena"
+
+# Profile → Layout (theme / layout settings)
+msgid "Layout"
+msgstr "Postavitev"
+
+msgid "Appearance"
+msgstr "Videz"
+
+msgid "Color scheme"
+msgstr "Barvna shema"
+
+msgid "The page and its navigation, in one pick."
+msgstr "Stran in njena navigacija z eno izbiro."
+
+msgid "Auto"
+msgstr "Samodejno"
+
+msgid "Light"
+msgstr "Svetla"
+
+msgid "Dark"
+msgstr "Temna"
+
+msgid "Dark nav"
+msgstr "Temna navigacija"
+
+msgid "Colored"
+msgstr "Barvna"
+
+msgid "Accent color"
+msgstr "Poudarjena barva"
+
+msgid "The accent color used across the app."
+msgstr "Poudarjena barva, uporabljena v celotni aplikaciji."
+
+msgid "Blue"
+msgstr "Modra"
+
+msgid "Azure"
+msgstr "Azurna"
+
+msgid "Indigo"
+msgstr "Indigo"
+
+msgid "Purple"
+msgstr "Vijolična"
+
+msgid "Pink"
+msgstr "Roza"
+
+msgid "Red"
+msgstr "Rdeča"
+
+msgid "Orange"
+msgstr "Oranžna"
+
+msgid "Yellow"
+msgstr "Rumena"
+
+msgid "Lime"
+msgstr "Limeta"
+
+msgid "Green"
+msgstr "Zelena"
+
+msgid "Teal"
+msgstr "Modrozelena"
+
+msgid "Cyan"
+msgstr "Cian"
+
+msgid "Inverted"
+msgstr "Obrnjena"
+
+msgid "Theme base"
+msgstr "Osnova teme"
+
+msgid "The gray palette behind every surface."
+msgstr "Siva paleta za vsemi površinami."
+
+msgid "Slate"
+msgstr "Skrilasta"
+
+msgid "Gray"
+msgstr "Siva"
+
+msgid "Zinc"
+msgstr "Cink"
+
+msgid "Neutral"
+msgstr "Nevtralna"
+
+msgid "Stone"
+msgstr "Kamnita"
+
+msgid "Mist"
+msgstr "Megla"
+
+msgid "Corner radius"
+msgstr "Zaobljenost robov"
+
+msgid "How round corners are drawn."
+msgstr "Kako zaobljeni so robovi."
+
+msgid "Navigation"
+msgstr "Navigacija"
+
+msgid "Where the main menu lives."
+msgstr "Kje se nahaja glavni meni."
+
+msgid "Navbar"
+msgstr "Zgornji meni"
+
+msgid "Sidebar"
+msgstr "Stranski meni"
+
+msgid "Container width"
+msgstr "Širina vsebine"
+
+msgid "How wide the page content runs."
+msgstr "Kako široka je vsebina strani."
+
+msgid "Default"
+msgstr "Privzeto"
+
+msgid "Fluid"
+msgstr "Polna širina"
+
+msgid "Boxed"
+msgstr "Okvirjeno"
+
+msgid "Navbar behavior"
+msgstr "Obnašanje zgornje vrstice"
+
+msgid "Keep the navbar visible while scrolling."
+msgstr "Zgornja vrstica ostane vidna med drsenjem."
+
+msgid "Sticky"
+msgstr "Pripeto"
+
+msgid "Navigation style"
+msgstr "Slog navigacije"
+
+msgid "Attach the navigation to the edges, or let it float."
+msgstr "Navigacija je pripeta na robove ali lebdi."
+
+msgid "Attached"
+msgstr "Pripeto"
+
+msgid "Floating"
+msgstr "Lebdeče"
+
+msgid "Offcanvas style"
+msgstr "Slog stranskih panelov"
+
+msgid "Attach side panels to the edges, or let them float."
+msgstr "Stranski paneli so pripeti na robove ali lebdijo."
+
+msgid "Expanded"
+msgstr "Razširjen"
+
+msgid "Folded"
+msgstr "Zložen"
+
+msgid "On hover"
+msgstr "Ob prehodu z miško"
+
+msgid "Pick the look and layout of the application. Changes are applied and saved immediately."
+msgstr "Izberite videz in postavitev aplikacije. Spremembe se uveljavijo in shranijo takoj."
+
+msgid "You are impersonating this user: changes apply to this session only and are not saved to the user's settings."
+msgstr "Prijavljeni ste kot ta uporabnik: spremembe veljajo samo za to sejo in se ne shranijo v uporabnikove nastavitve."
+
+msgid "Reset to defaults"
+msgstr "Ponastavi na privzeto"
+
+msgid "Saved"
+msgstr "Shranjeno"
+
+msgid "Saving failed"
+msgstr "Shranjevanje ni uspelo"
+
+msgid "Invalid layout setting."
+msgstr "Neveljavna nastavitev postavitve."
+
+msgid "Toggle navigation"
+msgstr "Preklopi navigacijo"

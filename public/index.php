@@ -32,12 +32,23 @@ header("Cache-Control: no-cache, must-revalidate"); //HTTP 1.1
 header("Pragma: no-cache");                         //HTTP 1.0
 header("Expires: Sat, 26 Jul 2016 05:00:00 GMT");   //Date in the past
 
-// theme ?
-if(!isset($_SESSION['theme'])) { $_SESSION['theme'] = "dark"; }
+// which view is rendered — decides if layout (navigation) attributes apply
+if (isset($_SESSION['2fa_pending']) && empty($_SESSION['username']))     { $_view = "2fa"; }
+elseif ($_params['tenant']=="login" || $_params['tenant']=="logout")     { $_view = "login"; }
+elseif ($_params['tenant']=="report")                                    { $_view = "report"; }
+elseif ($_params['tenant']=="error" && $_params['route']=="generic")     { $_view = "error"; }
+elseif ($_params['tenant']=="install")                                   { $_view = "install"; }
+elseif (isset($user) && !empty($user->disabled))                         { $_view = "disabled"; }
+elseif (isset($user) && !empty($user->changePass))                       { $_view = "changepass"; }
+else                                                                     { $_view = "app"; }
+
+// layout / theme (Layout class may be missing if config or extensions are missing)
+if (!isset($Layout) && class_exists('Layout')) { $Layout = new Layout (); }
+$_html_attributes = isset($Layout) ? $Layout->html_attributes($_view === "app") : 'data-bs-theme="dark" data-theme="dark" data-bs-theme-base="slate" style="color-scheme: dark;"';
 ?>
 
 <!doctype html>
-<html lang="en" data-bs-theme-base="slate" data-theme="<?php print $_SESSION['theme']; ?>" data-bs-theme="<?php print $_SESSION['theme']; ?>" style="color-scheme: <?php print $_SESSION['theme']; ?>;">
+<html lang="en" <?php print $_html_attributes; ?>>
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -69,6 +80,16 @@ if(!isset($_SESSION['theme'])) { $_SESSION['theme'] = "dark"; }
 	<link href="/css/bootstrap-table.1.26.0.min.css" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="/css/style.css">
 
+	<!-- color scheme "auto": follow OS preference before first paint -->
+	<script>
+	(function () {
+		var h = document.documentElement;
+		if (h.getAttribute('data-bs-theme-mode') === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+			h.setAttribute('data-bs-theme', 'dark'); h.setAttribute('data-theme', 'dark'); h.style.colorScheme = 'dark';
+		}
+	})();
+	</script>
+
 	<!-- js -->
     <script src="/js/jquery-3.6.0.min.js"></script>
     <script src="/js/popper.2.11.8.js"></script>
@@ -82,50 +103,56 @@ if(!isset($_SESSION['theme'])) { $_SESSION['theme'] = "dark"; }
 <body>
 	<?php
 	// 2FA pending — intercept every route until TOTP is verified
-	if (isset($_SESSION['2fa_pending']) && empty($_SESSION['username'])) {
+	if ($_view == "2fa") {
 		include (__DIR__ . "/../route/login/2fa_challenge.php");
 	}
 	// login and logout
-	elseif($_params['tenant']=="login" || $_params['tenant']=="logout") {
+	elseif ($_view == "login") {
 		include (__DIR__ . "/../route/login/index.php");
 	}
 	// public testSSL report by hash — no auth required
-	elseif ($_params['tenant']=="report") {
+	elseif ($_view == "report") {
 		include (__DIR__ . "/../route/report/index.php");
 	}
 	// generic errors
-	elseif ($_params['tenant']=="error" && $_params['route']=="generic") {
+	elseif ($_view == "error") {
 		include (__DIR__ . "/../route/error/generic.php");
 	}
 	// installation
-	elseif ($_params['tenant']=="install") {
+	elseif ($_view == "install") {
 		include (__DIR__ . "/../route/install/index.php");
 	}
 	// disabled account — render without header/sidebar
-	elseif (isset($user) && !empty($user->disabled)) {
+	elseif ($_view == "disabled") {
 		include (__DIR__ . "/../route/disabled/index.php");
 	}
 	// force password change — render without header/sidebar
-	elseif (isset($user) && !empty($user->changePass)) {
+	elseif ($_view == "changepass") {
 		include (__DIR__ . "/../route/user/changepass/index.php");
 	}
 	// default
 	else {
-		// header
-		include (__DIR__ . "/../route/common/header.php");
+		$_horizontal = $Layout->is_horizontal();
 	?>
 
-	<!-- content -->
-	<div class="container-fluid">
-	  <div class="row">
-	  	<aside class="navbar navbar-vertical navbar-expand-lg">
-	    	<?php include (__DIR__ . "/../route/common/left-menu.php"); ?>
+	<!-- content (Tabler page layout: sidebar | header | top menu | page-wrapper) -->
+	<div class="page">
+		<?php if (!$_horizontal) { ?>
+		<aside class="navbar navbar-vertical navbar-expand-lg">
+			<?php include (__DIR__ . "/../route/common/left-menu.php"); ?>
 		</aside>
-	    <div class='page-wrapper'>
-	    	<?php include (__DIR__ . "/../route/common/checks.php"); ?>
-	    	<?php include (__DIR__ . "/../route/content.php"); ?>
-	    </main>
-	  </div>
+		<?php } ?>
+
+		<?php include (__DIR__ . "/../route/common/header.php"); ?>
+
+		<?php if ($_horizontal) { include (__DIR__ . "/../route/common/top-menu.php"); } ?>
+
+		<div class="page-wrapper">
+			<div class="page-body">
+				<?php include (__DIR__ . "/../route/common/checks.php"); ?>
+				<?php include (__DIR__ . "/../route/content.php"); ?>
+			</div>
+		</div>
 	</div>
 
 	<!-- modal -->

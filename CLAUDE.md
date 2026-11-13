@@ -115,6 +115,7 @@ URLs follow the pattern `/{tenant_href}/{route}/{app}/{id1}`. The `tenant` segme
 | `class.Migration.php` | Tracks and applies incremental DB migrations |
 | `class.testssl.php` | testssl.sh integration: scan requests, cron execution, JSON parsing, export, email notification |
 | `class.WebAuthn.php` | WebAuthn/Passkey authentication (ES256 and RS256) |
+| `class.Layout.php` | Per-user Tabler UI layout/theme preferences (stored in `users.layout`), renders `<html>` `data-bs-*` attributes |
 
 ### Route Structure (`route/`)
 
@@ -212,7 +213,9 @@ All domain classes inherit shared utilities from `Common` (permalink generation,
 
 ### Frontend
 
-Tabler 1.7.5 (Bootstrap-based admin UI) + jQuery 3.6.0 + Bootstrap-table 1.26.0. All JS/CSS libraries are bundled locally in `public/js/` and `public/css/`. Custom JS is in `public/js/magic.js`. Dark/light theme toggle is built in (stored in `$_SESSION['theme']`).
+Tabler 1.7.5 (Bootstrap-based admin UI) + jQuery 3.6.0 + Bootstrap-table 1.26.0. All JS/CSS libraries are bundled locally in `public/js/` and `public/css/`. Custom JS is in `public/js/magic.js`.
+
+**Layout / theme settings** (profile → Layout tab, `/{tenant}/profile/layout/`): `class.Layout.php` (global `$Layout`) holds the Tabler theme options (color scheme, accent, theme base, radius, navbar/sidebar navigation, container width, sticky navbar, navigation/offcanvas style, sidebar folding), validates them and renders them as `data-bs-*` attributes on `<html>` via `$Layout->html_attributes()`. Stored as JSON in `users.layout` (migration `0031_users_layout.sql`; only explicitly chosen values, NULL = defaults). While impersonating, changes go to `$_SESSION['layout_impersonate']` only; if the column is missing (migration not applied) or nobody is logged in, `$_SESSION['layout']` is used. Saved via `route/ajax/layout-save.php`. The header light/dark toggle sets the `scheme` option. Page structure in `public/index.php` follows Tabler's `.page` layout: sidebar (`route/common/left-menu.php`, vertical mode, uses `data-bs-navbar-position="combined"` so the top header stays visible) or horizontal top menu (`route/common/top-menu.php`), then `route/common/header.php`, then `.page-wrapper > .page-body`, which wraps all page content (route pages must not add their own `.page-body`). The logo is shared in `route/common/logo.php` (both light/dark variants, switched by CSS).
 
 **CSS/JS paths** and all `/route/...` URLs are hardcoded as absolute paths (`/css/`, `/js/`) — the app must be served at the root of a host (no subdirectory installs).
 

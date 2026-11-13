@@ -2707,3 +2707,190 @@ msgstr "Kette"
 
 msgid "No chain stored"
 msgstr "Keine Kette gespeichert"
+
+# Profile → Layout (theme / layout settings)
+msgid "Layout"
+msgstr "Layout"
+
+msgid "Appearance"
+msgstr "Erscheinungsbild"
+
+msgid "Color scheme"
+msgstr "Farbschema"
+
+msgid "The page and its navigation, in one pick."
+msgstr "Seite und Navigation mit einer Auswahl."
+
+msgid "Auto"
+msgstr "Automatisch"
+
+msgid "Light"
+msgstr "Hell"
+
+msgid "Dark"
+msgstr "Dunkel"
+
+msgid "Dark nav"
+msgstr "Dunkle Navigation"
+
+msgid "Colored"
+msgstr "Farbig"
+
+msgid "Accent color"
+msgstr "Akzentfarbe"
+
+msgid "The accent color used across the app."
+msgstr "Die in der gesamten Anwendung verwendete Akzentfarbe."
+
+msgid "Blue"
+msgstr "Blau"
+
+msgid "Azure"
+msgstr "Azurblau"
+
+msgid "Indigo"
+msgstr "Indigo"
+
+msgid "Purple"
+msgstr "Lila"
+
+msgid "Pink"
+msgstr "Rosa"
+
+msgid "Red"
+msgstr "Rot"
+
+msgid "Orange"
+msgstr "Orange"
+
+msgid "Yellow"
+msgstr "Gelb"
+
+msgid "Lime"
+msgstr "Limette"
+
+msgid "Green"
+msgstr "Grün"
+
+msgid "Teal"
+msgstr "Petrol"
+
+msgid "Cyan"
+msgstr "Cyan"
+
+msgid "Inverted"
+msgstr "Invertiert"
+
+msgid "Theme base"
+msgstr "Theme-Basis"
+
+msgid "The gray palette behind every surface."
+msgstr "Die Graupalette hinter allen Flächen."
+
+msgid "Slate"
+msgstr "Schiefer"
+
+msgid "Gray"
+msgstr "Grau"
+
+msgid "Zinc"
+msgstr "Zink"
+
+msgid "Neutral"
+msgstr "Neutral"
+
+msgid "Stone"
+msgstr "Stein"
+
+msgid "Mist"
+msgstr "Nebel"
+
+msgid "Corner radius"
+msgstr "Eckenradius"
+
+msgid "How round corners are drawn."
+msgstr "Wie rund Ecken dargestellt werden."
+
+msgid "Navigation"
+msgstr "Navigation"
+
+msgid "Where the main menu lives."
+msgstr "Wo sich das Hauptmenü befindet."
+
+msgid "Navbar"
+msgstr "Obere Leiste"
+
+msgid "Sidebar"
+msgstr "Seitenleiste"
+
+msgid "Container width"
+msgstr "Inhaltsbreite"
+
+msgid "How wide the page content runs."
+msgstr "Wie breit der Seiteninhalt ist."
+
+msgid "Default"
+msgstr "Standard"
+
+msgid "Fluid"
+msgstr "Volle Breite"
+
+msgid "Boxed"
+msgstr "Gerahmt"
+
+msgid "Navbar behavior"
+msgstr "Verhalten der oberen Leiste"
+
+msgid "Keep the navbar visible while scrolling."
+msgstr "Obere Leiste beim Scrollen sichtbar halten."
+
+msgid "Sticky"
+msgstr "Fixiert"
+
+msgid "Navigation style"
+msgstr "Navigationsstil"
+
+msgid "Attach the navigation to the edges, or let it float."
+msgstr "Navigation an den Rändern anheften oder schweben lassen."
+
+msgid "Attached"
+msgstr "Angeheftet"
+
+msgid "Floating"
+msgstr "Schwebend"
+
+msgid "Offcanvas style"
+msgstr "Seitenpanel-Stil"
+
+msgid "Attach side panels to the edges, or let them float."
+msgstr "Seitenpanels an den Rändern anheften oder schweben lassen."
+
+msgid "Expanded"
+msgstr "Ausgeklappt"
+
+msgid "Folded"
+msgstr "Eingeklappt"
+
+msgid "On hover"
+msgstr "Bei Mausberührung"
+
+msgid "Pick the look and layout of the application. Changes are applied and saved immediately."
+msgstr "Wählen Sie Aussehen und Layout der Anwendung. Änderungen werden sofort übernommen und gespeichert."
+
+msgid "You are impersonating this user: changes apply to this session only and are not saved to the user's settings."
+msgstr "Sie verwenden die Identität dieses Benutzers: Änderungen gelten nur für diese Sitzung und werden nicht in den Einstellungen des Benutzers gespeichert."
+
+msgid "Reset to defaults"
+msgstr "Auf Standard zurücksetzen"
+
+msgid "Saved"
+msgstr "Gespeichert"
+
+msgid "Saving failed"
+msgstr "Speichern fehlgeschlagen"
+
+msgid "Invalid layout setting."
+msgstr "Ungültige Layout-Einstellung."
+
+msgid "Toggle navigation"
+msgstr "Navigation umschalten"

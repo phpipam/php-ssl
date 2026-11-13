@@ -5,8 +5,8 @@
 if (@$_params['app'] === 'profile' || !isset($_params['app'])) {
 	include(dirname(__FILE__)."/../user/profile/index.php");
 }
-elseif (in_array(@$_params['app'], ['passkeys', 'notifications', 'activity', '2fa'])) {
-	$_profile_tab_map = ['passkeys' => 'pf-passkeys', 'notifications' => 'pf-notifications', 'activity' => 'pf-logs', '2fa' => 'pf-2fa'];
+elseif (in_array(@$_params['app'], ['passkeys', 'notifications', 'activity', '2fa', 'layout'])) {
+	$_profile_tab_map = ['passkeys' => 'pf-passkeys', 'notifications' => 'pf-notifications', 'activity' => 'pf-logs', '2fa' => 'pf-2fa', 'layout' => 'pf-layout'];
 	$_profile_default_tab = $_profile_tab_map[$_params['app']];
 	include(dirname(__FILE__)."/../user/profile/index.php");
 }

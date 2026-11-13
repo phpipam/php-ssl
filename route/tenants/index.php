@@ -33,7 +33,7 @@ if (sizeof($tenants)==0) {
 }
 else {
 
-	print '<div class="page-body">';
+	print '<div>';
 	print '<div class="card">';
 
 	print "<div class='table-responsive'>";
