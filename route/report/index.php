@@ -33,7 +33,7 @@ $flask_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" vi
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>testSSL Report — <?php print htmlspecialchars($scan->hostname ?? ''); ?></title>
-<link rel="stylesheet" href="/css/tabler.min.css">
+<link rel="stylesheet" href="/css/tabler.1.7.5.min.css">
 <link rel="stylesheet" href="/css/tabler-icons.min.css">
 <style>
   body { background: var(--tblr-body-bg); }
@@ -75,6 +75,6 @@ $flask_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" vi
 </div>
 
 <script src="/js/jquery-3.6.0.min.js"></script>
-<script src="/js/tabler.min.js"></script>
+<script src="/js/tabler.1.7.5.min.js"></script>
 </body>
 </html>

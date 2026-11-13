@@ -212,7 +212,7 @@ All domain classes inherit shared utilities from `Common` (permalink generation,
 
 ### Frontend
 
-Tabler 1.7.1 (Bootstrap-based admin UI) + jQuery 3.6.0 + Bootstrap-table 1.26.0. All JS/CSS libraries are bundled locally in `public/js/` and `public/css/`. Custom JS is in `public/js/magic.js`. Dark/light theme toggle is built in (stored in `$_SESSION['theme']`).
+Tabler 1.7.5 (Bootstrap-based admin UI) + jQuery 3.6.0 + Bootstrap-table 1.26.0. All JS/CSS libraries are bundled locally in `public/js/` and `public/css/`. Custom JS is in `public/js/magic.js`. Dark/light theme toggle is built in (stored in `$_SESSION['theme']`).
 
 **CSS/JS paths** and all `/route/...` URLs are hardcoded as absolute paths (`/css/`, `/js/`) — the app must be served at the root of a host (no subdirectory installs).
 
