@@ -376,6 +376,83 @@ class Certificates extends Common
 	}
 
 	/**
+	 * Returns translated status name for a status code
+	 * @method get_status_label
+	 * @param  int $status_int
+	 * @return string
+	 */
+	public function get_status_label($status_int = 0)
+	{
+		switch ($status_int) {
+			case 1:  return _("Expired");
+			case 2:  return _("Expires soon");
+			case 3:  return _("Valid");
+			case 10: return _("Domain mismatch");
+			case 11: return _("Self-signed");
+			default: return _("Unknown");
+		}
+	}
+
+	/**
+	 * Has the current user enabled color-blind friendly status indicators?
+	 * (profile → Layout → Accessibility; stored by the Layout class)
+	 * Always false outside a web request (cron, mails).
+	 * @method accessible_status
+	 * @return bool
+	 */
+	public function accessible_status()
+	{
+		global $Layout;
+		return isset($Layout) && $Layout instanceof Layout && $Layout->is_accessible_status();
+	}
+
+	/**
+	 * Returns a status icon (Tabler outline icon, inherits text color) — a different
+	 * shape per status so status does not depend on color alone.
+	 * @method get_status_icon
+	 * @param  int $status_int
+	 * @return string  SVG markup (aria-hidden — the caller provides the label)
+	 */
+	public function get_status_icon($status_int = 0)
+	{
+		switch ($status_int) {
+			// valid — circle-check
+			case 3:  $paths = '<path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M9 12l2 2l4 -4" />'; break;
+			// expires soon — clock
+			case 2:  $paths = '<path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" /><path d="M12 7v5l3 3" />'; break;
+			// expired — circle-x
+			case 1:  $paths = '<path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M10 10l4 4m0 -4l-4 4" />'; break;
+			// domain mismatch — link-off
+			case 10: $paths = '<path d="M9 15l3 -3m2 -2l1 -1" /><path d="M11 6l.463 -.536a5 5 0 0 1 7.071 7.072l-.534 .464" /><path d="M3 3l18 18" /><path d="M13 18l-.397 .534a5.068 5.068 0 0 1 -7.127 0a4.972 4.972 0 0 1 0 -7.071l.524 -.463" />'; break;
+			// self-signed — alert-triangle
+			case 11: $paths = '<path d="M12 9v4" /><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z" /><path d="M12 16h.01" />'; break;
+			// unknown — help-circle
+			default: $paths = '<path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" /><path d="M12 16v.01" /><path d="M12 13a2 2 0 0 0 .914 -3.782a1.98 1.98 0 0 0 -2.414 .483" />';
+		}
+		return '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon status-icon" aria-hidden="true" focusable="false"><path stroke="none" d="M0 0h24v24H0z" fill="none"/>' . $paths . '</svg>';
+	}
+
+	/**
+	 * Returns a compact status indicator for tables:
+	 * a colored dot by default, or a colored per-status icon when the user
+	 * enabled color-blind friendly status indicators.
+	 * @method get_status_indicator
+	 * @param  int $status_int
+	 * @return string
+	 */
+	public function get_status_indicator($status_int = 0)
+	{
+		$label = htmlspecialchars($this->get_status_label($status_int), ENT_QUOTES);
+		$color = $this->get_status_color($status_int);
+
+		if ($this->accessible_status()) {
+			return "<span class='status-indicator text-$color' role='img' aria-label='$label' title='$label'>" . $this->get_status_icon($status_int) . "</span>";
+		}
+		$bg = $status_int == 0 ? "" : " bg-$color";
+		return "<span class='badge$bg' role='img' aria-label='$label' title='$label'></span>";
+	}
+
+	/**
 	 * Returns certificate status in text - badge
 	 * @method get_status_text
 	 * @param  int $status_int
@@ -387,29 +464,31 @@ class Certificates extends Common
 		// span status
 		$span_hidden = $text === true ? "" : "visually-hidden";
 		$status_class = $text === true ? "" : "status";
+		// color-blind friendly mode: per-status icon in front of the label
+		$icon = $this->accessible_status() ? $this->get_status_icon($status_int) : "";
 
 		// return
 		if ($status_int == 10) {
-			return "<span class='badge bg-red-lt $status_class' data-bs-toggle='tooltip' data-bs-placement='left' title='" . _("Domain mismatch") . "'> <span class='$span_hidden'>" . _("Domain mismatch") . "</span></span> ";
+			return "<span class='badge bg-red-lt $status_class' data-bs-toggle='tooltip' data-bs-placement='left' title='" . _("Domain mismatch") . "'>" . $icon . " <span class='$span_hidden'>" . _("Domain mismatch") . "</span></span> ";
 		}
 		if ($status_int == 11) {
-			return "<span class='badge bg-orange-lt $status_class' data-bs-toggle='tooltip' data-bs-placement='left' title='" . _("Self-signed") . "'> <span class='$span_hidden'>" . _("Self-signed") . "</span></span> ";
+			return "<span class='badge bg-orange-lt $status_class' data-bs-toggle='tooltip' data-bs-placement='left' title='" . _("Self-signed") . "'>" . $icon . " <span class='$span_hidden'>" . _("Self-signed") . "</span></span> ";
 		}
 		if ($status_int == 0) {
-			return "<span class='badge bg-light-lt $status_class bg-light text-muted' data-bs-toggle='tooltip' data-bs-placement='left' title='" . _("Unknown") . "'> <span class='$span_hidden'>" . _("Unknown") . "</span></span> ";
+			return "<span class='badge bg-light-lt $status_class bg-light text-muted' data-bs-toggle='tooltip' data-bs-placement='left' title='" . _("Unknown") . "'>" . $icon . " <span class='$span_hidden'>" . _("Unknown") . "</span></span> ";
 		}
 		if ($status_int == 1) {
-			return "<span class='badge bg-red-lt $status_class' data-bs-toggle='tooltip' data-bs-placement='left' title='" . _("Expired") . "'> <span class='$span_hidden'>" . _("Expired") . "</span></span> ";
+			return "<span class='badge bg-red-lt $status_class' data-bs-toggle='tooltip' data-bs-placement='left' title='" . _("Expired") . "'>" . $icon . " <span class='$span_hidden'>" . _("Expired") . "</span></span> ";
 		}
 		if ($status_int == 2) {
-			return "<span class='badge bg-orange-lt $status_class' data-bs-toggle='tooltip' data-bs-placement='left' title='" . _("Expires soon") . "'> <span class='$span_hidden'>" . _("Expires soon") . "</span></span> ";
+			return "<span class='badge bg-orange-lt $status_class' data-bs-toggle='tooltip' data-bs-placement='left' title='" . _("Expires soon") . "'>" . $icon . " <span class='$span_hidden'>" . _("Expires soon") . "</span></span> ";
 		}
 		if ($status_int == 3) {
-			return "<span class='badge bg-green-lt $status_class' data-bs-toggle='tooltip' data-bs-placement='left' title='" . _("Valid") . "'> <span class='$span_hidden'>" . _("Valid") . "</span></span> ";
+			return "<span class='badge bg-green-lt $status_class' data-bs-toggle='tooltip' data-bs-placement='left' title='" . _("Valid") . "'>" . $icon . " <span class='$span_hidden'>" . _("Valid") . "</span></span> ";
 		}
 
 		// default
-		return "<span class='badge bg-green-lt $status_class' data-bs-toggle='tooltip' data-bs-placement='left' title='" . _($text) . "'> <span class='$span_hidden'>" . _($text) . "</span></span> ";
+		return "<span class='badge bg-green-lt $status_class' data-bs-toggle='tooltip' data-bs-placement='left' title='" . _($text) . "'>" . $icon . " <span class='$span_hidden'>" . _($text) . "</span></span> ";
 
 	}
 

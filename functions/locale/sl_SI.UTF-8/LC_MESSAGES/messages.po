@@ -2929,3 +2929,18 @@ msgstr "Neveljavna nastavitev postavitve."
 
 msgid "Toggle navigation"
 msgstr "Preklopi navigacijo"
+
+msgid "Accessibility"
+msgstr "Dostopnost"
+
+msgid "Status indicators"
+msgstr "Oznake stanja"
+
+msgid "Color-blind friendly: every certificate status gets its own icon, and green / orange / red are replaced with colors that stay distinguishable."
+msgstr "Prilagojeno za barvno slepe: vsako stanje certifikata ima svojo ikono, zelena / oranžna / rdeča pa so zamenjane z barvami, ki jih je mogoče ločiti."
+
+msgid "Colored dots"
+msgstr "Barvne pike"
+
+msgid "Color-blind friendly"
+msgstr "Za barvno slepe"

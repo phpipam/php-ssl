@@ -57,6 +57,33 @@ html[data-bs-navbar-theme] body .page > .navbar .logo-dark  { display: inline-bl
 	margin-right: 10px;
 }
 
+/* accessibility: color-blind friendly status palette (profile → Layout → Accessibility).
+   Okabe–Ito colors: green → blue, red → vermillion, orange → amber. Tabler derives
+   -lt / -darken variants from the base color; -rgb and success/danger are literals. */
+html[data-bs-status-style=accessible] {
+	--tblr-green: #0072B2;   --tblr-green-rgb: 0,114,178;
+	--tblr-success: #0072B2; --tblr-success-rgb: 0,114,178;
+	--tblr-red: #D55E00;     --tblr-red-rgb: 213,94,0;
+	--tblr-danger: #D55E00;  --tblr-danger-rgb: 213,94,0;
+	--tblr-orange: #E69F00;  --tblr-orange-rgb: 230,159,0;
+}
+/* dark theme: lighter blue (Okabe–Ito sky blue) keeps enough contrast on dark surfaces */
+html[data-bs-status-style=accessible][data-bs-theme=dark] {
+	--tblr-green: #56B4E9;   --tblr-green-rgb: 86,180,233;
+	--tblr-success: #56B4E9; --tblr-success-rgb: 86,180,233;
+}
+
+/* accessibility: per-status icon used instead of the colored dot */
+.status-indicator {
+	display: inline-flex;
+	vertical-align: middle;
+	line-height: 1;
+}
+.status-indicator .status-icon {
+	width: 16px;
+	height: 16px;
+}
+
 /* layout: container width "default" limits page content, "fluid" uses full width */
 html[data-bs-layout=default] .page-wrapper > .page-body {
 	max-width: 1320px;

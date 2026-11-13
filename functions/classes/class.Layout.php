@@ -6,6 +6,8 @@
  *
  * Every option maps to a data-bs-* attribute on <html>, which Tabler 1.7.5
  * CSS (tabler.css + tabler-themes.css) reacts to.
+ * Exception: "status-style" (accessibility) is php-ssl specific — public/css/style.css
+ * swaps the status palette and Certificates::get_status_indicator() renders icons.
  *
  * Storage: users.layout (JSON, only explicitly chosen values; NULL = defaults).
  *  - while an admin impersonates a user, changes are kept in the session only
@@ -31,6 +33,7 @@ class Layout
 		'navbar-style'    => ['default', 'floating'],
 		'offcanvas-style' => ['default', 'floating'],
 		'sidebar'         => ['default', 'folded', 'folded-hover'],
+		'status-style'    => ['default', 'accessible'],
 	];
 
 	/**
@@ -48,6 +51,7 @@ class Layout
 		'navbar-style'    => 'floating',
 		'offcanvas-style' => 'floating',
 		'sidebar'         => 'folded-hover',
+		'status-style'    => 'default',
 	];
 
 	/**
@@ -179,6 +183,17 @@ class Layout
 	}
 
 	/**
+	 * Color-blind friendly status indicators selected?
+	 * (icons instead of colored dots + color-blind safe palette)
+	 * @method is_accessible_status
+	 * @return bool
+	 */
+	public function is_accessible_status(): bool
+	{
+		return $this->get('status-style') === 'accessible';
+	}
+
+	/**
 	 * Returns data-bs-* attributes for the <html> tag.
 	 *
 	 * Theme attributes (scheme, accent, base, radius) are always returned.
@@ -205,6 +220,7 @@ class Layout
 			'data-bs-theme-primary'=> $v['theme-primary'],
 			'data-bs-theme-base'   => $v['theme-base'],
 			'data-bs-theme-radius' => $v['theme-radius'],
+			'data-bs-status-style' => $v['status-style'],
 		];
 
 		if ($app_layout) {

@@ -62,6 +62,13 @@ $_layout_sections = [
 			'options' => ['default' => _("Expanded"), 'folded' => _("Folded"), 'folded-hover' => _("On hover")],
 		],
 	],
+	_("Accessibility") => [
+		'status-style' => [
+			'label'   => _("Status indicators"),
+			'help'    => _("Color-blind friendly: every certificate status gets its own icon, and green / orange / red are replaced with colors that stay distinguishable."),
+			'options' => ['default' => _("Colored dots"), 'accessible' => _("Color-blind friendly")],
+		],
+	],
 ];
 ?>
 

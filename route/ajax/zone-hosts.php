@@ -156,8 +156,8 @@ try {
 
 			// days valid
 			$h->days_valid = isset($cert_parsed['custom_validDays']) ? $cert_parsed['custom_validDays'] : "/";
-			// status badge — reflects certificate status, not only days until expiry
-			$h->status_badge = $status['code']==0 ? "<span class='badge'></span>" : "<span class='badge bg-$status_color'></span>";
+			// status indicator — dot, or per-status icon in color-blind friendly mode
+			$h->status_badge = $Certificates->get_status_indicator($status['code']);
 
 			// valid to
 			$h->valid_to = isset($cert_parsed['custom_validTo']) ? $cert_parsed['custom_validTo'] : "/";

@@ -2894,3 +2894,18 @@ msgstr "Ungültige Layout-Einstellung."
 
 msgid "Toggle navigation"
 msgstr "Navigation umschalten"
+
+msgid "Accessibility"
+msgstr "Barrierefreiheit"
+
+msgid "Status indicators"
+msgstr "Statusanzeigen"
+
+msgid "Color-blind friendly: every certificate status gets its own icon, and green / orange / red are replaced with colors that stay distinguishable."
+msgstr "Farbenblind-freundlich: Jeder Zertifikatsstatus erhält ein eigenes Symbol, und Grün / Orange / Rot werden durch Farben ersetzt, die unterscheidbar bleiben."
+
+msgid "Colored dots"
+msgstr "Farbige Punkte"
+
+msgid "Color-blind friendly"
+msgstr "Farbenblind-freundlich"
