@@ -136,7 +136,7 @@ CAs discovered from scanned certificate chains, or manually imported.
 
 ### `pkey` — Private keys
 
-Single-column table (`private_key_enc`). The encrypted private key is stored as a base64-encoded AES-256-GCM ciphertext. The encryption key comes from `$private_key_encryption_key[t_id]` in `config.php`. Referenced by `certificates`, `cas`, and `csrs`.
+Single-column table (`private_key_enc`). The encrypted private key is stored as a base64-encoded AES-256-GCM ciphertext. The encryption key comes from `$private_key_encryption_key[t_id]` in `config/config.php`. Referenced by `certificates`, `cas`, and `csrs`.
 
 ### `ssl_port_groups`
 
@@ -152,7 +152,7 @@ Per-tenant cron schedules. Standard cron fields plus `script` (the PHP cron scri
 
 ### `config`
 
-Key/value pairs scoped to a `t_id`. Override any setting from `config.php` for a specific tenant.
+Key/value pairs scoped to a `t_id`. Override any setting from `config/config.php` for a specific tenant.
 
 ### `testssl`
 

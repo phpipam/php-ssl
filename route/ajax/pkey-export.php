@@ -47,7 +47,7 @@ if (!$pkey_row || empty($pkey_row->private_key_enc)) {
 $pem_key = $Certificates->pkey_decrypt($pkey_row->private_key_enc, (int) $cert->t_id);
 if ($pem_key === false || empty($pem_key)) {
     http_response_code(500);
-    print json_encode(['status' => 'error', 'message' => _("Decryption failed. Check that the encryption key in config.php is correct.")]);
+    print json_encode(['status' => 'error', 'message' => _("Decryption failed. Check that the encryption key in config/config.php is correct.")]);
     exit;
 }
 

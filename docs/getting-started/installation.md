@@ -40,7 +40,7 @@ git submodule update --init --recursive
 Copy the example config file and edit it:
 
 ```bash
-cp config.dist.php config.php
+cp config/config.dist.php config/config.php
 ```
 
 At minimum, update the database credentials. See [Configuration](configuration.md) for the full reference.
@@ -76,7 +76,7 @@ The installer will:
 2. Import `db/SCHEMA.sql` (creates all tables and seeds default data)
 3. Create the initial admin user
 
-Once complete, set the installed flag in `config.php` to disable the installer:
+Once complete, set the installed flag in `config/config.php` to disable the installer:
 
 ```php
 $installed = true;

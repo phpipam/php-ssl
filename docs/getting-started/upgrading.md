@@ -9,8 +9,20 @@ php-ssl uses numbered SQL migration files to evolve the database schema incremen
 Web-facing files moved into `public/` and the cron entry point moved to `cron/cron.php`. When you pull this change on an existing installation:
 
 1. **Change the web server document root** to `<app>/public` and add the `/route/` rewrite — see [Web Server Configuration](../operations/apache-nginx.md). nginx installations stop working until this is done. Apache installations keep working through the fallback `.htaccess` in the application root, but should still be switched.
-2. **Update the crontab** to `/usr/bin/php <app>/cron/cron.php`. The old `cron.php` in the application root is a deprecated shim that forwards to the new location, so existing crontabs keep working in the meantime.
+2. **Update the crontab** to `/usr/bin/php <app>/cron/cron.php`. The old `cron.php` in the application root has been removed — crontabs still pointing at it will fail.
 3. If PHP `open_basedir` is set, make sure it covers the application directory, not just `public/`.
+
+---
+
+## Upgrading to the `config/` directory
+
+Configuration files moved from the application root into `config/`. After pulling this change, move your local config file:
+
+```bash
+mv config.php config/config.php
+```
+
+Until it is moved, the application shows a *Configuration file is missing* page that names the file to move, and cron jobs fail. `config.dist.php` is tracked in git and moves automatically. Both the old (`/config.php`) and new (`/config/config.php`) locations are listed in `.gitignore`.
 
 ---
 

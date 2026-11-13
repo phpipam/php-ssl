@@ -1998,8 +1998,14 @@ msgstr "Die Verschlüsselung privater Schlüssel ist für diesen Mandanten nicht
 msgid "No encryption key is configured for this tenant."
 msgstr "Für diesen Mandanten ist kein Verschlüsselungsschlüssel konfiguriert."
 
-msgid "Add an entry to $private_key_encryption_key in config.php before uploading private keys."
-msgstr "Fügen Sie einen Eintrag zu $private_key_encryption_key in config.php hinzu, bevor Sie private Schlüssel hochladen."
+msgid "Add an entry to $private_key_encryption_key in config/config.php before uploading private keys."
+msgstr "Fügen Sie einen Eintrag zu $private_key_encryption_key in config/config.php hinzu, bevor Sie private Schlüssel hochladen."
+
+msgid "nmap binary not found at %s. Install nmap or update $nmap_path in config/config.php."
+msgstr "nmap-Programm nicht gefunden unter %s. Installieren Sie nmap oder passen Sie $nmap_path in config/config.php an."
+
+msgid "Decryption failed. Check that the encryption key in config/config.php is correct."
+msgstr "Entschlüsselung fehlgeschlagen. Prüfen Sie, ob der Verschlüsselungsschlüssel in config/config.php korrekt ist."
 
 msgid "Private key encryption not configured"
 msgstr "Verschlüsselung privater Schlüssel nicht konfiguriert"

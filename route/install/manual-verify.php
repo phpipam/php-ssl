@@ -3,7 +3,7 @@ global $db, $installed;
 
 $error = null;
 
-// Try connecting with application credentials from config.php
+// Try connecting with application credentials from config/config.php
 try {
 	$dsn = "mysql:host={$db['host']};port={$db['port']};dbname={$db['name']};charset=utf8";
 	$pdo = new PDO($dsn, $db['user'], $db['pass'], [
@@ -59,7 +59,7 @@ if ($error !== null) {
 <hr class="my-4">
 
 <div class="alert alert-warning mb-4" style="display:block">
-  <strong>Action required:</strong><hr>Open <code>config.php</code> and set <code>$installed = true;</code> to complete the installation.
+  <strong>Action required:</strong><hr>Open <code>config/config.php</code> and set <code>$installed = true;</code> to complete the installation.
 </div>
 
 <div class="my-4">

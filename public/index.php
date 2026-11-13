@@ -4,14 +4,20 @@
 ob_start();
 
 # check for config file
-if (!file_exists(__DIR__ . "/../config.php") && $_SERVER['REQUEST_URI']!="/install/")
+if (!file_exists(__DIR__ . "/../config/config.php") && $_SERVER['REQUEST_URI']!="/install/")
 {
 	// html
 	$title   = "Config file missing";
 	$url     = isset($_SERVER['HTTPS']) ? "https://" : "http://" .$_SERVER['SERVER_NAME'];
 	// error page
 	$error_title = "Configuration file is missing.";
-	$error_text = "To know how to connect to database config.php file needs to be present.<br>Please copy config.dist.php to config.php and change it accordingly.";
+	// config.php in the application root = installation from before the config/ directory was introduced
+	if (file_exists(__DIR__ . "/../config.php")) {
+		$error_text = "Configuration files moved to the config/ directory.<br>Please move config.php from the application root to config/config.php.";
+	}
+	else {
+		$error_text = "To know how to connect to database config/config.php file needs to be present.<br>Please copy config/config.dist.php to config/config.php and change it accordingly.";
+	}
 
 	$_params = ['tenant'=>'error', "route"=>"generic"];
 }

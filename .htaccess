@@ -1,6 +1,6 @@
 # Fallback for Apache hosts whose DocumentRoot still points at the application
 # root instead of public/. Every request is mapped into public/, so nothing
-# outside it (config.php, db/, functions/, route/ …) is served directly.
+# outside it (config/, db/, functions/, route/ …) is served directly.
 # Preferred setup: DocumentRoot /path/to/php-ssl/public (then this file is unused).
 
 <IfModule mod_rewrite.c>

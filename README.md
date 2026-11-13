@@ -66,8 +66,8 @@ git clone --recursive https://github.com/phpipam/php-ssl.git php-ssl
 
 Copy and edit the config file:
 ```
-cp config.dist.php config.php
-# Edit config.php: set DB credentials and mail settings
+cp config/config.dist.php config/config.php
+# Edit config/config.php: set DB credentials and mail settings
 ```
 
 Point the web server's **document root at the `public/` directory** (e.g. `/var/www/html/php-ssl/public`)
@@ -80,7 +80,7 @@ https://<your-server>/install/
 ```
 
 The installer will create the database, application user, and import the schema automatically.
-Once installation is complete, set `$installed = true` in `config.php` to disable the installer.
+Once installation is complete, set `$installed = true` in `config/config.php` to disable the installer.
 
 ## Cronjob
 

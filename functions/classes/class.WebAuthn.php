@@ -20,9 +20,9 @@ class WebAuthn
     }
 
     /**
-     * Derive rpId and origin from config.php globals, falling back to the HTTP request.
+     * Derive rpId and origin from config/config.php globals, falling back to the HTTP request.
      *
-     * Set $webauthn_origin and $webauthn_rpid in config.php when running behind a
+     * Set $webauthn_origin and $webauthn_rpid in config/config.php when running behind a
      * reverse proxy that terminates TLS (PHP cannot detect the scheme reliably).
      */
     public static function from_request(string $rpName): self

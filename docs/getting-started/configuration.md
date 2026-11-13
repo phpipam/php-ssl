@@ -2,16 +2,16 @@
 
 php-ssl uses a two-layer configuration system:
 
-1. **`config.php`** — global defaults, loaded on every request
+1. **`config/config.php`** — global defaults, loaded on every request
 2. **`config` database table** — per-tenant overrides managed through the UI (Settings menu)
 
 When both are set, the database value takes precedence for the tenant in question.
 
 ---
 
-## config.php Reference
+## config/config.php Reference
 
-Copy `config.dist.php` to `config.php` to get started. Never commit `config.php` to version control — it contains credentials.
+Copy `config/config.dist.php` to `config/config.php` to get started. Never commit `config/config.php` to version control — it contains credentials.
 
 ### Database
 
@@ -111,12 +111,12 @@ $private_key_encryption_key[1] = 'change-me-to-a-long-random-secret';
 $private_key_encryption_key[2] = 'another-secret-for-tenant-2';
 ```
 
-Use a different, long random string for each tenant. Keep `config.php` outside version control.
+Use a different, long random string for each tenant. Keep `config/config.php` outside version control.
 
 ---
 
 ## Per-Tenant Database Overrides
 
-Settings in the `config` table (key/value pairs scoped to a `t_id`) override the corresponding `config.php` values for that tenant. Managed via **Settings** in the tenant UI.
+Settings in the `config` table (key/value pairs scoped to a `t_id`) override the corresponding `config/config.php` values for that tenant. Managed via **Settings** in the tenant UI.
 
 Overridable settings include: `expired_days`, `expired_after_days`, `scanMaxThreads`, mail settings, and others.

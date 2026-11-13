@@ -43,7 +43,7 @@ $pem = $Certificates->pkey_decrypt($pkey->private_key_enc, (int) $cert->t_id);
 
 if ($pem === false || empty($pem)) {
     http_response_code(500);
-    exit('Decryption failed. Check that the encryption key in config.php is correct.');
+    exit('Decryption failed. Check that the encryption key in config/config.php is correct.');
 }
 
 // Derive filename from cert CN

@@ -38,7 +38,7 @@ FLUSH PRIVILEGES;
 </pre>
 
 <br>
-<span class='text-secondary'>Don't forget to set <code>$installed = true;</code> in your <code>config.php</code>!</span>
+<span class='text-secondary'>Don't forget to set <code>$installed = true;</code> in your <code>config/config.php</code>!</span>
 </div>
 
 <div class="my-4">

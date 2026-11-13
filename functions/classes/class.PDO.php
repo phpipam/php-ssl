@@ -1314,7 +1314,7 @@ class Database_PDO extends DB
 
 
     /**
-     * get database parameters from config.php
+     * get database parameters from config/config.php
      *
      * @access private
      * @return void
@@ -1322,7 +1322,7 @@ class Database_PDO extends DB
     private function set_db_params()
     {
         # use config file
-        require(dirname(__FILE__) . '/../../config.php');
+        require(dirname(__FILE__) . '/../../config/config.php');
         # set
         $this->host = $db['host'];
         $this->port = $db['port'];

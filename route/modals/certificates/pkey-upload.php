@@ -34,7 +34,7 @@ if (empty($private_key_encryption_key[$cert->t_id])) {
         _("Private key encryption not configured"),
         "<div class='alert alert-warning'>"
             ._("No encryption key is configured for this tenant.")." "
-            ._("Add an entry to \$private_key_encryption_key in config.php before uploading private keys.")
+            ._("Add an entry to \$private_key_encryption_key in config/config.php before uploading private keys.")
             ."</div>",
         "", "", false, "warning"
     );

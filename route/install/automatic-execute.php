@@ -3,7 +3,7 @@ global $Common, $installed, $db;
 
 // Block if already installed
 if ($installed === true) {
-	print '<div class="alert alert-danger"><strong>Error:</strong> Installation is already complete (<code>$installed = true</code> in config.php).</div>';
+	print '<div class="alert alert-danger"><strong>Error:</strong> Installation is already complete (<code>$installed = true</code> in config/config.php).</div>';
 	print '<div class="my-4"><a href="/install/" class="btn btn-secondary w-100">Back</a></div>';
 	return;
 }
@@ -28,7 +28,7 @@ if (empty($expected_csrf) || !hash_equals($expected_csrf, $submitted_csrf)) {
 // Invalidate token after single use
 unset($_SESSION['install_csrf_token']);
 
-// Config-derived values always come from config.php, never from POST
+// Config-derived values always come from config/config.php, never from POST
 // (readonly form fields are display-only — POST values for them are ignored)
 $params = [
 	'admin_user'    => strip_tags(trim($_POST['admin_user'] ?? '')),
@@ -77,7 +77,7 @@ if ($result['success']) {
 	<hr class="my-4">
 
 	<div class="alert alert-warning mb-4" style='display:block'>
-	  <strong>Action required:</strong><hr>Open <code>config.php</code> and set <code>$installed = true;</code> to complete the installation.
+	  <strong>Action required:</strong><hr>Open <code>config/config.php</code> and set <code>$installed = true;</code> to complete the installation.
 	</div>
 
 	<div class="my-4">

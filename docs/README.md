@@ -6,7 +6,7 @@ This directory contains the full documentation for **php-ssl**, a PHP 8.0+ SSL/T
 
 ### Getting Started
 - [Installation](getting-started/installation.md) — Clone, configure, database setup, web installer
-- [Configuration](getting-started/configuration.md) — `config.php` reference and per-tenant overrides
+- [Configuration](getting-started/configuration.md) — `config/config.php` reference and per-tenant overrides
 - [Upgrading](getting-started/upgrading.md) — Applying database migrations after a git pull
 
 ### Architecture

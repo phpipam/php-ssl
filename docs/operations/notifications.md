@@ -35,7 +35,7 @@ Private zone notifications are never sent to tenant recipients, even as BCC. Thi
 
 ### 4. Global BCC (all sends)
 
-`config.php` has a `$mail_sender_settings->bcc` setting. When non-empty, this address is silently added as BCC to **every** outgoing email — both the tenant-wide send and every individual per-host send. This is useful for a central audit address.
+`config/config.php` has a `$mail_sender_settings->bcc` setting. When non-empty, this address is silently added as BCC to **every** outgoing email — both the tenant-wide send and every individual per-host send. This is useful for a central audit address.
 
 ---
 
@@ -55,9 +55,9 @@ Private zone notifications are never sent to tenant recipients, even as BCC. Thi
 |---|---|
 | Tenant recipients | Tenants → edit tenant → **Recipients** field |
 | Per-host recipients | Zones → expand zone → host row → **Recipients** column |
-| Global BCC | `config.php` → `$mail_sender_settings->bcc` |
-| SMTP server / auth | `config.php` → `$mail_settings` block |
-| Sender name / address | `config.php` → `$mail_sender_settings->mail_from` / `mail_addr` |
+| Global BCC | `config/config.php` → `$mail_sender_settings->bcc` |
+| SMTP server / auth | `config/config.php` → `$mail_settings` block |
+| Sender name / address | `config/config.php` → `$mail_sender_settings->mail_from` / `mail_addr` |
 
 ---
 
@@ -84,7 +84,7 @@ Certificates whose issuer is in the tenant's ignored issuers list are silently s
 
 A notification is sent for any certificate where:
 
-- The expiry date is within `$expired_days` days from now (configurable in `config.php`, default 20), **or**
+- The expiry date is within `$expired_days` days from now (configurable in `config/config.php`, default 20), **or**
 - The certificate has already expired but less than `$expired_after_days` days ago (default 7)
 
 Certificates whose issuer is marked as ignored for expiry in the tenant's ignored issuers list are skipped.

@@ -1,6 +1,6 @@
 # Web Server Configuration
 
-php-ssl is a standard PHP application with no build step. **The web server's document root must be the `public/` directory** of the checkout. Everything else — `config.php`, `functions/`, `route/`, `db/` (including backups in `db/bkp/`), `cron/` — stays outside the web root and cannot be requested by URL.
+php-ssl is a standard PHP application with no build step. **The web server's document root must be the `public/` directory** of the checkout. Everything else — `config/config.php`, `functions/`, `route/`, `db/` (including backups in `db/bkp/`), `cron/` — stays outside the web root and cannot be requested by URL.
 
 ```
 /var/www/html/php-ssl/
@@ -10,7 +10,8 @@ php-ssl is a standard PHP application with no build step. **The web server's doc
 │   ├── .htaccess    ← Apache rewrite rules
 │   ├── css/  js/  favicon.*
 ├── cron/cron.php    ← cron entry point (CLI only)
-├── route/  functions/  db/  config.php  …   ← not web-accessible
+├── config/          ← config.php, config.dist.php
+├── route/  functions/  db/  …   ← not web-accessible
 ```
 
 Two rewrites are required:
@@ -96,7 +97,7 @@ server {
 ## Security recommendations
 
 - Serve over HTTPS only; redirect HTTP to HTTPS.
-- Never point the document root at the application root — that would expose `config.php`, database backups in `db/bkp/` and the `.git` directory.
+- Never point the document root at the application root — that would expose `config/config.php`, database backups in `db/bkp/` and the `.git` directory.
 - Do not add PHP files to `public/` other than `index.php` and `route.php`. New endpoints belong in `route/ajax/` or `route/modals/`.
 - If PHP `open_basedir` is set, it must include the application directory (the parent of `public/`), not just `public/`.
-- The `install/` route is disabled by setting `$installed = true` in `config.php`. Consider also blocking it at the web server level after installation.
+- The `install/` route is disabled by setting `$installed = true` in `config/config.php`. Consider also blocking it at the web server level after installation.

@@ -39,7 +39,7 @@ if ($zone === null) {
 
     if (!$nmap_available) {
         $content[] = $Result->show("warning",
-            sprintf(_("nmap binary not found at %s. Install nmap or update \$nmap_path in config.php."), htmlspecialchars($Nmap->nmap_path)),
+            sprintf(_("nmap binary not found at %s. Install nmap or update \$nmap_path in config/config.php."), htmlspecialchars($Nmap->nmap_path)),
             false, false, true);
         $btn_text     = "";
         $header_class = "warning";

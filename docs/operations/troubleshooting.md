@@ -4,12 +4,12 @@
 
 ### "Config file missing" on first load
 
-`config.php` does not exist. Copy `config.dist.php` to `config.php` and fill in your database credentials before loading the app.
+`config/config.php` does not exist. Copy `config/config.dist.php` to `config/config.php` and fill in your database credentials before loading the app.
 
 ### Installer redirects to itself repeatedly
 
 The installer checks the DB connection. Verify:
-- The DB host, user, password, and database name in `config.php` are correct
+- The DB host, user, password, and database name in `config/config.php` are correct
 - The MySQL/MariaDB server is running and reachable from the web server
 - The DB user has `ALL` privileges on the database
 
@@ -132,7 +132,7 @@ Add to `/etc/fstab` and run `mount /dev/fd`.
 
 ### No emails sent after certificate change
 
-1. Verify SMTP settings in `config.php` (or the tenant's config overrides)
+1. Verify SMTP settings in `config/config.php` (or the tenant's config overrides)
 2. Check that the tenant has at least one recipient configured under **Tenants → Edit**
 3. Run `update_certificates` manually and check for mail-related PHP errors: `php cron/cron.php 1 update_certificates`
 4. Confirm the host is not muted (mute icon in the zone host list)

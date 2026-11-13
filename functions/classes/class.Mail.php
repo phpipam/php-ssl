@@ -155,7 +155,7 @@ class mailer extends Common
 	public function read_settings()
 	{
 		// include config file
-		include(dirname(__FILE__) . "/../../config.php");
+		include(dirname(__FILE__) . "/../../config/config.php");
 		// save objects
 		$this->settings = $mail_sender_settings;
 		$this->mail_settings = $mail_settings;

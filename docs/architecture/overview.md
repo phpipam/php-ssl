@@ -12,7 +12,8 @@ cron/cron.php        ← cron entry point (CLI only)
 route/               ← page templates, AJAX endpoints, modals (not web-accessible)
 functions/           ← autoload, classes, cron job scripts, locale, submodules
 db/                  ← SCHEMA.sql, migrations, backups
-config.php, version.php
+config/              ← config.php (local, gitignored), config.dist.php (template)
+version.php
 ```
 
 Code in `public/` reaches the rest of the application via `__DIR__ . '/../…'`. Only `index.php` and `route.php` belong in `public/`.
@@ -24,7 +25,7 @@ Browser request
     │
     ▼
 public/index.php
-    ├── Loads config.php
+    ├── Loads config/config.php
     ├── require functions/autoload.php
     │       ├── Instantiates all classes (Database_PDO, URL, User, SSL, …)
     │       ├── Parses URL → $_params

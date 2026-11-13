@@ -15,7 +15,7 @@ class Common extends Validate
 	 */
 	public function config_exists()
 	{
-		return file_exists(dirname(__FILE__) . "/../../config.php") ? true : false;
+		return file_exists(dirname(__FILE__) . "/../../config/config.php") ? true : false;
 	}
 
 	/**
@@ -35,7 +35,7 @@ class Common extends Validate
 
 		// Check $installed flag
 		if (!isset($installed) || $installed !== true) {
-			$warnings[] = ['text' => 'Application is not marked as installed. Open <code style="font-size:10px;">config.php</code> and set <code style="font-size:10px;">$installed = true;</code>'];
+			$warnings[] = ['text' => 'Application is not marked as installed. Open <code style="font-size:10px;">config/config.php</code> and set <code style="font-size:10px;">$installed = true;</code>'];
 		}
 
 		// Check for default password (admin/admin — sha512 hash)
@@ -86,7 +86,7 @@ class Common extends Validate
 
 		// Safety check: refuse to run if already installed
 		if ($installed === true) {
-			return ['success' => false, 'errors' => ['Installation refused: $installed is set to true in config.php. Set it to false to reinstall.'], 'log' => []];
+			return ['success' => false, 'errors' => ['Installation refused: $installed is set to true in config/config.php. Set it to false to reinstall.'], 'log' => []];
 		}
 
 		$admin_user    = trim($params['admin_user'] ?? '');

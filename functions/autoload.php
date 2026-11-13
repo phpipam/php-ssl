@@ -109,7 +109,7 @@ function load_translations ($Database)
 }
 
 # config
-include (dirname(__FILE__)."/../config.php");
+include (__DIR__ . "/../config/config.php");
 
 # version
 include (dirname(__FILE__)."/../version.php");

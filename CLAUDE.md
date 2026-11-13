@@ -12,8 +12,8 @@ Key features: certificate monitoring, CA management, CSR generation/signing, tes
 
 **Configuration:**
 ```bash
-cp config.dist.php config.php
-# Edit config.php with DB credentials and mail settings
+cp config/config.dist.php config/config.php
+# Edit config/config.php with DB credentials and mail settings
 ```
 
 **Web server:** the document root must be `public/` (served at the root of a vhost). See `docs/operations/apache-nginx.md`.
@@ -40,8 +40,6 @@ php cron/cron.php <tenant_id> <script_name>
 # e.g.: php cron/cron.php 1 update_certificates
 ```
 
-The root-level `cron.php` is a deprecated shim that only requires `cron/cron.php` (kept for existing crontabs).
-
 **PHP required:** 8.0 or later (server currently runs PHP 8.3)
 
 **PHP extensions required:** `curl`, `gettext`, `openssl`, `pcntl`, `PDO`, `pdo_mysql`, `session`
@@ -62,7 +60,8 @@ cron/cron.php ← cron entry point (CLI only)
 route/        ← page templates, AJAX endpoints, modals (NOT web-accessible)
 functions/    ← autoload, classes, cron job scripts, locale, submodules
 db/           ← SCHEMA.sql, migrations, backups (db/bkp)
-config.php, version.php
+config/       ← config.php (local, gitignored — credentials), config.dist.php (template)
+version.php
 ```
 
 Code under `public/` must reference the rest of the app via `__DIR__ . '/../...'`. Never add PHP files to `public/` other than the two front controllers.
@@ -176,11 +175,11 @@ Key `zones` columns: `private_zone_uid` (NULL = public; non-NULL = private, owne
 
 Key `hosts` columns: `c_id` (current certificate FK), `c_id_old` (previous certificate FK — used for change detection), `ignore`, `mute`, `h_recipients` (per-host notification overrides).
 
-The `config` table stores per-tenant configuration overrides for settings defined in `config.php`.
+The `config` table stores per-tenant configuration overrides for settings defined in `config/config.php`.
 
 ### Dual Configuration System
 
-`config.php` provides global defaults. The `Config` class reads the `config` DB table and composes per-tenant overrides. This means some settings (like `$expired_days`) can differ per tenant at runtime, even though `config.php` defines the baseline.
+`config/config.php` provides global defaults. The `Config` class reads the `config` DB table and composes per-tenant overrides. This means some settings (like `$expired_days`) can differ per tenant at runtime, even though `config/config.php` defines the baseline.
 
 ### Global Variables in Route Files
 
@@ -276,7 +275,7 @@ Included on every authenticated page. Checks:
 - **Unapplied migrations** (admin only) — compares `db/migrations/*.sql` filenames against `migrations` table
 - **Missing git submodules** (all users) — checks `functions/assets/Net_DNS2/Net/DNS2.php`, `functions/assets/PHPMailer/src/PHPMailer.php`, `functions/testSSL/testssl.sh`
 
-### Configuration (`config.php`)
+### Configuration (`config/config.php`)
 
 Key settings beyond DB credentials:
 - `$expired_days` — days before expiry to warn (default 20)

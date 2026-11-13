@@ -28,7 +28,7 @@ if (php_sapi_name() != "cli") {
 $tenant_id = $j->t_id;
 
 # get config (db credentials + optional $backup_retention_period)
-include(dirname(__FILE__) . "/../../config.php");
+include(dirname(__FILE__) . "/../../config/config.php");
 
 # retention period in days
 $retention_days = (isset($backup_retention_period) && is_numeric($backup_retention_period)) ? (int)$backup_retention_period : 30;

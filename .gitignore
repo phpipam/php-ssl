@@ -1,3 +1,5 @@
 db/bkp
-config.php
+/config/config.php
+# legacy location (before the config/ directory) — keep ignored so credentials are never committed
+/config.php
 .claude

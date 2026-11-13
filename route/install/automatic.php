@@ -41,7 +41,7 @@ $csrf_token = $_SESSION['install_csrf_token'];
 
   <hr class="my-4">
   <h4 class="mb-2">Database settings</h4>
-  <p class="text-secondary small mb-3">Read from <code>config.php</code> — edit that file to change these values.</p>
+  <p class="text-secondary small mb-3">Read from <code>config/config.php</code> — edit that file to change these values.</p>
 
   <div class="row g-3 mb-3">
     <div class="col-8">
@@ -61,7 +61,7 @@ $csrf_token = $_SESSION['install_csrf_token'];
 
   <hr class="my-4">
   <h4 class="mb-2">Application user</h4>
-  <p class="text-secondary small mb-3">Read from <code>config.php</code> — this user will be created and granted access to the database.</p>
+  <p class="text-secondary small mb-3">Read from <code>config/config.php</code> — this user will be created and granted access to the database.</p>
 
   <div class="mb-3">
     <label class="form-label">Username</label>

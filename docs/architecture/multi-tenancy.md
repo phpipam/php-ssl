@@ -53,7 +53,7 @@ A zone can be marked as private at creation time. The `zones.private_zone_uid` c
 - Admins **cannot** see private zones belonging to other users
 - The zones list shows a note when hidden private zones exist in the tenant
 - Cron scripts scan private zones but send notifications only to the zone creator — tenant-wide recipients are never BCC'd on private-zone changes
-- If `$log_object = false` in `config.php`, private zone filtering in the logs page for deleted-zone records will not work correctly
+- If `$log_object = false` in `config/config.php`, private zone filtering in the logs page for deleted-zone records will not work correctly
 
 **Where private-zone filtering is applied:**
 - `Zones::get_all()`
@@ -85,9 +85,9 @@ Stopping impersonation clears this key.
 
 ## Tenant configuration overrides
 
-The `config` table stores per-tenant key/value overrides for settings defined in `config.php`. The `Config` class reads these and merges them over the global defaults at runtime, so `$expired_days`, mail settings, `scanMaxThreads`, and other values can differ per tenant.
+The `config` table stores per-tenant key/value overrides for settings defined in `config/config.php`. The `Config` class reads these and merges them over the global defaults at runtime, so `$expired_days`, mail settings, `scanMaxThreads`, and other values can differ per tenant.
 
 The resolution order for user-facing expiry thresholds is:
 1. User's personal setting (`users.days`)
 2. Tenant config override (`config` table)
-3. Global default (`config.php`)
+3. Global default (`config/config.php`)

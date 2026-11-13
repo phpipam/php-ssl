@@ -2033,8 +2033,14 @@ msgstr "Šifriranje zasebnega ključa ni konfigurirano za tega najemnika."
 msgid "No encryption key is configured for this tenant."
 msgstr "Za tega najemnika ni konfiguriran šifrirni ključ."
 
-msgid "Add an entry to $private_key_encryption_key in config.php before uploading private keys."
-msgstr "Dodajte vnos v $private_key_encryption_key v config.php preden naložite zasebne ključe."
+msgid "Add an entry to $private_key_encryption_key in config/config.php before uploading private keys."
+msgstr "Dodajte vnos v $private_key_encryption_key v config/config.php preden naložite zasebne ključe."
+
+msgid "nmap binary not found at %s. Install nmap or update $nmap_path in config/config.php."
+msgstr "Program nmap ni bil najden na %s. Namestite nmap ali posodobite $nmap_path v config/config.php."
+
+msgid "Decryption failed. Check that the encryption key in config/config.php is correct."
+msgstr "Dešifriranje ni uspelo. Preverite, ali je šifrirni ključ v config/config.php pravilen."
 
 msgid "Private key encryption not configured"
 msgstr "Šifriranje zasebnega ključa ni konfigurirano"

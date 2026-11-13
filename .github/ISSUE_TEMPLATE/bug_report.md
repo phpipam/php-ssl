@@ -24,7 +24,7 @@ Please include steps to reproduce the issue:
 4. See error
 
 **Screenshots and error logs**
-Please set `$debugging=true;` in your config.php and include any reported error messages. If applicable, add screenshots or other error logs to help explain your problem.
+Please set `$debugging=true;` in your config/config.php and include any reported error messages. If applicable, add screenshots or other error logs to help explain your problem.
 
 **Additional Info**
 Add any other useful info about the problem here. e.g enabled modules or advanced usage such as MySQL clustering/reverse proxies.

@@ -143,13 +143,13 @@ Audit logging. All changes to zones, hosts, certificates, users, and CAs are wri
 $Log->write($object, $object_id, $tenant_id, $user_id, $action, $public, $text, $old_json, $new_json);
 ```
 
-The `$old_json` / `$new_json` parameters are only stored when `$log_object = true` in `config.php`.
+The `$old_json` / `$new_json` parameters are only stored when `$log_object = true` in `config/config.php`.
 
 ---
 
 ## Config (`class.Config.php`)
 
-Reads per-tenant overrides from the `config` DB table and merges them over the global `config.php` defaults.
+Reads per-tenant overrides from the `config` DB table and merges them over the global `config/config.php` defaults.
 
 **Key method:** `get_config($tenant_id)` — returns an associative array of all config values for the tenant.
 
