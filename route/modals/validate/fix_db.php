@@ -46,6 +46,7 @@ foreach ($validation['issues'] as $issue) {
 	try {
 		$Database->runQuery($issue['fix_sql']);
 		$applied++;
+		$Log->write("database", null, $user->t_id, $user->id, "db_fix", false, "Database structure fix applied", null, json_encode(['sql' => $issue['fix_sql']]));
 	} catch (Exception $e) {
 		$errors[] = $issue['fix_sql'] . ': ' . $e->getMessage();
 	}
