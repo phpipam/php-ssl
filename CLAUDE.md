@@ -62,7 +62,6 @@ cron/cron.php ← cron entry point (CLI only)
 route/        ← page templates, AJAX endpoints, modals (NOT web-accessible)
 functions/    ← autoload, classes, cron job scripts, locale, submodules
 db/           ← SCHEMA.sql, migrations, backups (db/bkp)
-phpversions/  ← CLI tool
 config.php, version.php
 ```
 
