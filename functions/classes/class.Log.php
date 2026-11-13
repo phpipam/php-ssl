@@ -39,7 +39,8 @@ class Log extends Common
 		"logs",
 		"csr_templates",
 		"csrs",
-		"cas"
+		"cas",
+		"database"
 	];
 
 	/**
@@ -66,7 +67,9 @@ class Log extends Common
 		"sign",
 		"passkey_delete",
 		"2fa_enabled",
-		"2fa_disabled"
+		"2fa_disabled",
+		"migrate",
+		"db_fix"
 	];
 
 	/**

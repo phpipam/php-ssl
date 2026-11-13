@@ -27,6 +27,11 @@ if ($user->admin !== '1') {
 // Apply
 $results = $Migration->apply_all();
 
+// Log each migration result
+foreach ($results as $r) {
+	$Log->write("database", null, $user->t_id, $user->id, "migrate", false, ($r['success'] ? "Migration applied " : "Migration failed ") . $r['file']);
+}
+
 $all_ok = !in_array(false, array_column($results, 'success'), true);
 
 print json_encode([
