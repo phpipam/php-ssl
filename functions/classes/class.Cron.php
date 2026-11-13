@@ -66,7 +66,7 @@ class Cron extends Common
 	}
 
 	/**
-	 * Fetch all cronjobs
+	 * Fetch all cronjobs of active tenants (inactive tenants are not scanned)
 	 * @method fetch_cronjobs
 	 * @return false|array
 	 */
@@ -74,7 +74,7 @@ class Cron extends Common
 	{
 		// Fetch all cronjobs
 		try {
-			$this->cronjobs = $this->Database->getObjectsQuery("select * from cron;");
+			$this->cronjobs = $this->Database->getObjectsQuery("select c.* from cron as c join tenants as t on c.t_id = t.id where t.active = 1;");
 		}
 		catch (Exception $e) {
 			$this->errors[] = "Unable to fetch cron jobs";
@@ -232,7 +232,7 @@ class Cron extends Common
 
 		// always run testssl_scan for every tenant that has pending scans
 		$pending = $this->Database->getObjectsQuery(
-			"SELECT DISTINCT tenant_id AS t_id FROM testssl WHERE status = 'Requested'", []
+			"SELECT DISTINCT tenant_id AS t_id FROM testssl WHERE status = 'Requested' AND tenant_id IN (SELECT id FROM tenants WHERE active = 1)", []
 		);
 		if ($pending) {
 			foreach ($pending as $j) {
@@ -242,7 +242,7 @@ class Cron extends Common
 
 		// always run nmap_scan for every tenant that has pending scans
 		$pending = $this->Database->getObjectsQuery(
-			"SELECT DISTINCT tenant_id AS t_id FROM nmap_scans WHERE status = 'Requested'", []
+			"SELECT DISTINCT tenant_id AS t_id FROM nmap_scans WHERE status = 'Requested' AND tenant_id IN (SELECT id FROM tenants WHERE active = 1)", []
 		);
 		if ($pending) {
 			foreach ($pending as $j) {
