@@ -259,6 +259,18 @@ class mailer extends Common
 	}
 
 	/**
+	 * Check that a recipient is a valid email address, so that a single invalid
+	 * address (e.g. the default "admin" user) does not make the whole mail fail.
+	 * @method is_valid_recipient
+	 * @param  mixed $email
+	 * @return bool
+	 */
+	private function is_valid_recipient($email = "")
+	{
+		return is_string($email) && filter_var(trim($email), FILTER_VALIDATE_EMAIL) !== false;
+	}
+
+	/**
 	 * Send mail
 	 * @method send
 	 * @param  string $title
@@ -280,21 +292,24 @@ class mailer extends Common
 			// add to / cc
 			if (is_array($to)) {
 				foreach ($to as $t) {
+					if (!$this->is_valid_recipient($t)) continue;
 					$this->Php_mailer->addAddress($t);
 				}
 			}
 			if (is_array($cc)) {
 				foreach ($cc as $t) {
+					if (!$this->is_valid_recipient($t)) continue;
 					$this->Php_mailer->addCC($t);
 				}
 			}
 			if (is_array($bcc)) {
 				foreach ($bcc as $t) {
+					if (!$this->is_valid_recipient($t)) continue;
 					$this->Php_mailer->addBCC($t);
 				}
 			}
 			// Global BCC from config
-			if (!empty($this->settings->bcc)) {
+			if (!empty($this->settings->bcc) && $this->is_valid_recipient($this->settings->bcc)) {
 				$this->Php_mailer->addBCC($this->settings->bcc);
 			}
 
