@@ -196,9 +196,22 @@ class Nmap
      */
     private function send_completion_email(object $scan): void
     {
-        global $mail_sender_settings;
-
         if (empty($scan->notify_email)) { return; }
+
+        // render mail in the recipient's language
+        with_locale(
+            recipient_lang_id($scan->notify_email, $scan->tenant_id ?? null, $this->Database),
+            $this->Database,
+            fn() => $this->send_completion_email_localized($scan)
+        );
+    }
+
+    /**
+     * Build and send the completion email in the currently active language.
+     */
+    private function send_completion_email_localized(object $scan): void
+    {
+        global $mail_sender_settings;
 
         $Mail = new mailer();
 
@@ -235,7 +248,7 @@ class Nmap
         if ($zone_link) {
             $rows[] = $Mail->font_norm . "<a href='{$zone_link}' style='color:#003551;'>" . _("View zone") . "</a></font><br>";
         }
-        $rows[] = "<br>" . $Mail->font_norm . "Visit <a href='" . ($mail_sender_settings->www ?? '') . "' style='color:#003551;'>" . ($mail_sender_settings->www ?? '') . "</a></font>";
+        $rows[] = "<br>" . $Mail->font_norm . _("Visit") . " <a href='" . ($mail_sender_settings->www ?? '') . "' style='color:#003551;'>" . ($mail_sender_settings->www ?? '') . "</a></font>";
 
         $Mail->send(
             "php-ssl :: " . _("Network scan completed"),

@@ -2944,3 +2944,59 @@ msgstr "Barvne pike"
 
 msgid "Color-blind friendly"
 msgstr "Za barvno slepe"
+
+# Email notifications (rendered in recipient's language)
+
+msgid "changed certificates"
+msgstr "spremenjeni certifikati"
+
+msgid "certificate expiration"
+msgstr "potek certifikatov"
+
+msgid "DNS changed hosts"
+msgstr "spremenjeni DNS gostitelji"
+
+msgid "Expired certificates"
+msgstr "Potekli certifikati"
+
+msgid "Certificates that will expire soon"
+msgstr "Certifikati, ki bodo kmalu potekli"
+
+msgid "New DNS records"
+msgstr "Novi DNS zapisi"
+
+msgid "Removed DNS records"
+msgstr "Odstranjeni DNS zapisi"
+
+msgid "%s for zone %s"
+msgstr "%s za cono %s"
+
+msgid "Visit"
+msgstr "Obiščite"
+
+msgid "This email was automatically generated. Do not reply."
+msgstr "To sporočilo je bilo samodejno ustvarjeno. Ne odgovarjajte nanj."
+
+msgid "Notification sent."
+msgstr "Obvestilo poslano."
+
+msgid "Started"
+msgstr "Začeto"
+
+msgid "Prefix"
+msgstr "Predpona"
+
+msgid "URL"
+msgstr "URL"
+
+msgid "New certificate issued"
+msgstr "Izdan nov certifikat"
+
+msgid "A new TLS certificate for <b>%s</b> has been successfully issued and is ready for use."
+msgstr "Nov TLS certifikat za <b>%s</b> je bil uspešno izdan in je pripravljen za uporabo."
+
+msgid "Common Name"
+msgstr "Splošno ime (CN)"
+
+msgid "Issued on"
+msgstr "Izdano"

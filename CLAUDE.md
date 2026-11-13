@@ -319,4 +319,18 @@ When adding new strings, also add the corresponding `msgid` / `msgstr` entries t
 - `functions/locale/sl_SI.UTF-8/LC_MESSAGES/messages.po`
 - `functions/locale/de_DE.UTF-8/LC_MESSAGES/messages.po`
 
-After editing `.po` files, recompile on the server with `msgfmt messages.po -o messages.mo`.
+After editing `.po` files, recompile on the server. At runtime gettext uses the domain `messages_{translations.id}` (cache-busting for PHP-FPM), so it reads `messages_2.mo` (sl_SI) / `messages_3.mo` (de_DE), not `messages.mo` — compile both:
+```bash
+cd functions/locale/sl_SI.UTF-8/LC_MESSAGES && msgfmt messages.po -o messages.mo && cp messages.mo messages_2.mo
+cd functions/locale/de_DE.UTF-8/LC_MESSAGES && msgfmt messages.po -o messages.mo && cp messages.mo messages_3.mo
+```
+
+### Email language
+
+Emails are rendered in each **recipient's** language, not the language of the request/cron process. Helpers in `functions/autoload.php`:
+- `recipient_lang_id($email, $t_id, $Database)` — `users.lang_id` of the user with that email (same-tenant user preferred) → `tenants.lang_id` → `null` (English). Also used for addresses that are not users (tenant default).
+- `group_recipients_by_lang($emails, $t_id, $Database)` — splits a recipient list into per-language groups (send one mail per group instead of one mail to everyone).
+- `with_locale($lang_id, $Database, fn() => ...)` — switches gettext, runs the callback, restores the previous language (the logged-in user's UI language).
+- `apply_locale($lang_id, $Database)` — low-level switch used by `init_locale()` and `with_locale()`.
+
+When adding an email: build **all** of its content (subject, body, footer) inside a `with_locale()` callback so every `_()` resolves in the recipient's language. Cron scripts (`update_certificates`, `expired_certificates`, `axfr_transfer`) first collect hosts/recipients, then render per recipient group. BCC copies to tenant recipients use the primary recipient's language.

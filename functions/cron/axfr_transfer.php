@@ -79,38 +79,41 @@ try {
 				// tenant
 				$tenant = $Database->getObject("tenants", $tenant_id);
 
-				// mail content
-				$content = [];
-
 				// items to main
 				$items = [];
 
 				// created records
 				if(sizeof($AXFR->records['new_records'])>0) {
-					$items['New DNS records'] = $AXFR->records['new_records'];
+					$items['new'] = $AXFR->records['new_records'];
 				}
 				// removed records
 				if(sizeof($AXFR->records['removed_records'])>0 && $zone->delete_records=="1") {
-					$items['Removed DNS records'] = $AXFR->records['removed_records'];
+					$items['removed'] = $AXFR->records['removed_records'];
 				}
 
-				// loop and save
-				foreach ($items as $type=>$items1) {
-					$content[] = $Mail->font_title._($type)." for zone ".$zone->name."</font>:<br><br>";
-					foreach ($items1 as $item) {
-						$content[] = $Mail->font_norm.$item."</font><br>";
+				// mail content - rendered in currently active language
+				$render_mail = function () use ($Mail, $items, $zone, $mail_sender_settings) {
+					$content = [];
+					foreach ($items as $type=>$items1) {
+						$type_title = $type == "new" ? _("New DNS records") : _("Removed DNS records");
+						$content[] = $Mail->font_title.sprintf(_("%s for zone %s"), $type_title, $zone->name)."</font>:<br><br>";
+						foreach ($items1 as $item) {
+							$content[] = $Mail->font_norm.$item."</font><br>";
+						}
+						$content[] = "<br><hr style='border-bottom:none;border-top:1px solid #ccc;'>";
 					}
-					$content[] = "<br><hr style='border-bottom:none;border-top:1px solid #ccc;'>";
-				}
-
-				// footer
-				$content[] = "<br><br>".$Mail->font_norm."Visit <a href='".$mail_sender_settings->www."' style='color:#003551;'>".$mail_sender_settings->www."</a></font>";
+					// footer
+					$content[] = "<br><br>".$Mail->font_norm._("Visit")." <a href='".$mail_sender_settings->www."' style='color:#003551;'>".$mail_sender_settings->www."</a></font>";
+					return implode("\n", $content);
+				};
 
 				// private zone: only notify the creator, not tenant recipients
 				if (!empty($zone->private_zone_uid)) {
 					$creator = $Database->getObject("users", $zone->private_zone_uid);
 					if ($creator && filter_var($creator->email, FILTER_VALIDATE_EMAIL)) {
-						$Mail->send ("Telemach php-ssl :: DNS changed hosts [".$zone->name."]", [$creator->email], [], [], implode("\n", $content), false);
+						with_locale (recipient_lang_id ($creator->email, $tenant_id, $Database), $Database, function () use ($Mail, $creator, $zone, $render_mail) {
+							$Mail->send ("Telemach php-ssl :: "._("DNS changed hosts")." [".$zone->name."]", [$creator->email], [], [], $render_mail (), false);
+						});
 					}
 				}
 				else {
@@ -119,8 +122,12 @@ try {
 						array_map('trim', explode(";", str_replace(",", ";", $tenant->recipients))),
 						fn($e) => filter_var($e, FILTER_VALIDATE_EMAIL)));
 
-					// send
-					$Mail->send ("Telemach php-ssl :: DNS changed hosts [".$tenant->name."]", $to, [], [], implode("\n", $content), false);
+					// send - one mail per recipient language
+					foreach (group_recipients_by_lang ($to, $tenant_id, $Database) as $group) {
+						with_locale ($group['lang_id'], $Database, function () use ($Mail, $group, $tenant, $render_mail) {
+							$Mail->send ("Telemach php-ssl :: "._("DNS changed hosts")." [".$tenant->name."]", $group['emails'], [], [], $render_mail (), false);
+						});
+					}
 				}
 			}
 

@@ -106,9 +106,6 @@ try {
 			$User = new User ($Database);
 			$all_users = $User->get_all ("email");
 
-			// processed flag - we need it in case issuer is ignored !
-			$processed = 0;
-
 			// fake user
 			$cron_user = new stdClass ();
 			$cron_user->t_id = $tenant_id;
@@ -133,161 +130,184 @@ try {
 
 			$use_list = ($tenant->mail_style == "list");
 
-			// headers
-			$header_list = [
-				$Mail->font_title._("Changed host certificates")."</font>:<br><br>",
-				"<table border='0' cellpadding='3' cellspacing='0'>",
-			];
-			$header_table = [
-				$Mail->font_title._("Changed host certificates")."</font>:<br><br>",
-				"<table border='0' cellpadding='3' cellspacing='0'>",
-				"<thead>",
-				"  <th style='border-bottom:2px solid #003551; text-align:left'>".$Mail->font_norm._("Hostname")." / "._("IP")."</font></th>",
-				"  <th style='border-bottom:2px solid #003551; text-align:left'>".$Mail->font_norm._("Zone")."</font></th>",
-				"  <th style='border-bottom:2px solid #003551; text-align:left'>".$Mail->font_norm._("Certificate")."</font></th>",
-				"  <th style='border-bottom:2px solid #003551; text-align:left'>".$Mail->font_norm._("Serial")." / "._("Issuer")."</font></th>",
-				"  <th style='border-bottom:2px solid #003551; text-align:left'>".$Mail->font_norm._("Valid to")."</font></th>",
-				"  <th style='border-bottom:2px solid #003551; text-align:left'>".$Mail->font_norm._("Expires")."</font></th>",
-				"</thead>",
-				"<tbody>",
-			];
-
-			// initialize per-recipient content: $content[$email] = [rows]
-			$content = [];
-			foreach ($email_to_tenant_recipents as $email) {
-				$content[$email] = $use_list ? $header_list : $header_table;
-			}
-
-			// separate log content capturing all rows regardless of recipient config or private zones
-			$log_content_rows = $header_list;
-
-			// track private zone creator emails so we don't BCC tenant recipients to their notifications
-			$private_zone_emails = [];
+			//
+			// 1. collect changed hosts and who has to be notified about each of them.
+			//    Mail content is rendered later, separately for each recipient language.
+			//
+			$notify_hosts       = [];		// [idx => ['c'=>row, 'cert'=>parsed cert, 'status_int'=>int, 'zone_name'=>string]]
+			$tenant_host_idx    = [];		// idx of public hosts -> tenant recipients
+			$individual         = [];		// $email => ['hosts'=>[idx], 'private'=>bool] (per-host recipients and private zone creators)
 
 			foreach ($changed_hosts as $c) {
 
             	// parse cert
             	$cert_parsed = $Certificates->parse_cert ($c->certificate);
 
+            	// check if cert is ignored, if so skip to next item !
+            	if ($Certificates->is_issuer_ignored (str_replace("keyid:", "", $cert_parsed['extensions']['authorityKeyIdentifier']), $tenant_id, 'update')!==false) {
+            		continue;
+            	}
+
             	// status
             	$status_int = $Certificates->get_status_int ($cert_parsed, true, $c->hostname);
 
-            	if     ($status_int == "1")  { $status = "Expired";         $color = "#E74C3C"; }
-            	elseif ($status_int == "2")  { $status = "Expires soon";    $color = "#FF5733"; }
-            	elseif ($status_int == "10") { $status = "Domain mismatch"; $color = "#FF5733"; }
-            	elseif ($status_int == "11") { $status = "Self-signed";     $color = "#FF5733"; }
-            	else                         { $status = "Valid";            $color = "#1ABC9C"; }
+				// keep raw zone name for links
+				$zone_name_raw = $c->zone_name;
 
-            	// check if cert is ignored, if so skip to next item !
-            	if ($Certificates->is_issuer_ignored (str_replace("keyid:", "", $cert_parsed['extensions']['authorityKeyIdentifier']), $tenant_id, 'update')===false) {
+            	// try to prevent linkable text
+				$c->hostname                                 = $Mail->prevent_linkable_text($c->hostname);
+				$cert_parsed['subject']['CN']                = $Mail->prevent_linkable_text($cert_parsed['subject']['CN']);
+				$cert_parsed['extensions']['subjectAltName'] = $Mail->prevent_linkable_text($cert_parsed['extensions']['subjectAltName']);
+				$cert_parsed['issuer']['O']                  = $Mail->prevent_linkable_text($cert_parsed['issuer']['O']);
 
-	            	// try to prevent linkable text
-					$c->hostname                                 = $Mail->prevent_linkable_text($c->hostname);
-					$cert_parsed['subject']['CN']                = $Mail->prevent_linkable_text($cert_parsed['subject']['CN']);
-					$cert_parsed['extensions']['subjectAltName'] = $Mail->prevent_linkable_text($cert_parsed['extensions']['subjectAltName']);
-					$cert_parsed['issuer']['O']                  = $Mail->prevent_linkable_text($cert_parsed['issuer']['O']);
-					$zone_name                                   = $Mail->prevent_linkable_text($c->zone_name ?? "/");
+				$idx = sizeof($notify_hosts);
+				$notify_hosts[$idx] = [
+					'c'          => $c,
+					'cert'       => $cert_parsed,
+					'status_int' => $status_int,
+					'zone_name'  => $Mail->prevent_linkable_text($zone_name_raw ?? "/"),
+					'zone_raw'   => $zone_name_raw,
+				];
 
-	                $td_style_title = "vertical-align:top;padding:1px 5px;white-space:nowrap;padding-left:0px;padding-bottom: 7px;padding-top:20px;";
-	                $td_style       = "border-left:1px solid #ddd;vertical-align:top;padding:1px 5px;white-space:nowrap;padding-left:10px;";
+                // private zone: only notify the zone creator, not tenant recipients
+                if (!empty($c->private_zone_uid)) {
+                	$creator = $Database->getObject("users", $c->private_zone_uid);
+                	if ($creator && $Common->validate_mail($creator->email)) {
+                		if (!isset($individual[$creator->email])) { $individual[$creator->email] = ['hosts'=>[], 'private'=>false]; }
+                		$individual[$creator->email]['hosts'][] = $idx;
+                		$individual[$creator->email]['private'] = true;
+                	}
+                }
+                else {
+	                // tenant recipients
+	                $tenant_host_idx[] = $idx;
 
-	                // table-style rows
-	                $cn_display = is_array($cert_parsed['subject']['CN']) ? implode("<br>", $cert_parsed['subject']['CN']) : $cert_parsed['subject']['CN'];
-	                $table_rows = [
-	                	"<tr>",
-	                	"  <td style='border-bottom:1px solid #ddd;vertical-align:top;'>".$Mail->font_bold.$c->hostname."<br>".$Mail->font_ligh.$c->ip."</font></td>",
-	                	"  <td style='border-bottom:1px solid #ddd;vertical-align:top;'>".$Mail->font_norm.$zone_name."</font></td>",
-	                	"  <td style='border-bottom:1px solid #ddd;vertical-align:top;'>".$Mail->font_norm.$cn_display."</font></td>",
-	                	"  <td style='border-bottom:1px solid #ddd;vertical-align:top;padding:2px 5px;'><strong><a href='https://".$mail_sender_settings->url."/".$tenant->href."/certificates/".rawurlencode($c->zone_name)."/".$cert_parsed['serialNumber']."/'>".$Mail->font_bold.$cert_parsed['serialNumberHex']."</strong></font></a><br>".$Mail->font_norm.$cert_parsed['issuer']['O']."</font></td>",
-	                	"  <td style='border-bottom:1px solid #ddd;vertical-align:top;'>".$Mail->font_norm.str_replace(" ","<br>",$cert_parsed['custom_validTo'])."</font></td>",
-	                	"  <td style='border-bottom:1px solid #ddd;vertical-align:top;padding:2px 5px;'>".$Mail->font_norm."<div style='border-radius:4px;margin-top:5px;padding:2px 6px;border:1px solid #1ABC9C;background:rgba(26,188,156,0.1);text-align: center;white-space:nowrap;'>".$cert_parsed['custom_validDays']." "._("days")."</div></font></td>",
-	                	"</tr>",
-	                ];
-
-	                // list-style rows
-	                $list_rows = [
-		                "<tr><td style='$td_style_title'>".$Mail->font_bold.$c->hostname."</font></td></tr>",
-		                "<tr><td style='$td_style'>".$Mail->font_norm._("IP").": ".$c->ip."</font></td></tr>",
-		                "<tr><td style='$td_style'>".$Mail->font_norm._("Zone").": ".$zone_name."</font></td></tr>",
-		                "<tr><td style='$td_style'>".$Mail->font_norm._("Subject").":</font> ".$Mail->font_bold.$cert_parsed['subject']['CN']."</font></td></tr>",
-		                "<tr><td style='$td_style'>".$Mail->font_norm._("Status").": <span style='color:$color;padding:0px;margin:0px;'>".$status." (".$cert_parsed['custom_validDays']." "._("days").")</span></font></td></tr>",
-		                "<tr><td style='$td_style'>".$Mail->font_norm._("Issuer").": ".$cert_parsed['issuer']['O']."</font></td></tr>",
-		                "<tr><td style='$td_style'>".$Mail->font_norm._("Serial").": <a href='https://".$mail_sender_settings->url."/".$tenant->href."/certificates/".rawurlencode($c->zone_name)."/".$cert_parsed['serialNumber']."/' style='text-decoration:none;color:#333'>".$cert_parsed['serialNumberHex']."</a></font></td></tr>",
-		                "<tr><td style='$td_style'>".$Mail->font_norm._("Expires").": ".$cert_parsed['custom_validTo']."</font></td></tr>",
-		                "<tr><td style='$td_style'>".$Mail->font_norm._("Scan agent").": ".$c->agname."</font></td></tr>",
-	                ];
-	                if (strlen($cert_parsed['extensions']['subjectAltName'])>0)
-	                $list_rows[] = "<tr><td style='$td_style'>".$Mail->font_norm._("Altnames").":<br><span style='padding:2px;padding-left:15px;'>".str_replace(",","</span><br><span style='padding:0px;padding:2px;padding-left:15px;'>",$cert_parsed['extensions']['subjectAltName'])."</span></font></td></tr>";
-
-	                // always add to log content rows (all hosts, regardless of private zone)
-	                array_push($log_content_rows, ...$list_rows);
-
-	                // private zone: only notify the zone creator, not tenant recipients
-	                if (!empty($c->private_zone_uid)) {
-	                	$creator = $Database->getObject("users", $c->private_zone_uid);
-	                	if ($creator && $Common->validate_mail($creator->email)) {
-	                		if (!isset($content[$creator->email])) { $content[$creator->email] = $header_list; }
-	                		array_push($content[$creator->email], ...$list_rows);
-	                		$private_zone_emails[$creator->email] = true;
-	                	}
+	                // per-host recipients (tenant recipients already get this host in the tenant mail)
+	                foreach (explode(";", $c->h_recipients ?? '') as $r) {
+	                    $r = trim($r);
+	                    if ($Common->validate_mail($r) && !in_array($r, $email_to_tenant_recipents)) {
+	                        if (!isset($individual[$r])) { $individual[$r] = ['hosts'=>[], 'private'=>false]; }
+	                        $individual[$r]['hosts'][] = $idx;
+	                    }
 	                }
-	                else {
-		                // add to tenant recipients
-		                $host_rows = $use_list ? $list_rows : $table_rows;
-		                foreach ($email_to_tenant_recipents as $email) {
-		                	array_push($content[$email], ...$host_rows);
-		                }
-
-		                // add to per-host recipients (always list style)
-		                foreach (explode(";", $c->h_recipients ?? '') as $r) {
-		                    $r = trim($r);
-		                    if ($Common->validate_mail($r)) {
-		                        if (!isset($content[$r])) { $content[$r] = $header_list; }
-		                        array_push($content[$r], ...$list_rows);
-		                    }
-		                }
-	                }
-
-                	$processed++;
-            	}
+                }
 	        }
 
-	        // added for ignored certs check
-	        if ($processed>0) {
+	        //
+	        // 2. render + send. All _() calls below run inside with_locale(), so every
+	        //    mail is written in the language of its recipient(s).
+	        //
+	        if (sizeof($notify_hosts)>0) {
 
-	        	// close tables + footer
-				foreach ($content as $email => &$rows) {
-					if (!$use_list && in_array($email, $email_to_tenant_recipents)) { $rows[] = "</tbody>"; }
-					$rows[] = "</table>";
-					$rows[] = "<br><br>".$Mail->font_norm."Visit <a href='".$mail_sender_settings->www."' style='color:#003551;'>".$mail_sender_settings->www."</a></font>";
-				}
-				unset($rows);
-				// close log content
-				$log_content_rows[] = "</table>";
-				$log_content_rows[] = "<br><br>".$Mail->font_norm."Visit <a href='".$mail_sender_settings->www."' style='color:#003551;'>".$mail_sender_settings->www."</a></font>";
+	        	// renders mail body for list of host indexes in currently active language
+	        	$render_mail = function (array $host_idx, bool $as_list) use ($Mail, $notify_hosts, $mail_sender_settings, $tenant) {
 
-				// send to tenant recipients together
+	        		$td_style_title = "vertical-align:top;padding:1px 5px;white-space:nowrap;padding-left:0px;padding-bottom: 7px;padding-top:20px;";
+	                $td_style       = "border-left:1px solid #ddd;vertical-align:top;padding:1px 5px;white-space:nowrap;padding-left:10px;";
+
+	        		// headers
+	        		$rows = [
+						$Mail->font_title._("Changed host certificates")."</font>:<br><br>",
+						"<table border='0' cellpadding='3' cellspacing='0'>",
+	        		];
+	        		if (!$as_list) {
+	        			array_push($rows,
+							"<thead>",
+							"  <th style='border-bottom:2px solid #003551; text-align:left'>".$Mail->font_norm._("Hostname")." / "._("IP")."</font></th>",
+							"  <th style='border-bottom:2px solid #003551; text-align:left'>".$Mail->font_norm._("Zone")."</font></th>",
+							"  <th style='border-bottom:2px solid #003551; text-align:left'>".$Mail->font_norm._("Certificate")."</font></th>",
+							"  <th style='border-bottom:2px solid #003551; text-align:left'>".$Mail->font_norm._("Serial")." / "._("Issuer")."</font></th>",
+							"  <th style='border-bottom:2px solid #003551; text-align:left'>".$Mail->font_norm._("Valid to")."</font></th>",
+							"  <th style='border-bottom:2px solid #003551; text-align:left'>".$Mail->font_norm._("Expires")."</font></th>",
+							"</thead>",
+							"<tbody>"
+	        			);
+	        		}
+
+	        		foreach ($host_idx as $idx) {
+	        			$c           = $notify_hosts[$idx]['c'];
+	        			$cert_parsed = $notify_hosts[$idx]['cert'];
+	        			$zone_name   = $notify_hosts[$idx]['zone_name'];
+	        			$status_int  = $notify_hosts[$idx]['status_int'];
+	        			$cert_link   = "https://".$mail_sender_settings->url."/".$tenant->href."/certificates/".rawurlencode($notify_hosts[$idx]['zone_raw'] ?? '')."/".$cert_parsed['serialNumber']."/";
+
+		            	if     ($status_int == "1")  { $status = _("Expired");         $color = "#E74C3C"; }
+		            	elseif ($status_int == "2")  { $status = _("Expires soon");    $color = "#FF5733"; }
+		            	elseif ($status_int == "10") { $status = _("Domain mismatch"); $color = "#FF5733"; }
+		            	elseif ($status_int == "11") { $status = _("Self-signed");     $color = "#FF5733"; }
+		            	else                         { $status = _("Valid");           $color = "#1ABC9C"; }
+
+	        			if (!$as_list) {
+			                $cn_display = is_array($cert_parsed['subject']['CN']) ? implode("<br>", $cert_parsed['subject']['CN']) : $cert_parsed['subject']['CN'];
+			                array_push($rows,
+			                	"<tr>",
+			                	"  <td style='border-bottom:1px solid #ddd;vertical-align:top;'>".$Mail->font_bold.$c->hostname."<br>".$Mail->font_ligh.$c->ip."</font></td>",
+			                	"  <td style='border-bottom:1px solid #ddd;vertical-align:top;'>".$Mail->font_norm.$zone_name."</font></td>",
+			                	"  <td style='border-bottom:1px solid #ddd;vertical-align:top;'>".$Mail->font_norm.$cn_display."</font></td>",
+			                	"  <td style='border-bottom:1px solid #ddd;vertical-align:top;padding:2px 5px;'><strong><a href='".$cert_link."'>".$Mail->font_bold.$cert_parsed['serialNumberHex']."</strong></font></a><br>".$Mail->font_norm.$cert_parsed['issuer']['O']."</font></td>",
+			                	"  <td style='border-bottom:1px solid #ddd;vertical-align:top;'>".$Mail->font_norm.str_replace(" ","<br>",$cert_parsed['custom_validTo'])."</font></td>",
+			                	"  <td style='border-bottom:1px solid #ddd;vertical-align:top;padding:2px 5px;'>".$Mail->font_norm."<div style='border-radius:4px;margin-top:5px;padding:2px 6px;border:1px solid #1ABC9C;background:rgba(26,188,156,0.1);text-align: center;white-space:nowrap;'>".$cert_parsed['custom_validDays']." "._("days")."</div></font></td>",
+			                	"</tr>"
+			                );
+	        			}
+	        			else {
+			                array_push($rows,
+				                "<tr><td style='$td_style_title'>".$Mail->font_bold.$c->hostname."</font></td></tr>",
+				                "<tr><td style='$td_style'>".$Mail->font_norm._("IP").": ".$c->ip."</font></td></tr>",
+				                "<tr><td style='$td_style'>".$Mail->font_norm._("Zone").": ".$zone_name."</font></td></tr>",
+				                "<tr><td style='$td_style'>".$Mail->font_norm._("Subject").":</font> ".$Mail->font_bold.$cert_parsed['subject']['CN']."</font></td></tr>",
+				                "<tr><td style='$td_style'>".$Mail->font_norm._("Status").": <span style='color:$color;padding:0px;margin:0px;'>".$status." (".$cert_parsed['custom_validDays']." "._("days").")</span></font></td></tr>",
+				                "<tr><td style='$td_style'>".$Mail->font_norm._("Issuer").": ".$cert_parsed['issuer']['O']."</font></td></tr>",
+				                "<tr><td style='$td_style'>".$Mail->font_norm._("Serial").": <a href='".$cert_link."' style='text-decoration:none;color:#333'>".$cert_parsed['serialNumberHex']."</a></font></td></tr>",
+				                "<tr><td style='$td_style'>".$Mail->font_norm._("Expires").": ".$cert_parsed['custom_validTo']."</font></td></tr>",
+				                "<tr><td style='$td_style'>".$Mail->font_norm._("Scan agent").": ".$c->agname."</font></td></tr>"
+			                );
+			                if (strlen($cert_parsed['extensions']['subjectAltName'])>0)
+			                $rows[] = "<tr><td style='$td_style'>".$Mail->font_norm._("Altnames").":<br><span style='padding:2px;padding-left:15px;'>".str_replace(",","</span><br><span style='padding:0px;padding:2px;padding-left:15px;'>",$cert_parsed['extensions']['subjectAltName'])."</span></font></td></tr>";
+	        			}
+	        		}
+
+	        		// close table + footer
+	        		if (!$as_list) { $rows[] = "</tbody>"; }
+	        		$rows[] = "</table>";
+	        		$rows[] = "<br><br>".$Mail->font_norm._("Visit")." <a href='".$mail_sender_settings->www."' style='color:#003551;'>".$mail_sender_settings->www."</a></font>";
+
+	        		return $rows;
+	        	};
+
+				// log content: all hosts regardless of recipient config or private zones (English, list style)
+				$log_content_rows = with_locale (null, $Database, fn() => $render_mail (array_keys($notify_hosts), true));
+
 				$Log = new Log ($Database);
-				if (!empty($email_to_tenant_recipents)) {
-					$sent = $Mail->send ("Telemach php-ssl :: changed certificates [".$tenant->name."]", $email_to_tenant_recipents, [], [], implode("\n", $content[$email_to_tenant_recipents[0]]), false);
-					if ($sent) {
-						$Log->write ("users", NULL, $tenant->id, null, "notification", true, "Certificate change notification email sent to tenant recipients", json_encode($email_to_tenant_recipents), json_encode(["title"=>"Telemach php-ssl :: changed certificates [".$tenant->name."]", "data"=>$log_content_rows]), false);
-					} else {
-						$Log->write ("users", NULL, $tenant->id, null, "notification", true, "Certificate change notification email FAILED for tenant recipients", json_encode($email_to_tenant_recipents), null, false);
+
+				// send to tenant recipients together - one mail per recipient language
+				if (!empty($email_to_tenant_recipents) && !empty($tenant_host_idx)) {
+					foreach (group_recipients_by_lang ($email_to_tenant_recipents, $tenant_id, $Database) as $group) {
+						with_locale ($group['lang_id'], $Database, function () use ($group, $render_mail, $tenant_host_idx, $use_list, $Mail, $Log, $tenant, $log_content_rows) {
+							$title = "Telemach php-ssl :: "._("changed certificates")." [".$tenant->name."]";
+							$sent  = $Mail->send ($title, $group['emails'], [], [], implode("\n", $render_mail ($tenant_host_idx, $use_list)), false);
+							if ($sent) {
+								$Log->write ("users", NULL, $tenant->id, null, "notification", true, "Certificate change notification email sent to tenant recipients", json_encode($group['emails']), json_encode(["title"=>$title, "data"=>$log_content_rows]), false);
+							} else {
+								$Log->write ("users", NULL, $tenant->id, null, "notification", true, "Certificate change notification email FAILED for tenant recipients", json_encode($group['emails']), null, false);
+							}
+						});
 					}
 				}
 
-				// send to per-host recipients individually; private zone creators get no BCC to tenant recipients
-		        foreach ($content as $email => $rows) {
-		        	if (!in_array($email, $email_to_tenant_recipents)) {
-		        		$bcc = isset($private_zone_emails[$email]) ? [] : $email_to_tenant_recipents;
-		                $sent = $Mail->send ("Telemach php-ssl :: changed certificates", [$email], [], $bcc, implode("\n", $rows), false);
+				// send to per-host recipients individually, in their language; private zone creators get no BCC to tenant recipients
+		        foreach ($individual as $email => $item) {
+		        	$bcc = $item['private'] ? [] : $email_to_tenant_recipents;
+		        	with_locale (recipient_lang_id ($email, $tenant_id, $Database), $Database, function () use ($email, $item, $bcc, $render_mail, $Mail, $Log, $tenant, $all_users) {
+		        		$title = "Telemach php-ssl :: "._("changed certificates");
+		        		$rows  = $render_mail ($item['hosts'], true);
+		                $sent  = $Mail->send ($title, [$email], [], $bcc, implode("\n", $rows), false);
 		                if ($sent) {
-		                	$Log->write ("users", $all_users[$email]->id ?? null, $tenant->id, null, "notification", true, "Certificate change notification email sent to user ".(isset($all_users[$email]) ? $all_users[$email]->name : $email)." (".$email.")", json_encode([$email]), json_encode(["title"=>"Telemach php-ssl :: changed certificates", "data"=>$rows]), false);
+		                	$Log->write ("users", $all_users[$email]->id ?? null, $tenant->id, null, "notification", true, "Certificate change notification email sent to user ".(isset($all_users[$email]) ? $all_users[$email]->name : $email)." (".$email.")", json_encode([$email]), json_encode(["title"=>$title, "data"=>$rows]), false);
 		                } else {
 		                	$Log->write ("users", $all_users[$email]->id ?? null, $tenant->id, null, "notification", true, "Certificate change notification email FAILED for user ".(isset($all_users[$email]) ? $all_users[$email]->name : $email)." (".$email.")", json_encode([$email]), null, false);
 		                }
-		        	}
+		        	});
 		        }
 	    	}
 		}

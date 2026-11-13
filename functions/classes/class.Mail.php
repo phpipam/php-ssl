@@ -340,7 +340,7 @@ class mailer extends Common
 
 		// ok
 		if ($print_success)
-			print $this->Result->show("success", "Obvestilo poslano.");
+			print $this->Result->show("success", _("Notification sent."));
 		return true;
 	}
 
@@ -437,7 +437,7 @@ class Mail_send extends mailer
 		$html = array();
 		$html[] = "<hr style='margin-left:10px;height:0px;margin-top:40px;margin-left:0px;border-top:0px;border-bottom:1px solid #ddd;'>";
 		$html[] = "<div>";
-		$html[] = "$this->font_ligh This email was automatically generated. Do not reply.</font><br>";
+		$html[] = "$this->font_ligh " . _("This email was automatically generated. Do not reply.") . "</font><br>";
 		$html[] = "$this->font_ligh <a href='" . $this->settings->url . "' font-size:'11px;'>$this->font_href_light " . $this->settings->url . "/</font></a> <br>";
 		// $html[] = "$this->font_ligh <a href='mailto:".$this->settings->email."' font-size:'11px;'>$this->font_href_light ".$this->settings->email."</font></a><br>";
 		$html[] = "</div>";
