@@ -3000,3 +3000,9 @@ msgstr "Splošno ime (CN)"
 
 msgid "Issued on"
 msgstr "Izdano"
+
+msgid "Notifications muted"
+msgstr "Obveščanje izklopljeno"
+
+msgid "SSL check disabled"
+msgstr "SSL preverjanje onemogočeno"
