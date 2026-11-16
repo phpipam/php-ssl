@@ -151,7 +151,8 @@ if ($user->admin == "1" && !empty($body['t_id'])) {
 }
 $pkey_id = null;
 
-if (!empty($private_key_encryption_key[$t_id])) {
+// Only when a key was actually provided — external imports have no key
+if (!empty($key_pem) && !empty($private_key_encryption_key[$t_id])) {
     $encrypted = $Certificates->pkey_encrypt($key_pem, $t_id);
     if ($encrypted === null) {
         print json_encode(['status' => 'error', 'message' => _("Private key encryption failed.")]);
