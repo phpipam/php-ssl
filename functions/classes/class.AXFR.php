@@ -118,19 +118,10 @@ class AXFR
 		$this->Database = $Database;
 		// Results
 		$this->Result = new Result();
-		// register PSR-4 autoloader for Net_DNS2 v2.x
-		$net_dns2_src = dirname(__FILE__) . "/../assets/Net_DNS2/src";
-		if (!is_readable($net_dns2_src . "/NetDNS2/Client.php")) {
-			throw new Exception(_("Net_DNS2 submodule is missing. Run: git submodule update --init --recursive"));
+		// Net_DNS2 v2.x is installed by composer (assets/) and loaded by its autoloader
+		if (!class_exists('NetDNS2\\Client')) {
+			throw new Exception(_("Net_DNS2 library is missing. Run: composer install --no-dev"));
 		}
-		spl_autoload_register(function (string $class) use ($net_dns2_src): void {
-			if (str_starts_with($class, 'NetDNS2\\')) {
-				$file = $net_dns2_src . '/' . str_replace('\\', '/', $class) . '.php';
-				if (is_readable($file)) {
-					require_once $file;
-				}
-			}
-		});
 	}
 
 	/**

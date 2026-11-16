@@ -11,27 +11,31 @@
 
 **Required PHP extensions:** `curl`, `gettext`, `openssl`, `pcntl`, `PDO`, `pdo_mysql`, `session`
 
+**Required tools:** [Composer](https://getcomposer.org/) — installs the third-party libraries
+
 **Optional:**
 - `nmap` binary — for network host discovery scans
-- `testssl.sh` — for deep TLS analysis (configured as a git submodule)
 
 ---
 
-## 1. Clone the repository
-
-Clone with submodules. The `functions/assets/` and `functions/testSSL/` directories are git submodules (Net_DNS2, PHPMailer, testssl.sh).
+## 1. Clone the repository and install dependencies
 
 ```bash
 cd /var/www/html/
-git clone --recursive https://github.com/phpipam/php-ssl.git php-ssl
-```
-
-If you already cloned without `--recursive`, initialise the submodules afterwards:
-
-```bash
+git clone https://github.com/phpipam/php-ssl.git php-ssl
 cd php-ssl
-git submodule update --init --recursive
+composer install --no-dev
 ```
+
+`composer install` installs the versions pinned in `composer.lock` into the `assets/` directory (gitignored, outside the web root):
+
+| Package | Used for |
+|---|---|
+| `phpmailer/phpmailer` | Email notifications |
+| `mikepultz/netdns2` | DNS zone transfers (AXFR) |
+| `testssl/testssl.sh` | testSSL scans (`assets/testssl/testssl.sh/testssl.sh`, run via `bash`) |
+
+`testssl.sh` is not on Packagist; it is defined as an inline `package` repository in `composer.json` that points at a GitHub release tag.
 
 ---
 

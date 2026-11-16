@@ -10,12 +10,15 @@ class TestSSL
 {
     private Database_PDO $Database;
 
+    /** testssl.sh as installed by composer (package testssl/testssl.sh, vendor-dir assets/) */
+    public const SCRIPT = __DIR__ . '/../../assets/testssl/testssl.sh/testssl.sh';
+
     public string $testssl_path;
 
     public function __construct(Database_PDO $Database)
     {
         $this->Database     = $Database;
-        $this->testssl_path = dirname(__FILE__) . '/../testSSL/testssl.sh';
+        $this->testssl_path = self::SCRIPT;
     }
 
     // -------------------------------------------------------------------------
@@ -219,7 +222,7 @@ class TestSSL
         if (!file_exists($this->testssl_path)) {
             $this->Database->runQuery(
                 "UPDATE testssl SET status = 'Error', completed = NOW(), error_message = ? WHERE id = ?",
-                ['testssl.sh submodule not found', $scan->id]
+                ['testssl.sh not found (run: composer install --no-dev)', $scan->id]
             );
             return;
         }

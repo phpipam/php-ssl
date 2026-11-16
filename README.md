@@ -55,13 +55,16 @@ for certificate changes and upcoming expirations.
 - PHP 8.0+
 - MySQL database server
 - PHP extensions: `curl`, `gettext`, `openssl`, `pcntl`, `PDO`, `pdo_mysql`, `session`
+- [Composer](https://getcomposer.org/) — installs PHPMailer, Net_DNS2 and testssl.sh into `assets/`
 
 ## Installation
 
-Clone the repository (including submodules for Net_DNS2 and PHPMailer):
+Clone the repository and install the third-party libraries (PHPMailer, Net_DNS2, testssl.sh) with composer:
 ```
 cd /var/www/html/
-git clone --recursive https://github.com/phpipam/php-ssl.git php-ssl
+git clone https://github.com/phpipam/php-ssl.git php-ssl
+cd php-ssl
+composer install --no-dev
 ```
 
 Copy and edit the config file:

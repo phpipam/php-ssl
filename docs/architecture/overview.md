@@ -10,7 +10,8 @@ public/              ← web document root (the only web-accessible directory)
 └── css/  js/  favicon.*
 cron/cron.php        ← cron entry point (CLI only)
 route/               ← page templates, AJAX endpoints, modals (not web-accessible)
-functions/           ← autoload, classes, cron job scripts, locale, submodules
+functions/           ← autoload, classes, cron job scripts, locale
+assets/              ← composer vendor-dir (PHPMailer, Net_DNS2, testssl.sh) — gitignored, created by `composer install`
 db/                  ← SCHEMA.sql, migrations, backups
 config/              ← config.php (local, gitignored), config.dist.php (template)
 version.php
@@ -111,7 +112,7 @@ Parsing is done by `class.URL.php`. Valid routes are defined in `$url_items` in 
 | `$Result` | `Result` | JSON/alert response formatter |
 | `$Config` | `Config` | Per-tenant config overrides |
 | `$Cron` | `Cron` | Cron schedule management |
-| `$testssl_available` | `bool` | Whether `functions/testSSL/testssl.sh` exists |
+| `$testssl_available` | `bool` | Whether `assets/testssl/testssl.sh/testssl.sh` (`TestSSL::SCRIPT`) exists |
 
 `TestSSL` is **not** a global — instantiate it per-request with `new TestSSL($Database)`.
 

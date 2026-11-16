@@ -99,8 +99,28 @@ Commit both the migration file and the updated `SCHEMA.sql` together.
 
 ```bash
 git pull
-git submodule update --recursive
+composer install --no-dev
 php db/migrate.php
+```
+
+### Updating third-party libraries
+
+PHPMailer and Net_DNS2 come from Packagist and can be updated within their version constraints:
+
+```bash
+composer update --no-dev phpmailer/phpmailer mikepultz/netdns2
+```
+
+testssl.sh is pinned to a release tag. To move to a newer one, change the `version`, `dist.url` and `source.reference` of the `testssl/testssl.sh` package in `composer.json` (and the matching `require` constraint), then run `composer update --no-dev testssl/testssl.sh`. Commit `composer.json` and `composer.lock`.
+
+### Upgrading from a version that used git submodules
+
+Older versions shipped Net_DNS2, PHPMailer (`functions/assets/`) and testssl.sh (`functions/testSSL/`) as git submodules. After pulling, remove the stale submodule checkouts and install with composer:
+
+```bash
+git submodule deinit -f --all 2>/dev/null
+rm -rf functions/assets/Net_DNS2 functions/assets/PHPMailer functions/testSSL .git/modules
+composer install --no-dev
 ```
 
 If `cron/cron.php` is running, migrations are safe to apply while it runs — each migration is a discrete SQL statement and the cron scripts are tenant-scoped.

@@ -2429,14 +2429,14 @@ msgstr "Ungültiger Hostname."
 msgid "Invalid port."
 msgstr "Ungültiger Port."
 
-msgid "testssl.sh submodule not found"
-msgstr "testssl.sh-Submodul nicht gefunden"
+msgid "testssl.sh not found"
+msgstr "testssl.sh nicht gefunden"
 
-msgid "The testssl.sh submodule is missing. Run the following commands to pull it:"
-msgstr "Das testssl.sh-Submodul fehlt. Führen Sie folgende Befehle aus:"
+msgid "testssl.sh is not installed. Install the dependencies with composer from the application root:"
+msgstr "testssl.sh ist nicht installiert. Installieren Sie die Abhängigkeiten mit Composer im Stammverzeichnis der Anwendung:"
 
-msgid "Scans will fail until the submodule is available on the server."
-msgstr "Scans schlagen fehl, bis das Submodul auf dem Server verfügbar ist."
+msgid "Scans will fail until testssl.sh is installed on the server."
+msgstr "Scans schlagen fehl, bis testssl.sh auf dem Server installiert ist."
 
 msgid "General"
 msgstr "Allgemein"
@@ -2965,6 +2965,15 @@ msgstr "Allgemeiner Name (CN)"
 
 msgid "Issued on"
 msgstr "Ausgestellt am"
+
+msgid "Missing dependencies:"
+msgstr "Fehlende Abhängigkeiten:"
+
+msgid "Net_DNS2 library is missing. Run: composer install --no-dev"
+msgstr "Die Net_DNS2-Bibliothek fehlt. Ausführen: composer install --no-dev"
+
+msgid "PHPMailer library is missing. Run: composer install --no-dev"
+msgstr "Die PHPMailer-Bibliothek fehlt. Ausführen: composer install --no-dev"
 
 msgid "Notifications muted"
 msgstr "Benachrichtigungen stummgeschaltet"

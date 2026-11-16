@@ -3,3 +3,5 @@ db/bkp
 # legacy location (before the config/ directory) — keep ignored so credentials are never committed
 /config.php
 .claude
+# third-party libraries installed by composer (composer.json → vendor-dir "assets")
+/assets/

@@ -168,10 +168,10 @@ class mailer extends Common
 	 */
 	private function initialize_mailer()
 	{
-		// we need phpmailer
-		require_once(dirname(__FILE__) . '/../assets/PHPMailer/src/PHPMailer.php');
-		require_once(dirname(__FILE__) . '/../assets/PHPMailer/src/SMTP.php');
-		require_once(dirname(__FILE__) . '/../assets/PHPMailer/src/Exception.php');
+		// PHPMailer is installed by composer (assets/) and loaded by its autoloader
+		if (!class_exists('PHPMailer\\PHPMailer\\PHPMailer')) {
+			throw new Exception(_("PHPMailer library is missing. Run: composer install --no-dev"));
+		}
 		// initialize object — pass true to enable exceptions on SMTP/send failure
 		$this->Php_mailer = new PHPMailer\PHPMailer\PHPMailer(true);
 

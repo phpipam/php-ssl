@@ -1,0 +1,50 @@
+{
+    "name": "phpipam/php-ssl",
+    "description": "SSL/TLS certificate monitoring web application",
+    "type": "project",
+    "license": "GPL-3.0-or-later",
+    "require": {
+        "php": ">=8.1",
+        "ext-curl": "*",
+        "ext-openssl": "*",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
+        "mikepultz/netdns2": "^2.0.8",
+        "phpmailer/phpmailer": "^7.1",
+        "testssl/testssl.sh": "3.3.0-alpha.2611"
+    },
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "testssl/testssl.sh",
+                "description": "Testing TLS/SSL encryption anywhere on any port (bash script, invoked by class.testssl.php)",
+                "type": "library",
+                "version": "3.3.0-alpha.2611",
+                "dist": {
+                    "type": "tar",
+                    "url": "https://github.com/testssl/testssl.sh/archive/refs/tags/v3.3dev-snapshot-2611.tar.gz"
+                },
+                "source": {
+                    "type": "git",
+                    "url": "https://github.com/testssl/testssl.sh.git",
+                    "reference": "v3.3dev-snapshot-2611"
+                }
+            }
+        }
+    ],
+    "config": {
+        "vendor-dir": "assets",
+        "optimize-autoloader": true,
+        "platform-check": false,
+        "sort-packages": true
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "@php -r \"@chmod('assets/testssl/testssl.sh/testssl.sh', 0755);\""
+        ],
+        "post-update-cmd": [
+            "@php -r \"@chmod('assets/testssl/testssl.sh/testssl.sh', 0755);\""
+        ]
+    }
+}

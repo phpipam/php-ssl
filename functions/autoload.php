@@ -223,6 +223,11 @@ include (__DIR__ . "/../config/config.php");
 # version
 include (dirname(__FILE__)."/../version.php");
 
+# third-party libraries (PHPMailer, Net_DNS2, testssl.sh) — installed into assets/ by `composer install`
+if (is_readable(__DIR__ . "/../assets/autoload.php")) {
+	require_once (__DIR__ . "/../assets/autoload.php");
+}
+
 # include classes
 include (__DIR__ . "/classes/class.PDO.php");
 include (__DIR__ . "/classes/class.Result.php");
@@ -249,8 +254,8 @@ include (__DIR__ . "/classes/class.testssl.php");
 include (__DIR__ . "/classes/class.Nmap.php");
 include (__DIR__ . "/classes/class.Layout.php");
 
-# testssl submodule availability flag
-$testssl_available = file_exists(dirname(__FILE__)."/testSSL/testssl.sh");
+# testssl.sh availability flag (composer package, see TestSSL::SCRIPT)
+$testssl_available = file_exists(TestSSL::SCRIPT);
 
 # required extensions
 $required_extensions = ['curl', 'openssl', 'posix', 'pdo', 'pdo_mysql', 'session', 'hash'];
