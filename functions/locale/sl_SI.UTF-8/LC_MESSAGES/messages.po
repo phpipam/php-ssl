@@ -3009,3 +3009,9 @@ msgstr "Knjižnica Net_DNS2 manjka. Zaženite: composer install --no-dev"
 
 msgid "PHPMailer library is missing. Run: composer install --no-dev"
 msgstr "Knjižnica PHPMailer manjka. Zaženite: composer install --no-dev"
+
+msgid "Notifications muted"
+msgstr "Obveščanje izklopljeno"
+
+msgid "SSL check disabled"
+msgstr "SSL preverjanje onemogočeno"

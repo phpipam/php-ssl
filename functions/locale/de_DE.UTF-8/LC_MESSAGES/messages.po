@@ -2974,3 +2974,9 @@ msgstr "Die Net_DNS2-Bibliothek fehlt. Ausführen: composer install --no-dev"
 
 msgid "PHPMailer library is missing. Run: composer install --no-dev"
 msgstr "Die PHPMailer-Bibliothek fehlt. Ausführen: composer install --no-dev"
+
+msgid "Notifications muted"
+msgstr "Benachrichtigungen stummgeschaltet"
+
+msgid "SSL check disabled"
+msgstr "SSL-Prüfung deaktiviert"
