@@ -2965,3 +2965,9 @@ msgstr "Allgemeiner Name (CN)"
 
 msgid "Issued on"
 msgstr "Ausgestellt am"
+
+msgid "Notifications muted"
+msgstr "Benachrichtigungen stummgeschaltet"
+
+msgid "SSL check disabled"
+msgstr "SSL-Prüfung deaktiviert"
