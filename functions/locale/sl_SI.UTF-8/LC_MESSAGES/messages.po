@@ -2464,14 +2464,14 @@ msgstr "Neveljavno ime gostitelja."
 msgid "Invalid port."
 msgstr "Neveljavna vrata."
 
-msgid "testssl.sh submodule not found"
-msgstr "Podmodul testssl.sh ni najden"
+msgid "testssl.sh not found"
+msgstr "testssl.sh ni najden"
 
-msgid "The testssl.sh submodule is missing. Run the following commands to pull it:"
-msgstr "Podmodul testssl.sh manjka. Zaženite naslednje ukaze za prenos:"
+msgid "testssl.sh is not installed. Install the dependencies with composer from the application root:"
+msgstr "testssl.sh ni nameščen. Namestite odvisnosti s composerjem iz korenske mape aplikacije:"
 
-msgid "Scans will fail until the submodule is available on the server."
-msgstr "Skeni bodo neuspešni, dokler podmodul ni na voljo na strežniku."
+msgid "Scans will fail until testssl.sh is installed on the server."
+msgstr "Skeni bodo neuspešni, dokler testssl.sh ni nameščen na strežniku."
 
 msgid "General"
 msgstr "Splošno"
@@ -3000,3 +3000,12 @@ msgstr "Splošno ime (CN)"
 
 msgid "Issued on"
 msgstr "Izdano"
+
+msgid "Missing dependencies:"
+msgstr "Manjkajoče odvisnosti:"
+
+msgid "Net_DNS2 library is missing. Run: composer install --no-dev"
+msgstr "Knjižnica Net_DNS2 manjka. Zaženite: composer install --no-dev"
+
+msgid "PHPMailer library is missing. Run: composer install --no-dev"
+msgstr "Knjižnica PHPMailer manjka. Zaženite: composer install --no-dev"

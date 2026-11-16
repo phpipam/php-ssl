@@ -25,20 +25,21 @@ Remember to set it back to `false` afterwards.
 
 ---
 
-## Git submodules
+## Missing dependencies
 
-The **System Health** banner (visible to all logged-in users) shows a warning if any of the following are missing:
+The **System Health** banner (visible to all logged-in users) shows a "Missing dependencies" warning if any of the following are missing:
 
-| File | Submodule |
+| Check | Dependency |
 |---|---|
-| `functions/assets/Net_DNS2/Net/DNS2.php` | Net_DNS2 |
-| `functions/assets/PHPMailer/src/PHPMailer.php` | PHPMailer |
-| `functions/testSSL/testssl.sh` | testssl.sh |
+| class `NetDNS2\Client` (composer autoloader) | Net_DNS2 |
+| class `PHPMailer\PHPMailer\PHPMailer` (composer autoloader) | PHPMailer |
+| `assets/testssl/testssl.sh/testssl.sh` | testssl.sh |
+| `functions/assets/GoogleAuthenticator/GoogleAuthenticator.php` | GoogleAuthenticator (bundled in the repository) |
 
-Fix with:
+Fix with (from the application root):
 
 ```bash
-git submodule update --init --recursive
+composer install --no-dev
 ```
 
 ---
@@ -112,7 +113,7 @@ mysql -u phpssladmin -p php-ssl -e "DESCRIBE <table>;"
 
 ### Scans stay in "Requested" state
 
-- Confirm `functions/testSSL/testssl.sh` exists (submodule initialised)
+- Confirm `assets/testssl/testssl.sh/testssl.sh` exists (`composer install --no-dev`)
 - Confirm `cron/cron.php` is running — testssl scans are picked up on every cron run
 - Check for errors in the scan record via the testssl detail page
 

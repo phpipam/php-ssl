@@ -192,7 +192,7 @@ Formats AJAX JSON responses and HTML alert banners.
 
 ## AXFR (`class.AXFR.php`)
 
-DNS zone transfer client. Uses the Net_DNS2 submodule to perform AXFR requests and extract hostnames.
+DNS zone transfer client. Uses the Net_DNS2 library (composer package `mikepultz/netdns2`) to perform AXFR requests and extract hostnames.
 
 ---
 

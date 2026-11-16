@@ -24,10 +24,11 @@ mysql -u root -p -e "CREATE DATABASE \`php-ssl\`; CREATE USER 'phpssladmin'@'loc
 mysql -u root -p php-ssl < db/SCHEMA.sql
 ```
 
-**Git submodules** (Net_DNS2, PHPMailer in `functions/assets/`; testssl.sh in `functions/testSSL/`):
+**Third-party libraries** (PHPMailer, Net_DNS2, testssl.sh) are installed with Composer into `assets/` (`composer.json` sets `vendor-dir: assets`; the directory is gitignored, `composer.lock` is committed):
 ```bash
-git submodule update --init --recursive
+composer install --no-dev
 ```
+`functions/autoload.php` requires `assets/autoload.php`, so `PHPMailer\PHPMailer\*` and `NetDNS2\*` classes are autoloaded — never `require` their files directly. testssl.sh is not on Packagist: it is an inline `package` repository in `composer.json` pinned to a GitHub tag (bump `version`, `dist.url`, `source.reference` and the `require` constraint together, then `composer update testssl/testssl.sh`). Its path is `TestSSL::SCRIPT` (`assets/testssl/testssl.sh/testssl.sh`). `functions/assets/GoogleAuthenticator/` is still bundled in the repo (not composer).
 
 **Cron:**
 ```
@@ -40,7 +41,7 @@ php cron/cron.php <tenant_id> <script_name>
 # e.g.: php cron/cron.php 1 update_certificates
 ```
 
-**PHP required:** 8.0 or later (server currently runs PHP 8.3)
+**PHP required:** 8.1 or later (Net_DNS2 v2 requires 8.1; server currently runs PHP 8.3)
 
 **PHP extensions required:** `curl`, `gettext`, `openssl`, `pcntl`, `PDO`, `pdo_mysql`, `session`
 
@@ -58,7 +59,9 @@ public/       ← web document root (only web-accessible directory)
   css/ js/ favicon*
 cron/cron.php ← cron entry point (CLI only)
 route/        ← page templates, AJAX endpoints, modals (NOT web-accessible)
-functions/    ← autoload, classes, cron job scripts, locale, submodules
+functions/    ← autoload, classes, cron job scripts, locale
+assets/       ← composer vendor-dir (PHPMailer, Net_DNS2, testssl.sh) — gitignored
+composer.json / composer.lock
 db/           ← SCHEMA.sql, migrations, backups (db/bkp)
 config/       ← config.php (local, gitignored — credentials), config.dist.php (template)
 version.php
@@ -100,11 +103,11 @@ URLs follow the pattern `/{tenant_href}/{route}/{app}/{id1}`. The `tenant` segme
 | `class.Zones.php` | DNS zone and host management |
 | `class.User.php` | Session-based authentication, role checks, permission validation, impersonation |
 | `class.Tenants.php` | Multi-tenant isolation |
-| `class.AXFR.php` | DNS zone transfer (uses Net_DNS2 submodule) |
+| `class.AXFR.php` | DNS zone transfer (uses Net_DNS2, composer) |
 | `class.Agent.php` | Remote scanning agent communication |
 | `class.Cron.php` | Cronjob orchestration — reads schedule from `cron` DB table |
 | `class.Thread.php` | Multi-process scanning via `pcntl_fork` |
-| `class.Mail.php` | Email notifications via PHPMailer submodule |
+| `class.Mail.php` | Email notifications via PHPMailer (composer) |
 | `class.Log.php` | Audit logging to the `logs` table |
 | `class.Common.php` | Shared utility methods (base class for URL, User, Config, Zones) |
 | `class.Validate.php` | Input validation |
@@ -132,7 +135,7 @@ AJAX endpoints (return JSON via `$Result`) live under `route/ajax/`. Some have s
 Modals are loaded asynchronously: `data-bs-toggle="modal"` with an `href` triggers `$('.modal-content').load(href)` in `public/js/magic.js`.
 
 **Shared page components** live in `route/common/`:
-- `checks.php` — system health alerts shown on every page (unapplied migrations, missing git submodules)
+- `checks.php` — system health alerts shown on every page (unapplied migrations, missing composer dependencies)
 - `header.php` — top navigation bar HTML
 - `header-notifications.php` — notification bell/badge
 - `left-menu.php` — sidebar menu generation
@@ -201,7 +204,7 @@ After `functions/autoload.php` runs, all route files and modal handlers have the
 | `$Result` | `Result` | JSON/alert response formatter |
 | `$Config` | `Config` | Per-tenant config overrides |
 | `$Cron` | `Cron` | Cron orchestration |
-| `$testssl_available` | `bool` | Whether `functions/testSSL/testssl.sh` exists on disk |
+| `$testssl_available` | `bool` | Whether `TestSSL::SCRIPT` (`assets/testssl/testssl.sh/testssl.sh`) exists on disk |
 
 Note: `TestSSL` is **not** a global — instantiate per-request with `new TestSSL($Database)`.
 
@@ -280,7 +283,7 @@ Incremental migrations live in `db/migrations/` (numbered `NNNN_description.sql`
 
 Included on every authenticated page. Checks:
 - **Unapplied migrations** (admin only) — compares `db/migrations/*.sql` filenames against `migrations` table
-- **Missing git submodules** (all users) — checks `functions/assets/Net_DNS2/Net/DNS2.php`, `functions/assets/PHPMailer/src/PHPMailer.php`, `functions/testSSL/testssl.sh`
+- **Missing dependencies** (all users) — checks that `NetDNS2\Client` and `PHPMailer\PHPMailer\PHPMailer` autoload, that `TestSSL::SCRIPT` exists, and that the bundled `functions/assets/GoogleAuthenticator/GoogleAuthenticator.php` loads
 
 ### Configuration (`config/config.php`)
 
