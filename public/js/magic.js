@@ -64,13 +64,27 @@ $(document).ready(function () {
      * Tooltips
      * @type {Array}
      */
+    // Tabler auto-initializes Bootstrap tooltips on [data-bs-toggle="tooltip"], which moves
+    // the title attribute to data-bs-original-title (and shows a second bubble). Dispose those
+    // so that only tippy is used, and read the text from whichever attribute still holds it.
+    var bsLib = window.bootstrap || (window.tabler && window.tabler.bootstrap);
+    $('[data-bs-toggle="tooltip"]').each(function () {
+        if (bsLib && bsLib.Tooltip) {
+            var inst = bsLib.Tooltip.getInstance(this);
+            if (inst) { inst.dispose(); }
+        }
+    });
     tippy('[data-bs-toggle="tooltip"]', {
         duration: 0,
         arrow: false,
         followCursor: false,
         allowHTML: true,
         offset: [0, 10],
-        content: (reference) => reference.getAttribute('title'),
+        content: (reference) =>
+            reference.getAttribute('title') ||
+            reference.getAttribute('data-bs-original-title') ||
+            reference.getAttribute('data-tblr-original-title') ||
+            reference.getAttribute('aria-label') || '',
     })
 
     /**
